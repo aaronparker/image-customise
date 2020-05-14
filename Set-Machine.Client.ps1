@@ -7,7 +7,7 @@ $RegCommands =
 # Process Registry Commands
 ForEach ($Command in $RegCommands) {
     Write-Host "reg $Command"
-    Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
+    Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction "SilentlyContinue"
 }
 
 # Configure Windows features
