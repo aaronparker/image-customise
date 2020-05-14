@@ -30,10 +30,10 @@ Switch -Regex ((Get-WmiObject Win32_OperatingSystem).Caption) {
 }
 $Build = ([System.Environment]::OSVersion.Version).Build
 If ((Get-WmiObject -Computer . -Class "Win32_ComputerSystem").Model -match "Parallels*|VMware*|Virtual*") {
-    $Model = $Virtual
+    $Model = "Virtual"
 }
 Else {
-    $Model = $Physical
+    $Model = "Physical"
 }
 
 # Gather scripts
