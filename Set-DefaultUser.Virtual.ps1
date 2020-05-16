@@ -13,7 +13,7 @@
 # Load Registry Hives
 $RegDefaultUser = "$env:SystemDrive\Users\Default\NTUSER.DAT"
 If (Test-Path -Path $RegDefaultUser) {
-    Write-Verbose "Loading $RegDefaultUser" -ForegroundColor DarkGray
+    Write-Verbose "Loading $RegDefaultUser"
     Start-Process reg -ArgumentList "load HKLM\MountDefaultUser $RegDefaultUser" -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
 }
 
