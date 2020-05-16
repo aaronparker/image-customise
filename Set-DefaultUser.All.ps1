@@ -1,9 +1,19 @@
-#   Windows 10 and Windows Server 2016 / 2019
+#Requires -RunAsAdministrator
+<#
+    .SYNOPSIS
+    Set default user profile settings.
+  
+    .NOTES
+    AUTHOR: Aaron Parker
+ 
+    .LINK
+    http://stealthpuppy.com
+#>
 
 # Load Registry Hives
 $RegDefaultUser = "$env:SystemDrive\Users\Default\NTUSER.DAT"
 If (Test-Path -Path $RegDefaultUser) {
-    Write-Host "Loading $RegDefaultUser" -ForegroundColor DarkGray
+    Write-Verbose "Loading $RegDefaultUser" -ForegroundColor DarkGray
     Start-Process reg -ArgumentList "load HKLM\MountDefaultUser $RegDefaultUser" -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
 }
 
@@ -41,11 +51,11 @@ $RegCommands =
 ForEach ($Command in $RegCommands) {
     If ($Command -like "*HKCU*") {
         $Command = $Command -replace "HKCU","HKLM\MountDefaultUser"
-        Write-Host "reg $Command"
+        Write-Verbose "reg $Command"
         Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
     }
     Else {
-        Write-Host "reg $Command"
+        Write-Verbose "reg $Command"
         Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
     }
 }

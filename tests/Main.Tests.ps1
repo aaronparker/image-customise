@@ -18,7 +18,7 @@ Else {
 }
 
 Describe "General project validation" {
-    $scripts = Get-ChildItem -Path $projectRoot -Recurse -Include *.ps1, *.psm1
+    $scripts = Get-ChildItem -Path $projectRoot -Include *.ps1, *.psm1
 
     # TestCases are splatted to the script so we need hashtables
     $testCase = $scripts | ForEach-Object { @{file = $_ } }
@@ -48,7 +48,7 @@ Describe "General project validation" {
     }
 }
 
-Describe 'Scrip execute validation' {
+Describe 'Script execute validation' -Tag "Windows"  {
     It 'Script execution should be OK' {
       . (Join-Path -Path $projectRoot -ChildPath "Invoke-Scripts.ps1")   | Should Not Throw
     }

@@ -45,7 +45,7 @@ $ModelScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Model
 # Run all scripts
 ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScripts)) {
     Try {
-        Write-Host "Running script: $($script.FullName)."
+        Write-Verbose "Running script: $($script.FullName)."
         . $script.FullName
     }
     Catch {

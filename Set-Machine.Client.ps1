@@ -1,4 +1,14 @@
-#   Windows 10 Set-Customisations.ps1
+#Requires -RunAsAdministrator
+<#
+    .SYNOPSIS
+    Set machine level settings.
+  
+    .NOTES
+    AUTHOR: Aaron Parker
+ 
+    .LINK
+    http://stealthpuppy.com
+#>
 
 # Registry Commands
 $RegCommands =
@@ -6,7 +16,7 @@ $RegCommands =
 
 # Process Registry Commands
 ForEach ($Command in $RegCommands) {
-    Write-Host "reg $Command"
+    Write-Verbose "reg $Command"
     Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction "SilentlyContinue"
 }
 
