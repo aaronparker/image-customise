@@ -80,7 +80,7 @@ $ModelScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Model
 # Per script tests
 Describe "Script execution validation" -Tag "Windows" {
     ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScripts)) {
-        Write-Host "Running: $script" -ForegroundColor Cyan
+        Write-Host "`tRunning: $script" -ForegroundColor Cyan
         It "$($script.Name) should not Throw" {
             { . $script } | Should Not Throw
         }
