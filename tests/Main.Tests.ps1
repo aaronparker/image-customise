@@ -29,7 +29,7 @@ Describe "General project validation" {
     $testCase = $scripts | ForEach-Object { @{file = $_ } }
     It "Script <file> should be valid PowerShell" -TestCases $testCase {
         param($file)
-        #$file.fullname | Should Exist
+        $file.fullname | Should Exist
 
         $contents = Get-Content -Path $file.fullname -ErrorAction Stop
         $errors = $null
