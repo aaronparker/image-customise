@@ -18,9 +18,10 @@ Else {
 }
 
 # Set $VerbosePreference so full details are sent to the log; Make Invoke-WebRequest faster
-$VerbosePreference = "Continue"
+#$VerbosePreference = "Continue"
 $ProgressPreference = "SilentlyContinue"
 
+# All scripts validation
 Describe "General project validation" {
     $scripts = Get-ChildItem -Path $projectRoot -Filter *.ps1
     Write-Host "Found $($scripts.count) scripts."
@@ -76,10 +77,11 @@ $PlatformScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Pl
 $BuildScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Build.ps1") -ErrorAction SilentlyContinue)
 $ModelScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Model.ps1") -ErrorAction SilentlyContinue)
 
-Describe 'Script execute validation' -Tag "Windows" {
+# Per script tests
+Describe "Script execution validation" -Tag "Windows" {
     ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScripts)) {
         Write-Host "Running: $script" -ForegroundColor Cyan
-        It 'Script should not Throw' {
+        It "$($script.Name) should not Throw" {
             { . $script } | Should Not Throw
         }
     }
