@@ -141,7 +141,7 @@ Function Remove-ProtectedApps {
             "Microsoft.UI*",
             "Microsoft.VCLibs*"
         ),
-        [Parameter(Mandatory = $True)]
+        [Parameter(Mandatory = $False)]
         [System.String[]] $PackageList
     )
     [System.Array] $FilteredList = @()
