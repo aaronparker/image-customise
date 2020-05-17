@@ -19,7 +19,13 @@ $RegCommands =
 # Process Registry Commands
 ForEach ($Command in $RegCommands) {
     Write-Verbose "reg $Command"
-    Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction "SilentlyContinue"
+    try {
+        Write-Verbose "reg $Command"
+        Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction "SilentlyContinue"
+    }
+    catch {
+        Throw "Failed to run $Command"
+    }   
 }
 
 # Remove sample files if they exist

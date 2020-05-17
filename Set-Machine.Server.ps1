@@ -12,6 +12,13 @@
 
 # Configure services
 If ((Get-WindowsFeature -Name "RDS-RD-Server").InstallState -eq "Installed") {
-    Set-Service Audiosrv -StartupType Automatic
-    Set-Service WSearch -StartupType Automatic
+    $Services = "Audiosrv", "WSearch"
+    ForEach ($service in $Services) {
+        try {
+            Set-Service $service -StartupType "Automatic"
+        }
+        catch {
+            Throw "Failed to set service properties [$service]."
+        }
+    }
 }
