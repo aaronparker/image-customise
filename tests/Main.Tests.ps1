@@ -17,7 +17,9 @@ Else {
     $module = Split-Path -Path $projectRoot -Leaf
 }
 
-Write-Host "Project root: $projectRoot"
+# Set $VerbosePreference so full details are sent to the log; Make Invoke-WebRequest faster
+$VerbosePreference = "Continue"
+$ProgressPreference = "SilentlyContinue"
 
 Describe "General project validation" {
     $scripts = Get-ChildItem -Path $projectRoot -Filter *.ps1
