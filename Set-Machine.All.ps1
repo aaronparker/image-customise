@@ -18,7 +18,6 @@ $RegCommands =
 
 # Process Registry Commands
 ForEach ($Command in $RegCommands) {
-    Write-Verbose "reg $Command"
     try {
         Write-Verbose "reg $Command"
         Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction "SilentlyContinue"
@@ -28,14 +27,14 @@ ForEach ($Command in $RegCommands) {
     }   
 }
 
-# Remove sample files if they exist
-$Paths = "$env:PUBLIC\Music\Sample Music", "$env:PUBLIC\Pictures\Sample Pictures", `
-    "$env:PUBLIC\Videos\Sample Videos", "$env:PUBLIC\Recorded TV\Sample Media"
+# Remove specified paths
+$Paths = 
+"$env:PUBLIC\Music\Sample Music",
+"$env:PUBLIC\Pictures\Sample Pictures",
+"$env:PUBLIC\Videos\Sample Videos",
+"$env:PUBLIC\Recorded TV\Sample Media",
+"$env:SystemDrive\Logs"
 ForEach ($Path in $Paths) {
-    If (Test-Path $Path) { Remove-Item $Path -Recurse -Force }
+    If (Test-Path -Path $Path) { Remove-Item $Path -Recurse -Force }
 }
-
-# Remove the C:\Logs folder
-$Path = "$env:SystemDrive\Logs"
-If (Test-Path $Path) { Remove-Item $Path -Recurse -Force }
  
