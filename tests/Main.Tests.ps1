@@ -17,14 +17,18 @@ Else {
     $module = Split-Path -Path $projectRoot -Leaf
 }
 
+# Set $VerbosePreference so full details are sent to the log; Make Invoke-WebRequest faster
+$VerbosePreference = "Continue"
+$ProgressPreference = "SilentlyContinue"
+
 Describe "General project validation" {
-    $scripts = Get-ChildItem -Path $projectRoot -Include *.ps1, *.psm1
+    $scripts = Get-ChildItem -Path $projectRoot -Filter *.ps1
+    Write-Host "Found $($scripts.count) scripts."
 
     # TestCases are splatted to the script so we need hashtables
     $testCase = $scripts | ForEach-Object { @{file = $_ } }
     It "Script <file> should be valid PowerShell" -TestCases $testCase {
         param($file)
-
         $file.fullname | Should Exist
 
         $contents = Get-Content -Path $file.fullname -ErrorAction Stop
@@ -50,6 +54,6 @@ Describe "General project validation" {
 
 Describe 'Script execute validation' -Tag "Windows"  {
     It 'Script execution should be OK' {
-      . (Join-Path -Path $projectRoot -ChildPath "Invoke-Scripts.ps1")   | Should Not Throw
+      { . (Join-Path -Path $projectRoot -ChildPath "Invoke-Scripts.ps1") } | Should Not Throw
     }
 }

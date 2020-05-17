@@ -28,12 +28,12 @@ Else {
         $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
         $module = Split-Path -Path $projectRoot -Leaf
     }
-    $moduleParent = Join-Path -Path $projectRoot -ChildPath $module
+    #$moduleParent = Join-Path -Path $projectRoot -ChildPath $module
     
     # Tests success, push to GitHub
     If ($res.FailedCount -eq 0) {
         Try {
-            [String]$newVersion = New-Object -TypeName System.Version -ArgumentList ((Get-Date -Format "yyMM"), $env:APPVEYOR_BUILD_NUMBER)
+            [String]$newVersion = New-Object -TypeName System.Version -ArgumentList ((Get-Date -Format "yyMM"), (Get-Date -Format "dd"), $env:APPVEYOR_BUILD_NUMBER)
             Write-Output "New Version: $newVersion"
         }
         Catch {

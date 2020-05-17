@@ -51,12 +51,22 @@ $RegCommands =
 ForEach ($Command in $RegCommands) {
     If ($Command -like "*HKCU*") {
         $Command = $Command -replace "HKCU","HKLM\MountDefaultUser"
-        Write-Verbose "reg $Command"
-        Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
+        try {
+            Write-Verbose "reg $Command"
+            Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction "SilentlyContinue"
+        }
+        catch {
+            Throw "Failed to run $Command"
+        }
     }
     Else {
-        Write-Verbose "reg $Command"
-        Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
+        try {
+            Write-Verbose "reg $Command"
+            Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction "SilentlyContinue"
+        }
+        catch {
+            Throw "Failed to run $Command"
+        }
     }
 }
 

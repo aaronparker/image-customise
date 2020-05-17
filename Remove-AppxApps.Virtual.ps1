@@ -89,20 +89,20 @@ Param (
         "Microsoft.ZuneMusic_8wekyb3d8bbwe", # Zune Music
         "Microsoft.ZuneVideo_8wekyb3d8bbwe", # Zune Video
         # "Microsoft.Getstarted_8wekyb3d8bbwe",                 # Windows Tips
-        "Microsoft.Microsoft3DViewer_8wekyb3d8bbwe",          # 3D Viewer
+        "Microsoft.Microsoft3DViewer_8wekyb3d8bbwe", # 3D Viewer
         # "Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe",         # Office 365 hub
         # "Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe",       # Stick Notes
-        "Microsoft.MixedReality.Portal_8wekyb3d8bbwe",        # Mixed Reality Portal [add to blacklist for virtual desktops]
+        "Microsoft.MixedReality.Portal_8wekyb3d8bbwe", # Mixed Reality Portal [add to blacklist for virtual desktops]
         # "Microsoft.MSPaint_8wekyb3d8bbwe",                    # Paint 3D
         # "Microsoft.Office.OneNote_8wekyb3d8bbwe",             # Microsoft OneNote [add to blacklist if not using Office 365]
         # "Microsoft.PPIProjection_cw5n1h2txyewy",              # Connect (Miracast) [add to blacklist for virtual desktops]
-        "Microsoft.Print3D_8wekyb3d8bbwe",                    # Print 3D
+        "Microsoft.Print3D_8wekyb3d8bbwe", # Print 3D
         # "Microsoft.ScreenSketch_8wekyb3d8bbwe",               # Snip & Sketch
         # "Microsoft.Windows.Photos_8wekyb3d8bbwe",             # Photos
         # "Microsoft.WindowsAlarms_8wekyb3d8bbwe",              # Alarms
         # "Microsoft.WindowsCalculator_8wekyb3d8bbwe",          # Calculator
         # "Microsoft.WindowsCamera_8wekyb3d8bbwe",              # Camera
-        "Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe",         # Feedback Hub [add to blacklist for virtual desktops]
+        "Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe", # Feedback Hub [add to blacklist for virtual desktops]
         # "Microsoft.WindowsMaps_8wekyb3d8bbwe",                # Maps
         # "Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe",       # Voice Recorder
         "Microsoft.YourPhone_8wekyb3d8bbwe"                   # Your Phone [add to blacklist for virtual desktops]
@@ -123,7 +123,7 @@ Param (
 )
 
 #region Functions
-Function Remove-ProtectedApps {
+Function Edit-ProtectedApp {
     <# Filter out a set of apps that we'll never try to remove #>
     Param (
         [Parameter(Mandatory = $False)]
@@ -166,7 +166,7 @@ If ($Elevated) { Write-Verbose -Message "$($MyInvocation.MyCommand): Running wit
 Switch ($Operation) {
     "Blacklist" {
         # Filter list if it contains apps from the $protectList
-        $packagesToRemove = Remove-ProtectedApps -PackageList $BlackList
+        $packagesToRemove = Edit-ProtectedApp -PackageList $BlackList
     }
     "Whitelist" {
         Write-Warning -Message "$($MyInvocation.MyCommand): Whitelist action may break stuff."
@@ -185,12 +185,17 @@ Switch ($Operation) {
         # Select unique packages
         $uniquePackagesAllUsers = $packagesAllUsers.PackageFamilyName | Sort-Object -Unique
 
-        # Filter out the whitelisted apps
-        Write-Verbose -Message "$($MyInvocation.MyCommand): Filtering whitelisted apps."
-        $packagesWithoutWhitelist = Compare-Object -ReferenceObject $uniquePackagesAllUsers -DifferenceObject $Whitelist -PassThru
+        If ($Null -ne $uniquePackagesAllUsers) {
+            # Filter out the whitelisted apps
+            Write-Verbose -Message "$($MyInvocation.MyCommand): Filtering whitelisted apps."
+            $packagesWithoutWhitelist = Compare-Object -ReferenceObject $uniquePackagesAllUsers -DifferenceObject $Whitelist -PassThru
 
-        # Filter list if it contains apps from the $protectList
-        $packagesToRemove = Remove-ProtectedApps -PackageList $packagesWithoutWhitelist
+            # Filter list if it contains apps from the $protectList
+            $packagesToRemove = Edit-ProtectedApp -PackageList $packagesWithoutWhitelist
+        }
+        Else {
+            $packagesToRemove = $Null
+        }
     }
 }
 

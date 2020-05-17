@@ -10,4 +10,6 @@
     http://stealthpuppy.com
 #>
 
-Set-MpPreference -PUAProtection Enabled
+If (Get-Module -Name ConfigDefender -ListAvailable -ErrorAction SilentlyContinue) {
+    Set-MpPreference -PUAProtection Enabled
+}
