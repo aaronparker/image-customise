@@ -123,7 +123,7 @@ Param (
 )
 
 #region Functions
-Function Edit-ProtectedApps {
+Function Edit-ProtectedApp {
     <# Filter out a set of apps that we'll never try to remove #>
     Param (
         [Parameter(Mandatory = $False)]
@@ -166,7 +166,7 @@ If ($Elevated) { Write-Verbose -Message "$($MyInvocation.MyCommand): Running wit
 Switch ($Operation) {
     "Blacklist" {
         # Filter list if it contains apps from the $protectList
-        $packagesToRemove = Edit-ProtectedApps -PackageList $BlackList
+        $packagesToRemove = Edit-ProtectedApp -PackageList $BlackList
     }
     "Whitelist" {
         Write-Warning -Message "$($MyInvocation.MyCommand): Whitelist action may break stuff."
@@ -190,7 +190,7 @@ Switch ($Operation) {
         $packagesWithoutWhitelist = Compare-Object -ReferenceObject $uniquePackagesAllUsers -DifferenceObject $Whitelist -PassThru
 
         # Filter list if it contains apps from the $protectList
-        $packagesToRemove = Edit-ProtectedApps -PackageList $packagesWithoutWhitelist
+        $packagesToRemove = Edit-ProtectedApp -PackageList $packagesWithoutWhitelist
     }
 }
 
