@@ -33,6 +33,9 @@ ForEach ($Command in $RegCommands) {
     }
 }
 
+# Unload Registry Hives
+Start-Process reg -ArgumentList "unload HKLM\MountDefaultUser" -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
+
 # Configure the default Start menu
 If (!(Test-Path("$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows"))) { New-Item -Value "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows" -ItemType Directory }
 Import-StartLayout -LayoutPath .\WindowsServerStartMenuLayout.xml -MountPath "$($env:SystemDrive)\"
