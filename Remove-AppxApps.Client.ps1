@@ -184,12 +184,17 @@ Switch ($Operation) {
         # Select unique packages
         $uniquePackagesAllUsers = $packagesAllUsers.PackageFamilyName | Sort-Object -Unique
 
-        # Filter out the whitelisted apps
-        Write-Verbose -Message "$($MyInvocation.MyCommand): Filtering whitelisted apps."
-        $packagesWithoutWhitelist = Compare-Object -ReferenceObject $uniquePackagesAllUsers -DifferenceObject $Whitelist -PassThru
+        If ($Null -ne $uniquePackagesAllUsers) {
+            # Filter out the whitelisted apps
+            Write-Verbose -Message "$($MyInvocation.MyCommand): Filtering whitelisted apps."
+            $packagesWithoutWhitelist = Compare-Object -ReferenceObject $uniquePackagesAllUsers -DifferenceObject $Whitelist -PassThru
 
-        # Filter list if it contains apps from the $protectList
-        $packagesToRemove = Edit-ProtectedApp -PackageList $packagesWithoutWhitelist
+            # Filter list if it contains apps from the $protectList
+            $packagesToRemove = Edit-ProtectedApp -PackageList $packagesWithoutWhitelist
+        }
+        Else {
+            $packagesToRemove = $Null
+        }
     }
 }
 
