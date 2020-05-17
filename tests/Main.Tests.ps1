@@ -52,8 +52,35 @@ Describe "General project validation" {
     }
 }
 
-Describe 'Script execute validation' -Tag "Windows"  {
-    It 'Script execution should be OK' {
-      { . (Join-Path -Path $projectRoot -ChildPath "Invoke-Scripts.ps1") } | Should Not Throw
+# Gather scripts
+Switch -Regex ((Get-WmiObject Win32_OperatingSystem).Caption) {
+    "Microsoft Windows Server*" {
+        $Platform = "Server"
+    }
+    "Microsoft Windows 10 Enterprise for Virtual Desktops" {
+        $Platform = "Multi"
+    }
+    "Microsoft Windows 10*" {
+        $Platform = "Client"
+    }
+}
+$Build = ([System.Environment]::OSVersion.Version).Build
+If ((Get-WmiObject -Computer . -Class "Win32_ComputerSystem").Model -match "Parallels*|VMware*|Virtual*") {
+    $Model = "Virtual"
+}
+Else {
+    $Model = "Physical"
+}
+$AllScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.All.ps1") -ErrorAction SilentlyContinue)
+$PlatformScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Platform.ps1") -ErrorAction SilentlyContinue)
+$BuildScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Build.ps1") -ErrorAction SilentlyContinue)
+$ModelScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Model.ps1") -ErrorAction SilentlyContinue)
+
+Describe 'Script execute validation' -Tag "Windows" {
+    ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScripts)) {
+        Write-Host "Running: $script" -ForegroundColor Cyan
+        It 'Script should not Throw' {
+            { . $script } | Should Not Throw
+        }
     }
 }
