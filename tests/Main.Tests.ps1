@@ -18,7 +18,7 @@ Else {
 }
 
 # Set $VerbosePreference so full details are sent to the log; Make Invoke-WebRequest faster
-#$VerbosePreference = "Continue"
+$VerbosePreference = "Continue"
 $ProgressPreference = "SilentlyContinue"
 
 Describe "General project validation" {
