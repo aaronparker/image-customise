@@ -11,9 +11,9 @@
 Param ()
 
 # Log file
-$stampDate = Get-Date
-$scriptName = ([System.IO.Path]::GetFileNameWithoutExtension($(Split-Path $script:MyInvocation.MyCommand.Path -Leaf)))
-$logFile = "$env:SystemRoot\Logs\$scriptName-" + $stampDate.ToFileTimeUtc() + ".log"
+#$stampDate = Get-Date
+#$scriptName = ([System.IO.Path]::GetFileNameWithoutExtension($(Split-Path $script:MyInvocation.MyCommand.Path -Leaf)))
+#$logFile = "$env:SystemRoot\Logs\$scriptName-" + $stampDate.ToFileTimeUtc() + ".log"
 #Start-Transcript -Path $logFile
 
 # Get system properties

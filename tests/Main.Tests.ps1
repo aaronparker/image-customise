@@ -54,6 +54,6 @@ Describe "General project validation" {
 
 Describe 'Script execute validation' -Tag "Windows"  {
     It 'Script execution should be OK' {
-      . (Join-Path -Path $projectRoot -ChildPath "Invoke-Scripts.ps1") | Should Not Throw
+      { . (Join-Path -Path $projectRoot -ChildPath "Invoke-Scripts.ps1") } | Should Not Throw
     }
 }
