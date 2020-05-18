@@ -24,7 +24,7 @@ If (Get-Module -Name ConfigDefender -ListAvailable -ErrorAction SilentlyContinue
             DisableScriptScanning            = $False
             DisableArchiveScanning           = $False
             DisableEmailScanning             = $False
-            SubmitSamplesConsent             = "AlwaysPrompt"
+            SubmitSamplesConsent             = "SendSafeSamples"
         }
         Set-MpPreference @params
     }
