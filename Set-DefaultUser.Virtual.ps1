@@ -1,7 +1,8 @@
 #Requires -RunAsAdministrator
 <#
     .SYNOPSIS
-    Set default user profile settings.
+    Set default user profile settings by mounting the default profile registry hive and adding settings.
+    Adds settings for optimising a profile for virtual desktops.
   
     .NOTES
     AUTHOR: Aaron Parker
@@ -61,4 +62,10 @@ ForEach ($Command in $RegCommands) {
 }
 
 # Unload Registry Hives
-Start-Process reg -ArgumentList "unload HKLM\MountDefaultUser" -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
+try {
+    Write-Verbose "reg $Command"
+    Start-Process reg -ArgumentList "unload HKLM\MountDefaultUser" -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
+}
+catch {
+    Throw "Failed to run: [$Command]."
+}
