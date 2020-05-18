@@ -1,7 +1,7 @@
 #Requires -RunAsAdministrator
 <#
     .SYNOPSIS
-    Set default user profile settings.
+    Set default user profile settings by mounting the default profile registry hive and adding settings.
   
     .NOTES
     AUTHOR: Aaron Parker
@@ -13,8 +13,13 @@
 # Load Registry Hives
 $RegDefaultUser = "$env:SystemDrive\Users\Default\NTUSER.DAT"
 If (Test-Path -Path $RegDefaultUser) {
-    Write-Verbose "Loading $RegDefaultUser"
-    Start-Process reg -ArgumentList "load HKLM\MountDefaultUser $RegDefaultUser" -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
+    try {
+        Write-Verbose "reg $Command"
+        Start-Process reg -ArgumentList "load HKLM\MountDefaultUser $RegDefaultUser" -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
+    }
+    catch {
+        Throw "Failed to run: [$Command]."
+    }
 }
 
 # Registry Commands
@@ -56,7 +61,7 @@ ForEach ($Command in $RegCommands) {
             Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction "SilentlyContinue"
         }
         catch {
-            Throw "Failed to run $Command"
+            Throw "Failed to run: [$Command]."
         }
     }
     Else {
@@ -65,10 +70,16 @@ ForEach ($Command in $RegCommands) {
             Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction "SilentlyContinue"
         }
         catch {
-            Throw "Failed to run $Command"
+            Throw "Failed to run: [$Command]."
         }
     }
 }
 
 # Unload Registry Hives
-Start-Process reg -ArgumentList "unload HKLM\MountDefaultUser" -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
+try {
+    Write-Verbose "reg $Command"
+    Start-Process reg -ArgumentList "unload HKLM\MountDefaultUser" -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
+}
+catch {
+    Throw "Failed to run: [$Command]."
+}

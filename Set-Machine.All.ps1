@@ -23,7 +23,7 @@ ForEach ($Command in $RegCommands) {
         Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction "SilentlyContinue"
     }
     catch {
-        Throw "Failed to run $Command"
+        Throw "Failed to run: [$Command]."
     }   
 }
 
