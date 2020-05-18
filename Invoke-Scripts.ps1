@@ -10,12 +10,6 @@
 [CmdletBinding()]
 Param ()
 
-# Log file
-#$stampDate = Get-Date
-#$scriptName = ([System.IO.Path]::GetFileNameWithoutExtension($(Split-Path $script:MyInvocation.MyCommand.Path -Leaf)))
-#$logFile = "$env:SystemRoot\Logs\$scriptName-" + $stampDate.ToFileTimeUtc() + ".log"
-#Start-Transcript -Path $logFile
-
 # Get system properties
 Switch -Regex ((Get-WmiObject Win32_OperatingSystem).Caption) {
     "Microsoft Windows Server*" {
@@ -53,6 +47,3 @@ ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScri
         Throw $_.Exception.Message
     }
 }
-
-# End log
-#Stop-Transcript
