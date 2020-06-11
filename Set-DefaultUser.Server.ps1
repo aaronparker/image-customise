@@ -24,7 +24,8 @@ If (Test-Path -Path $RegDefaultUser) {
 }
 
 $RegCommands =
-'add "HKCU\Software\Microsoft\ServerManager" /v "DoNotOpenServerManagerAtLogon" /d 1 /t REG_DWORD /f'
+'add "HKCU\Software\Microsoft\ServerManager" /v "DoNotOpenServerManagerAtLogon" /d 1 /t REG_DWORD /f',
+'add "HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "EnableBlurBehind" /d 0 /t REG_DWORD /f'
 
 # Process Registry Commands
 ForEach ($Command in $RegCommands) {

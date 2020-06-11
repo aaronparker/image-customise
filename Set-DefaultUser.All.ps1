@@ -26,7 +26,6 @@ If (Test-Path -Path $RegDefaultUser) {
 $RegCommands =
 'add "HKCU\Software\Microsoft\Windows NT\CurrentVersion\Network\Persistent Connections" /v "SaveConnections" /d "No" /t REG_SZ /f',
 'add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "SeparateProcess" /d 1 /t REG_DWORD /f',
-'add "HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "EnableBlurBehind" /d 0 /t REG_DWORD /f',
 'add "HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "EnableTransparency" /d 0 /t REG_DWORD /f',
 'add "HKCU\Software\Microsoft\Windows\DWM" /v "ColorPrevalence" /d 1 /t REG_DWORD /f',
 'add "HKCU\Software\Microsoft\Windows\DWM" /v "AccentColor" /d 4289815296 /t REG_DWORD /f',
