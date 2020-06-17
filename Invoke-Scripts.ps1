@@ -47,3 +47,10 @@ ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScri
         Throw $_.Exception.Message
     }
 }
+
+# Set uninstall registry value for detecting in MDT / ConfigMgr etc.
+$guid = "f38de27b-799e-4c30-8a01-bfdedc622944"
+$DisplayName = "Install detection for Image customisations"
+$RunOn = Get-Date
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{$guid}" /v "DisplayName" /d $DisplayName /t REG_SZ /f
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{$guid}" /v "RunOn" /d $RunOn /t REG_SZ /f
