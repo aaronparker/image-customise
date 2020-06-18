@@ -70,13 +70,13 @@ Param (
         "Microsoft.GetHelp_8wekyb3d8bbwe", # Get Help
         "Microsoft.Messaging_8wekyb3d8bbwe", # Messaging
         "Microsoft.MicrosoftSolitaireCollection_8wekyb3d8bbwe", # Solitaire
-        "Microsoft.Office.Desktop_8wekyb3d8bbwe", # Office 365 desktop application. Remove if deploying Office 365 ProPlus
-        "Microsoft.Office.Desktop.Access_8wekyb3d8bbwe", # Office 365 desktop application. Remove if deploying Office 365 ProPlus
-        "Microsoft.Office.Desktop.Excel_8wekyb3d8bbwe", # Office 365 desktop application. Remove if deploying Office 365 ProPlus
-        "Microsoft.Office.Desktop.Outlook_8wekyb3d8bbwe", # Office 365 desktop application. Remove if deploying Office 365 ProPlus
-        "Microsoft.Office.Desktop.PowerPoint_8wekyb3d8bbwe", # Office 365 desktop application. Remove if deploying Office 365 ProPlus
-        "Microsoft.Office.Desktop.Publisher_8wekyb3d8bbwe", # Office 365 desktop application. Remove if deploying Office 365 ProPlus
-        "Microsoft.Office.Desktop.Word_8wekyb3d8bbwe", # Office 365 desktop application. Remove if deploying Office 365 ProPlus
+        "Microsoft.Office.Desktop_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
+        "Microsoft.Office.Desktop.Access_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
+        "Microsoft.Office.Desktop.Excel_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
+        "Microsoft.Office.Desktop.Outlook_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
+        "Microsoft.Office.Desktop.PowerPoint_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
+        "Microsoft.Office.Desktop.Publisher_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
+        "Microsoft.Office.Desktop.Word_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
         "Microsoft.OneConnect_8wekyb3d8bbwe", # Mobile Plans
         "Microsoft.People_8wekyb3d8bbwe", # People
         "Microsoft.SkypeApp_kzf8qxf38zg5c", # Skype
@@ -92,30 +92,32 @@ Param (
         "Microsoft.Microsoft3DViewer_8wekyb3d8bbwe",          # 3D Viewer
         # "Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe",         # Office 365 hub
         # "Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe",       # Stick Notes
-        "Microsoft.MixedReality.Portal_8wekyb3d8bbwe",        # Mixed Reality Portal [add to blacklist for virtual desktops]
+        "Microsoft.MixedReality.Portal_8wekyb3d8bbwe",        # Mixed Reality Portal
         # "Microsoft.MSPaint_8wekyb3d8bbwe",                    # Paint 3D
-        # "Microsoft.Office.OneNote_8wekyb3d8bbwe",             # Microsoft OneNote [add to blacklist if not using Office 365]
-        # "Microsoft.PPIProjection_cw5n1h2txyewy",              # Connect (Miracast) [add to blacklist for virtual desktops]
+        # "Microsoft.Office.OneNote_8wekyb3d8bbwe",             # Microsoft OneNote
+        # "Microsoft.PPIProjection_cw5n1h2txyewy",              # Connect (Miracast)
         "Microsoft.Print3D_8wekyb3d8bbwe",                    # Print 3D
         # "Microsoft.ScreenSketch_8wekyb3d8bbwe",               # Snip & Sketch
         # "Microsoft.Windows.Photos_8wekyb3d8bbwe",             # Photos
         # "Microsoft.WindowsAlarms_8wekyb3d8bbwe",              # Alarms
         # "Microsoft.WindowsCalculator_8wekyb3d8bbwe",          # Calculator
         # "Microsoft.WindowsCamera_8wekyb3d8bbwe",              # Camera
-        "Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe",         # Feedback Hub [add to blacklist for virtual desktops]
+        "Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe",         # Feedback Hub
         # "Microsoft.WindowsMaps_8wekyb3d8bbwe",                # Maps
         # "Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe",       # Voice Recorder
-        "Microsoft.YourPhone_8wekyb3d8bbwe"                   # Your Phone [add to blacklist for virtual desktops]
+        "Microsoft.YourPhone_8wekyb3d8bbwe"                   # Your Phone
     ),
 
     [Parameter(Mandatory = $False, ParameterSetName = "Whitelist", HelpMessage = "Specify an AppX package or packages to keep, removing all others.")]
     [System.String[]] $Whitelist = (
         "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe",
-        "Microsoft.HEIFImageExtension_8wekyb3d8bbwe",
         "Microsoft.StorePurchaseApp_8wekyb3d8bbwe",
-        "Microsoft.VP9VideoExtensions_8wekyb3d8bbwe",
         "Microsoft.Wallet_8wekyb3d8bbwe",
+        "Microsoft.VP9VideoExtensions_8wekyb3d8bbwe",
         "Microsoft.WebMediaExtensions_8wekyb3d8bbwe",
+        "Microsoft.MPEG2VideoExtension_8wekyb3d8bbwe",
+        "Microsoft.HEVCVideoExtension_8wekyb3d8bbwe",
+        "Microsoft.HEIFImageExtension_8wekyb3d8bbwe",
         "Microsoft.WebpImageExtension_8wekyb3d8bbwe",
         "Microsoft.WindowsStore_8wekyb3d8bbwe"
     )
@@ -133,7 +135,6 @@ Function Edit-ProtectedApp {
             "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe",
             "Microsoft.StorePurchaseApp_8wekyb3d8bbwe",
             "Microsoft.Wallet_8wekyb3d8bbwe",
-            "Microsoft.WebMediaExtensions_8wekyb3d8bbwe",
             "Microsoft.Advertising.Xaml*",
             "Microsoft.NET*",
             "Microsoft.Services*",
