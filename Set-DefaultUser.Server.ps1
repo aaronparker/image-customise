@@ -63,9 +63,15 @@ catch {
 $MinBuild = "14393"
 $CurrentBuild = ([System.Environment]::OSVersion.Version).Build
 If (!(Test-Path("$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows"))) { New-Item -Value "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows" -ItemType Directory }
+
 If ($CurrentBuild -ge $MinBuild) {
     try {
-        $Layout = Resolve-Path -Path ".\WindowsServerStartMenuLayout.xml"
+        If ((Get-WindowsFeature -Name "RDS-RD-Server").InstallState -eq "Installed") {
+            $Layout = Resolve-Path -Path ".\WindowsRDSStartMenuLayout.xml"
+        }
+        Else {
+            $Layout = Resolve-Path -Path ".\WindowsServerStartMenuLayout.xml"
+        }
         Import-StartLayout -LayoutPath $Layout -MountPath "$($env:SystemDrive)\"
     }
     catch {
