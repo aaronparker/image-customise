@@ -18,7 +18,7 @@ All scripts should be invoked by `Invoke-Scripts.ps1` so that the scripts for ea
 
 Key scripts include:
 
-* `Remove-AppxApps.Client.ps1` - removes default Universal Windows Platform apps (AppX). Runs in Blacklist or Whitelist mode
+* `Remove-AppxApps.Client.ps1` - removes default Universal Windows Platform apps (AppX). Runs in Blocklist or Allowlist mode
 * `Remove-AppxApps.Virtual.ps1` - removes addtional Universal Windows Platform apps (AppX) on virtual machines
 * `Set-DefaultUser.Client.ps1`, `Set-DefaultUser.Server.ps1`, `Set-DefaultUser.All.ps1` - configures the default user profile
 * `Set-DefaultUser.Virtual.ps1` - sets additional default profile optimisations for virtual machines

@@ -8,37 +8,37 @@
             If the script is run elevated, it will remove provisioned packages from the system and packages from all user accounts. Otherwise only packages for the current user account will be removed.
 
         .PARAMETER Operation
-            Specify the AppX removal operation - either Blacklist or Whitelist. 
+            Specify the AppX removal operation - either Blocklist or Allowlist. 
 
-        .PARAMETER Blacklist
-            Specify an array of AppX packages to 'blacklist' or remove from the current Windows instance, all other apps will remain installed. The script will use the blacklist by default.
+        .PARAMETER Blocklist
+            Specify an array of AppX packages to 'Blocklist' or remove from the current Windows instance, all other apps will remain installed. The script will use the Blocklist by default.
 
-            The default blacklist is primarily aimed at configuring AppX packages for physical PCs.
+            The default Blocklist is primarily aimed at configuring AppX packages for physical PCs.
   
-        .PARAMETER Whitelist
-            Specify an array of AppX packages to 'whitelist' or keep in the current Windows instance. All apps except this list will be removed from the current Windows instance.
+        .PARAMETER Allowlist
+            Specify an array of AppX packages to 'Allowlist' or keep in the current Windows instance. All apps except this list will be removed from the current Windows instance.
 
-            The default whitelist is primarily aimed at configuring AppX packages for virtual desktops.
+            The default Allowlist is primarily aimed at configuring AppX packages for virtual desktops.
 
         .EXAMPLE
-            PS C:\> .\Remove-AppxApps.ps1 -Operation Blacklist
+            PS C:\> .\Remove-AppxApps.ps1 -Operation Blocklist
             
-            Remove the default list of Blacklisted AppX packages stored in the function.
+            Remove the default list of Blocklisted AppX packages stored in the function.
  
         .EXAMPLE
-            PS C:\> .\Remove-AppxApps.ps1 -Operation Whitelist
+            PS C:\> .\Remove-AppxApps.ps1 -Operation Allowlist
             
-            Remove the default list of Whitelisted AppX packages stored in the function.
+            Remove the default list of Allowlisted AppX packages stored in the function.
 
          .EXAMPLE
-            PS C:\> .\Remove-AppxApps.ps1 -Operation Blacklist -Blacklist "Microsoft.3DBuilder_8wekyb3d8bbwe", "Microsoft.XboxApp_8wekyb3d8bbwe"
+            PS C:\> .\Remove-AppxApps.ps1 -Operation Blocklist -Blocklist "Microsoft.3DBuilder_8wekyb3d8bbwe", "Microsoft.XboxApp_8wekyb3d8bbwe"
             
-            Remove a specific set of AppX packages a specified in the -Blacklist argument.
+            Remove a specific set of AppX packages a specified in the -Blocklist argument.
  
          .EXAMPLE
-            PS C:\> .\Remove-AppxApps.ps1 -Operation Whitelist -Whitelist "Microsoft.BingNews_8wekyb3d8bbwe", "Microsoft.BingWeather_8wekyb3d8bbwe"
+            PS C:\> .\Remove-AppxApps.ps1 -Operation Allowlist -Allowlist "Microsoft.BingNews_8wekyb3d8bbwe", "Microsoft.BingWeather_8wekyb3d8bbwe"
             
-            Remove AppX packages from the system except those specified in the -Whitelist argument.
+            Remove AppX packages from the system except those specified in the -Allowlist argument.
 
         .NOTES
  	        NAME: Remove-AppxApps.ps1
@@ -49,15 +49,15 @@
         .LINK
             https://stealthpuppy.com
 #>
-[CmdletBinding(SupportsShouldProcess = $True, DefaultParameterSetName = "Blacklist")]
+[CmdletBinding(SupportsShouldProcess = $True, DefaultParameterSetName = "Blocklist")]
 Param (
-    [Parameter(Mandatory = $False, ParameterSetName = "Blacklist", HelpMessage = "Specify whether the operation is a blacklist or whitelist.")]
-    [Parameter(Mandatory = $False, ParameterSetName = "Whitelist", HelpMessage = "Specify whether the operation is a blacklist or whitelist.")]
-    [ValidateSet('Blacklist', 'Whitelist')]
-    [System.String] $Operation = "Whitelist",
+    [Parameter(Mandatory = $False, ParameterSetName = "Blocklist", HelpMessage = "Specify whether the operation is a Blocklist or Allowlist.")]
+    [Parameter(Mandatory = $False, ParameterSetName = "Allowlist", HelpMessage = "Specify whether the operation is a Blocklist or Allowlist.")]
+    [ValidateSet('Blocklist', 'Allowlist')]
+    [System.String] $Operation = "Allowlist",
 
-    [Parameter(Mandatory = $False, ParameterSetName = "Blacklist", HelpMessage = "Specify an AppX package or packages to remove.")]
-    [System.String[]] $Blacklist = (
+    [Parameter(Mandatory = $False, ParameterSetName = "Blocklist", HelpMessage = "Specify an AppX package or packages to remove.")]
+    [System.String[]] $Blocklist = (
         "7EE7776C.LinkedInforWindows_w1wdnht996qgy", # LinkedIn
         "king.com.CandyCrushSodaSaga_kgqvnymyfvs32", # Candy Crush
         "king.com.CandyCrushFriends_kgqvnymyfvs32", # Candy Crush Friends
@@ -108,8 +108,8 @@ Param (
         "Microsoft.YourPhone_8wekyb3d8bbwe"                   # Your Phone
     ),
 
-    [Parameter(Mandatory = $False, ParameterSetName = "Whitelist", HelpMessage = "Specify an AppX package or packages to keep, removing all others.")]
-    [System.String[]] $Whitelist = (
+    [Parameter(Mandatory = $False, ParameterSetName = "Allowlist", HelpMessage = "Specify an AppX package or packages to keep, removing all others.")]
+    [System.String[]] $Allowlist = (
         "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe",
         "Microsoft.StorePurchaseApp_8wekyb3d8bbwe",
         "Microsoft.Wallet_8wekyb3d8bbwe",
@@ -164,12 +164,12 @@ Function Edit-ProtectedApp {
 If ($Elevated) { Write-Verbose -Message "$($MyInvocation.MyCommand): Running with elevated privileges. Removing provisioned packages as well." }
 
 Switch ($Operation) {
-    "Blacklist" {
+    "Blocklist" {
         # Filter list if it contains apps from the $protectList
-        $packagesToRemove = Edit-ProtectedApp -PackageList $BlackList
+        $packagesToRemove = Edit-ProtectedApp -PackageList $Blocklist
     }
-    "Whitelist" {
-        Write-Warning -Message "$($MyInvocation.MyCommand): Whitelist action may break stuff."
+    "Allowlist" {
+        Write-Warning -Message "$($MyInvocation.MyCommand): Allowlist action may break stuff."
         If ($Elevated) {
             # Get packages from the current system for all users
             Write-Verbose -Message "$($MyInvocation.MyCommand): Enumerating all users apps."
@@ -186,12 +186,12 @@ Switch ($Operation) {
         $uniquePackagesAllUsers = $packagesAllUsers.PackageFamilyName | Sort-Object -Unique
 
         If ($Null -ne $uniquePackagesAllUsers) {
-            # Filter out the whitelisted apps
-            Write-Verbose -Message "$($MyInvocation.MyCommand): Filtering whitelisted apps."
-            $packagesWithoutWhitelist = Compare-Object -ReferenceObject $uniquePackagesAllUsers -DifferenceObject $Whitelist -PassThru
+            # Filter out the Allowlisted apps
+            Write-Verbose -Message "$($MyInvocation.MyCommand): Filtering Allowlisted apps."
+            $packagesWithoutAllowlist = Compare-Object -ReferenceObject $uniquePackagesAllUsers -DifferenceObject $Allowlist -PassThru
 
             # Filter list if it contains apps from the $protectList
-            $packagesToRemove = Edit-ProtectedApp -PackageList $packagesWithoutWhitelist
+            $packagesToRemove = Edit-ProtectedApp -PackageList $packagesWithoutAllowlist
         }
         Else {
             $packagesToRemove = $Null
