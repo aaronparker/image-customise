@@ -51,8 +51,9 @@ ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScri
 # Set uninstall registry value for detecting in MDT / ConfigMgr etc.
 $guid = "f38de27b-799e-4c30-8a01-bfdedc622944"
 $DisplayName = "Install detection for Image customisations"
-$RunOn = Get-Date
+$RunOn = Get-Date -Format "yyyy-MM-dd"
+$Version = "2021.2.0"
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{$guid}" /v "DisplayName" /d $DisplayName /t REG_SZ /f
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{$guid}" /v "Publisher" /d "stealthpuppy" /t REG_SZ /f
-reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{$guid}" /v "DisplayVersion" /d "1.0.0" /t REG_SZ /f
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{$guid}" /v "DisplayVersion" /d $Version /t REG_SZ /f
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{$guid}" /v "RunOn" /d $RunOn /t REG_SZ /f
