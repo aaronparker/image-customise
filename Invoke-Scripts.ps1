@@ -11,7 +11,7 @@
 Param ()
 
 # Get system properties
-Switch -Regex ((Get-WmiObject Win32_OperatingSystem).Caption) {
+Switch -Regex ((Get-WmiObject -Class "Win32_OperatingSystem").Caption) {
     "Microsoft Windows Server*" {
         $Platform = "Server"
     }
