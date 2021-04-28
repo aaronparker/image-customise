@@ -3,18 +3,20 @@
     .SYNOPSIS
     Set default user profile settings by mounting the default profile registry hive and adding settings.
     Adds settings for optimising a profile for virtual desktops.
-  
+
     .NOTES
     AUTHOR: Aaron Parker
- 
+
     .LINK
     http://stealthpuppy.com
 #>
 [CmdletBinding()]
 Param (
-    [Parameter()]    
+    [Parameter(Mandatory = $False)]
     [System.String] $Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
 )
+
+Write-Verbose -Message "Execution path: $Path."
 
 # Load Registry Hives
 $RegDefaultUser = "$env:SystemDrive\Users\Default\NTUSER.DAT"

@@ -11,9 +11,11 @@
 #>
 [CmdletBinding()]
 Param (
-    [Parameter()]    
+    [Parameter(Mandatory = $False)]
     [System.String] $Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
 )
+
+Write-Verbose -Message "Execution path: $Path."
 
 # Registry Commands
 $RegCommands =

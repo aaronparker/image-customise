@@ -9,22 +9,22 @@
 #>
 [CmdletBinding()]
 Param (
-    [Parameter()]    
+    [Parameter(Mandatory = $False)]
     [System.String] $Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent),
 
-    [Parameter()]    
+    [Parameter(Mandatory = $False)]
     [System.String] $Guid = "f38de27b-799e-4c30-8a01-bfdedc622944",
 
-    [Parameter()]    
+    [Parameter(Mandatory = $False)]
     [System.String] $Publisher = "stealthpuppy",
 
-    [Parameter()]    
+    [Parameter(Mandatory = $False)]
     [System.String] $DisplayName = "Install detection for Image customisations",
     
-    [Parameter()]    
+    [Parameter(Mandatory = $False)]
     [System.String] $RunOn = $(Get-Date -Format "yyyy-MM-dd"),
     
-    [Parameter()]    
+    [Parameter(Mandatory = $False)]
     [System.String] $Version = "2021.2.0"
 )
 

@@ -12,7 +12,7 @@ If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
     $module = $env:Module
 }
 Else {
-    # Local Testing 
+    # Local Testing
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
     $module = Split-Path -Path $projectRoot -Leaf
 }
@@ -30,9 +30,9 @@ Describe "General project validation" {
     $testCase = $scripts | ForEach-Object { @{file = $_ } }
     It "Script <file> should be valid PowerShell" -TestCases $testCase {
         param($file)
-        $file.fullname | Should Exist
+        $file.FullName | Should Exist
 
-        $contents = Get-Content -Path $file.fullname -ErrorAction Stop
+        $contents = Get-Content -Path $file.FullName -ErrorAction Stop
         $errors = $null
         $null = [System.Management.Automation.PSParser]::Tokenize($contents, [ref]$errors)
         $errors.Count | Should Be 0
@@ -40,7 +40,7 @@ Describe "General project validation" {
     $scriptAnalyzerRules = Get-ScriptAnalyzerRule
     It "<file> should pass ScriptAnalyzer" -TestCases $testCase {
         param($file)
-        $analysis = Invoke-ScriptAnalyzer -Path  $file.fullname -ExcludeRule @('PSAvoidUsingWMICmdlet') -Severity @('Warning', 'Error')   
+        $analysis = Invoke-ScriptAnalyzer -Path $file.FullName -ExcludeRule @('PSAvoidUsingWMICmdlet') -Severity @('Warning', 'Error')   
         
         ForEach ($rule in $scriptAnalyzerRules) {
             If ($analysis.RuleName -contains $rule) {
