@@ -8,7 +8,25 @@
     AUTHOR: Aaron Parker, Insentra
 #>
 [CmdletBinding()]
-Param ()
+Param (
+    [Parameter()]    
+    [System.String] $Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent),
+
+    [Parameter()]    
+    [System.String] $Guid = "f38de27b-799e-4c30-8a01-bfdedc622944",
+
+    [Parameter()]    
+    [System.String] $Publisher = "stealthpuppy",
+
+    [Parameter()]    
+    [System.String] $DisplayName = "Install detection for Image customisations",
+    
+    [Parameter()]    
+    [System.String] $RunOn = $(Get-Date -Format "yyyy-MM-dd"),
+    
+    [Parameter()]    
+    [System.String] $Version = "2021.2.0"
+)
 
 # Get system properties
 Switch -Regex ((Get-WmiObject -Class "Win32_OperatingSystem").Caption) {
@@ -31,15 +49,15 @@ Else {
 }
 
 # Gather scripts
-$AllScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.All.ps1") -ErrorAction SilentlyContinue)
-$PlatformScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Platform.ps1") -ErrorAction SilentlyContinue)
-$BuildScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Build.ps1") -ErrorAction SilentlyContinue)
-$ModelScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Model.ps1") -ErrorAction SilentlyContinue)
+$AllScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.All.ps1") -ErrorAction "SilentlyContinue")
+$PlatformScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Platform.ps1") -ErrorAction "SilentlyContinue")
+$BuildScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Build.ps1") -ErrorAction "SilentlyContinue")
+$ModelScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Model.ps1") -ErrorAction "SilentlyContinue")
 
 # Run all scripts
 ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScripts)) {
     Try {
-        Write-Verbose "Running script: $($script.FullName)."
+        Write-Verbose -Message "Running script: $($script.FullName)."
         . $script.FullName
     }
     Catch {
@@ -49,11 +67,8 @@ ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScri
 }
 
 # Set uninstall registry value for detecting in MDT / ConfigMgr etc.
-$guid = "f38de27b-799e-4c30-8a01-bfdedc622944"
-$DisplayName = "Install detection for Image customisations"
-$RunOn = Get-Date -Format "yyyy-MM-dd"
-$Version = "2021.2.0"
-reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{$guid}" /v "DisplayName" /d $DisplayName /t REG_SZ /f
-reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{$guid}" /v "Publisher" /d "stealthpuppy" /t REG_SZ /f
-reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{$guid}" /v "DisplayVersion" /d $Version /t REG_SZ /f
-reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{$guid}" /v "RunOn" /d $RunOn /t REG_SZ /f
+$Key = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
+reg add "$Key\{$Guid}" /v "DisplayName" /d $DisplayName /t REG_SZ /f
+reg add "$Key\{$Guid}" /v "Publisher" /d $Publisher /t REG_SZ /f
+reg add "$Key\{$Guid}" /v "DisplayVersion" /d $Version /t REG_SZ /f
+reg add "$Key\{$Guid}" /v "RunOn" /d $RunOn /t REG_SZ /f

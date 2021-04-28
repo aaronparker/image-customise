@@ -9,6 +9,11 @@
     .LINK
     http://stealthpuppy.com
 #>
+[CmdletBinding()]
+Param (
+    [Parameter()]    
+    [System.String] $Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
+)
 
 # Registry Commands
 $RegCommands =
@@ -19,8 +24,15 @@ $RegCommands =
 # Process Registry Commands
 ForEach ($Command in $RegCommands) {
     try {
-        Write-Verbose "reg $Command"
-        Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction "SilentlyContinue"
+        Write-Verbose -Message "reg $Command"
+        $params = @{
+            FilePath     = "$Env:SystemRoot\System32\reg.exe"
+            ArgumentList = $Command
+            Wait         = $True
+            WindowStyle  = "Hidden"
+            ErrorAction  = "SilentlyContinue"
+        }
+        Start-Process @params
     }
     catch {
         Throw "Failed to run: [$Command]."

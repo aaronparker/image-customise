@@ -9,16 +9,28 @@
     .LINK
     http://stealthpuppy.com
 #>
+[CmdletBinding()]
+Param (
+    [Parameter()]    
+    [System.String] $Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
+)
 
 # Load Registry Hives
 $RegDefaultUser = "$env:SystemDrive\Users\Default\NTUSER.DAT"
 If (Test-Path -Path $RegDefaultUser) {
     try {
-        Write-Verbose "reg $Command"
-        Start-Process reg -ArgumentList "load HKLM\MountDefaultUser $RegDefaultUser" -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
+        Write-Verbose -Message "reg load"
+        $params = @{
+            FilePath     = "$Env:SystemRoot\System32\reg.exe"
+            ArgumentList = "load HKLM\MountDefaultUser $RegDefaultUser"
+            Wait         = $True
+            WindowStyle  = "Hidden"
+            ErrorAction  = "SilentlyContinue"
+        }
+        Start-Process @params
     }
     catch {
-        Throw "Failed to run: [$Command]."
+        Throw "Failed to run: [reg load]."
     }
 }
 
@@ -57,29 +69,50 @@ ForEach ($Command in $RegCommands) {
     If ($Command -like "*HKCU*") {
         $Command = $Command -replace "HKCU","HKLM\MountDefaultUser"
         try {
-            Write-Verbose "reg $Command"
-            Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction "SilentlyContinue"
+            Write-Verbose -Message "reg $Command"
+            $params = @{
+                FilePath     = "$Env:SystemRoot\System32\reg.exe"
+                ArgumentList = $Command
+                Wait         = $True
+                WindowStyle  = "Hidden"
+                ErrorAction  = "SilentlyContinue"
+            }
+            Start-Process @params
         }
         catch {
-            Throw "Failed to run: [$Command]."
+            Write-Error -Message "Failed to run: [$Command]."
         }
     }
     Else {
         try {
-            Write-Verbose "reg $Command"
-            Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction "SilentlyContinue"
+            Write-Verbose -Message "reg $Command"
+            $params = @{
+                FilePath     = "$Env:SystemRoot\System32\reg.exe"
+                ArgumentList = $Command
+                Wait         = $True
+                WindowStyle  = "Hidden"
+                ErrorAction  = "SilentlyContinue"
+            }
+            Start-Process @params
         }
         catch {
-            Throw "Failed to run: [$Command]."
+            Write-Error -Message "Failed to run: [$Command]."
         }
     }
 }
 
 # Unload Registry Hives
 try {
-    Write-Verbose "reg $Command"
-    Start-Process reg -ArgumentList "unload HKLM\MountDefaultUser" -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
+    Write-Verbose -Message "reg unload"
+    $params = @{
+        FilePath     = "$Env:SystemRoot\System32\reg.exe"
+        ArgumentList = "unload HKLM\MountDefaultUser"
+        Wait         = $True
+        WindowStyle  = "Hidden"
+        ErrorAction  = "SilentlyContinue"
+    }
+    Start-Process @params
 }
 catch {
-    Throw "Failed to run: [$Command]."
+    Throw "Failed to run: [reg unload]."
 }

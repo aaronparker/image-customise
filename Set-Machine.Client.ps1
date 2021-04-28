@@ -9,15 +9,29 @@
     .LINK
     http://stealthpuppy.com
 #>
+[CmdletBinding()]
+Param (
+    [Parameter()]    
+    [System.String] $Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
+)
 
-# Registry Commands; Process Registry Commands
+# Registry Commands
 $RegCommands =
 'add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer" /v DisableEdgeDesktopShortcutCreation /t REG_DWORD /d 1 /f',
 'add "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableFirstLogonAnimation /t REG_DWORD /d 0 /f'
+
+# Process Registry Commands
 ForEach ($Command in $RegCommands) {
     try {
         Write-Verbose $Command
-        Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction "SilentlyContinue"
+        $params = @{
+            FilePath     = "$Env:SystemRoot\System32\reg.exe"
+            ArgumentList = $Command
+            Wait         = $True
+            WindowStyle  = "Hidden"
+            ErrorAction  = "SilentlyContinue"
+        }
+        Start-Process @params
     }
     catch {
         Throw "Failed to run: [$Command]."
@@ -29,7 +43,13 @@ $features = "Printing-XPSServices-Features", "SMB1Protocol", "WorkFolders-Client
 $features | ForEach-Object { Get-WindowsOptionalFeature -Online -FeatureName $_ } | `
     ForEach-Object { 
     try {
-        Disable-WindowsOptionalFeature -FeatureName $_.FeatureName -Online -NoRestart -ErrorAction "SilentlyContinue"
+        $params = @{
+            FeatureName = $_.FeatureName
+            Online      = $True
+            NoRestart   = $True
+            ErrorAction = "SilentlyContinue"
+        }
+        Disable-WindowsOptionalFeature @params
     }
     catch {
         Throw "Failed removing feature: [$($_.FeatureName)]."
@@ -40,7 +60,12 @@ $features | ForEach-Object { Get-WindowsOptionalFeature -Online -FeatureName $_ 
 $Capabilities = $("App.Support.QuickAssist~~~~0.0.1.0", "MathRecognizer~~~~0.0.1.0", "Media.WindowsMediaPlayer~~~~0.0.12.0", "XPS.Viewer~~~~0.0.1.0")
 ForEach ($Capability in $Capabilities) {
     try {    
-        Remove-WindowsCapability -Online -Name $Capability -ErrorAction "SilentlyContinue"
+        $params = @{
+            Name        = $Capability
+            Online      = $True
+            ErrorAction = "SilentlyContinue"
+        }
+        Remove-WindowsCapability @params
     }
     catch {
         Throw "Failed removing capability: [$Capability]."
@@ -52,7 +77,12 @@ ForEach ($Capability in $Capabilities) {
 Get-WindowsPackage -Online -PackageName "Microsoft-Windows-MediaPlayer-Package*" | `
     ForEach-Object {
     try {
-        Remove-WindowsPackage -PackageName $_.PackageName -Online -ErrorAction "SilentlyContinue"
+        $params = @{
+            PackageName = $_.PackageName
+            Online      = $True
+            ErrorAction = "SilentlyContinue"
+        }
+        Remove-WindowsPackage @params
     }
     catch {
         Throw "Failed removing package: [$($_.PackageName)]."

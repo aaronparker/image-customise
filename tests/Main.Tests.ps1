@@ -54,7 +54,7 @@ Describe "General project validation" {
 }
 
 # Gather scripts to test
-$Scripts = @(Get-ChildItem -Path (Join-Path -Path $projectRoot -ChildPath "*.ps1") -Exclude Invoke-Scripts.ps1 -ErrorAction SilentlyContinue)
+$Scripts = @(Get-ChildItem -Path (Join-Path -Path $projectRoot -ChildPath "*.ps1") -Exclude Invoke-Scripts.ps1 -ErrorAction "SilentlyContinue")
 
 # Per script tests
 Describe "Script execution validation" -Tag "Windows" {

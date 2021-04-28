@@ -215,7 +215,7 @@ ForEach ($app in $packagesToRemove) {
     If ($package) {
         If ($PSCmdlet.ShouldProcess($package.PackageFullName, "Remove User app")) {
             try {
-                $package | Remove-AppxPackage -ErrorAction SilentlyContinue
+                $package | Remove-AppxPackage -ErrorAction "SilentlyContinue"
             }
             catch [System.Exception] {
                 Write-Warning -Message "$($MyInvocation.MyCommand): Failed to remove: [$($package.PackageFullName)]."
@@ -236,7 +236,7 @@ ForEach ($app in $packagesToRemove) {
         If ($package) {
             If ($PSCmdlet.ShouldProcess($package.PackageName, "Remove Provisioned app")) {
                 try {
-                    $action = Remove-AppxProvisionedPackage -Online -PackageName $package.PackageName -ErrorAction SilentlyContinue
+                    $action = Remove-AppxProvisionedPackage -Online -PackageName $package.PackageName -ErrorAction "SilentlyContinue"
                 }
                 catch [System.Exception] {
                     Write-Warning -Message "$($MyInvocation.MyCommand): Failed to remove: [$($package.PackageName)]."

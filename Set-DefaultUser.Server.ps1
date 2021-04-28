@@ -10,13 +10,25 @@
     .LINK
     http://stealthpuppy.com
 #>
+[CmdletBinding()]
+Param (
+    [Parameter()]    
+    [System.String] $Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
+)
 
 # Load Registry Hives
 $RegDefaultUser = "$env:SystemDrive\Users\Default\NTUSER.DAT"
 If (Test-Path -Path $RegDefaultUser) {
     try {
-        Write-Verbose "Loading $RegDefaultUser"
-        Start-Process reg -ArgumentList "load HKLM\MountDefaultUser $RegDefaultUser" -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
+        Write-Verbose -Message "Loading $RegDefaultUser"
+        $params = @{
+            FilePath     = "$Env:SystemRoot\System32\reg.exe"
+            ArgumentList = "load HKLM\MountDefaultUser $RegDefaultUser"
+            Wait         = $True
+            WindowStyle  = "Hidden"
+            ErrorAction  = "SilentlyContinue"
+        }
+        Start-Process @params
     }
     catch {
         Throw "Failed to run $Command"
@@ -32,46 +44,70 @@ ForEach ($Command in $RegCommands) {
     If ($Command -like "*HKCU*") {
         $Command = $Command -replace "HKCU", "HKLM\MountDefaultUser"
         try {
-            Write-Verbose "reg $Command"
-            Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction "SilentlyContinue"
+            Write-Verbose -Message "reg $Command"
+            $params = @{
+                FilePath     = "$Env:SystemRoot\System32\reg.exe"
+                ArgumentList = $Command
+                Wait         = $True
+                WindowStyle  = "Hidden"
+                ErrorAction  = "SilentlyContinue"
+            }
+            Start-Process @params
         }
         catch {
-            Throw "Failed to run $Command"
+            Write-Error -Message "Failed to run $Command"
         }
     }
     Else {
         try {
-            Write-Verbose "reg $Command"
-            Start-Process reg -ArgumentList $Command -Wait -WindowStyle Hidden -ErrorAction "SilentlyContinue"
+            Write-Verbose -Message "reg $Command"
+            $params = @{
+                FilePath     = "$Env:SystemRoot\System32\reg.exe"
+                ArgumentList = $Command
+                Wait         = $True
+                WindowStyle  = "Hidden"
+                ErrorAction  = "SilentlyContinue"
+            }
+            Start-Process @params
         }
         catch {
-            Throw "Failed to run $Command"
+            Write-Error -Message "Failed to run $Command"
         }
     }
 }
 
 # Unload Registry Hives
 try {
-    Write-Verbose "reg $Command"
-    Start-Process reg -ArgumentList "unload HKLM\MountDefaultUser" -Wait -WindowStyle Hidden -ErrorAction SilentlyContinue
+    Write-Verbose -Message "reg unload"
+    $params = @{
+        FilePath     = "$Env:SystemRoot\System32\reg.exe"
+        ArgumentList = "unload HKLM\MountDefaultUser"
+        Wait         = $True
+        WindowStyle  = "Hidden"
+        ErrorAction  = "SilentlyContinue"
+    }
+    Start-Process @params
 }
 catch {
-    Throw "Failed to run $Command"
+    Throw "Failed to run: reg unload"
 }
 
 # Configure the default Start menu
 $MinBuild = "14393"
 $CurrentBuild = ([System.Environment]::OSVersion.Version).Build
-If (!(Test-Path("$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows"))) { New-Item -Value "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows" -ItemType Directory }
+If (!(Test-Path("$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows"))) {
+    New-Item -Value "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows" -ItemType "Directory" > $Null
+}
 
 If ($CurrentBuild -ge $MinBuild) {
     try {
         If ((Get-WindowsFeature -Name "RDS-RD-Server").InstallState -eq "Installed") {
-            $Layout = Resolve-Path -Path ".\WindowsRDSStartMenuLayout.xml"
+            $Layout = Resolve-Path -Path $(Join-Path -Path $Path -ChildPath "WindowsRDSStartMenuLayout.xml")
         }
         Else {
-            $Layout = Resolve-Path -Path ".\WindowsServerStartMenuLayout.xml"
+            $Layout = Resolve-Path -Path $(Join-Path -Path $Path -ChildPath "WindowsServerStartMenuLayout.xml")
         }
+        Write-Verbose -Message "Importing Start layout file: $Layout."
         Import-StartLayout -LayoutPath $Layout -MountPath "$($env:SystemDrive)\"
     }
     catch {
