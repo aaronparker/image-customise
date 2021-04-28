@@ -60,7 +60,7 @@ Describe "Script execution validation" -Tag "Windows" {
     ForEach ($script in $Scripts) {
         Write-Host "`tRunning: $script" -ForegroundColor Gray
         It "$($script.Name) should not Throw" {
-            { . $script.FullName } | Should -Not -Throw
+            { . $script.FullName -Path $projectRoot -Verbose } | Should -Not -Throw
         }
     }
 }
