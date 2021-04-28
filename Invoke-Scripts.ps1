@@ -28,6 +28,8 @@ Param (
     [System.String] $Version = "2021.2.0"
 )
 
+Write-Verbose -Message "Execution path: $Path."
+
 # Get system properties
 Switch -Regex ((Get-WmiObject -Class "Win32_OperatingSystem").Caption) {
     "Microsoft Windows Server*" {

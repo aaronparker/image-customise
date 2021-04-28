@@ -9,12 +9,10 @@ Param()
 If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
     # AppVeyor Testing
     $projectRoot = Resolve-Path -Path $env:APPVEYOR_BUILD_FOLDER
-    $module = $env:Module
 }
 Else {
     # Local Testing
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
-    $module = Split-Path -Path $projectRoot -Leaf
 }
 
 # Set $VerbosePreference so full details are sent to the log; Make Invoke-WebRequest faster
@@ -54,6 +52,7 @@ Describe "General project validation" {
 }
 
 # Gather scripts to test
+Push-Location -Path $projectRoot
 $Scripts = @(Get-ChildItem -Path (Join-Path -Path $projectRoot -ChildPath "*.ps1") -Exclude Invoke-Scripts.ps1 -ErrorAction "SilentlyContinue")
 
 # Per script tests

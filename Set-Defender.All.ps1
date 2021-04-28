@@ -31,6 +31,7 @@ If (Get-Module -Name "ConfigDefender" -ListAvailable -ErrorAction "SilentlyConti
             DisableArchiveScanning           = $False
             DisableEmailScanning             = $False
             SubmitSamplesConsent             = "SendSafeSamples"
+            ErrorAction                      = "SilentlyContinue"
         }
         Set-MpPreference @params
     }

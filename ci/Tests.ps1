@@ -8,7 +8,6 @@ Param()
 If (Get-Variable -Name "projectRoot" -ErrorAction "SilentlyContinue") {
 
     # Invoke Pester tests and upload results to AppVeyor
-    Push-Location -Path $projectRoot
     $res = Invoke-Pester -Path $tests -OutputFormat NUnitXml -OutputFile $output -PassThru
     If ($res.FailedCount -gt 0) { Throw "$($res.FailedCount) tests failed." }
     If (Test-Path -Path env:APPVEYOR_JOB_ID) {
