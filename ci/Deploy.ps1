@@ -21,20 +21,18 @@ Else {
     If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
         # AppVeyor Testing
         $projectRoot = Resolve-Path -Path $env:APPVEYOR_BUILD_FOLDER
-        $module = $env:Module
     }
     Else {
         # Local Testing 
         $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
-        $module = Split-Path -Path $projectRoot -Leaf
     }
-    #$moduleParent = Join-Path -Path $projectRoot -ChildPath $module
     
     # Tests success, push to GitHub
     If ($res.FailedCount -eq 0) {
         Try {
             [String]$newVersion = New-Object -TypeName System.Version -ArgumentList ((Get-Date -Format "yyMM"), (Get-Date -Format "dd"), $env:APPVEYOR_BUILD_NUMBER)
-            Write-Output "New Version: $newVersion"
+            Write-Output -InputObject "New Version: $newVersion"
+            $newVersion | Out-File -FilePath (Join-Path -Path $projectRoot -ChildPath "VERSION.txt") -Encoding "utf8" -Force -NoNewLine
         }
         Catch {
             Throw $_

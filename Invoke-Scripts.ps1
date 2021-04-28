@@ -1,4 +1,5 @@
 #Requires -RunAsAdministrator
+#Requires -PSEdition Desktop
 <#
     .SYNOPSIS
     Configuration changes to a default install of Windows during provisioning.
@@ -25,7 +26,7 @@ Param (
     [System.String] $RunOn = $(Get-Date -Format "yyyy-MM-dd"),
     
     [Parameter(Mandatory = $False)]
-    [System.String] $Version = "2021.2.0"
+    [System.String] $Version = (Get-Content -Path (Join-Path -Path $Path -ChildPath "VERSION.txt"))
 )
 
 Write-Verbose -Message "Execution path: $Path."
