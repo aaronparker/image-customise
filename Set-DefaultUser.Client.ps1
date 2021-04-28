@@ -16,7 +16,7 @@ Param (
 )
 
 # Configure the default Start menu
-If (!(Test-Path("$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows"))) {
+If (!(Test-Path -Path "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows")) {
     New-Item -Value "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows" -ItemType "Directory" > $Null
 }
 
@@ -26,5 +26,25 @@ try {
     Import-StartLayout -LayoutPath $Layout -MountPath "$($env:SystemDrive)\"
 }
 catch {
-    Throw "Failed to import Start menu layout: [$Layout]."
+    Throw "Failed to import Start menu layout: $Layout."
+}
+
+# Configure Microsoft Teams defaults
+$Target = "$env:SystemDrive\Users\Default\AppData\Roaming\Microsoft\Teams"
+If (!(Test-Path -Path $Target)) {
+    New-Item -Value $Target -ItemType "Directory" > $Null
+}
+
+try {
+    $Config = Resolve-Path -Path $(Join-Path -Path $Path -ChildPath "desktop-config.json")
+    Write-Verbose -Message "Copy Teams config file file: $Config."
+    $params = @{
+        Path        = $Config
+        Destination = $Target
+        ErrorAction = "SilentlyContinue"
+    }
+    Copy-Item @params
+}
+catch {
+    Throw "Failed to copy Microsoft Teams default config: $Config."
 }

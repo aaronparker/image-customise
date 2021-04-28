@@ -36,6 +36,7 @@ If (Test-Path -Path $RegDefaultUser) {
 
 # Registry Commands
 $RegCommands =
+'add "HKCU\Software\Microsoft\OneDrive" /v "EnableADAL" /t REG_DWORD /d 1 /f',
 'add "HKCU\Software\Microsoft\TabletTip\1.7" /v "TipbandDesiredVisibility" /d 0 /t REG_DWORD /f',
 'add "HKCU\Software\Microsoft\Windows NT\CurrentVersion\Network\Persistent Connections" /v "SaveConnections" /d "No" /t REG_SZ /f',
 'add "HKCU\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo" /v "Enabled" /d 0 /t REG_DWORD /f',
