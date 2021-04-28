@@ -20,8 +20,8 @@ Write-Verbose -Message "Execution path: $Path."
 # Registry Commands
 $RegCommands =
 'add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontSubstitutes" /v "MS Shell Dlg" /d "Tahoma" /t REG_SZ /f',
-'add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontSubstitutes" /v "MS Shell Dlg 2" /d "Tahoma" /t REG_SZ /f',
-'add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v "EnableSmartScreen" /d 2 /t REG_DWORD /f'
+'add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontSubstitutes" /v "MS Shell Dlg 2" /d "Tahoma" /t REG_SZ /f'
+# 'add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v "EnableSmartScreen" /d 2 /t REG_DWORD /f'
 
 # Process Registry Commands
 ForEach ($Command in $RegCommands) {

@@ -17,6 +17,28 @@ Param (
 
 Write-Verbose -Message "Execution path: $Path."
 
+# Registry Commands
+$RegCommands =
+'add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer" /v DisableEdgeDesktopShortcutCreation /t REG_DWORD /d 1 /f'
+
+# Process Registry Commands
+ForEach ($Command in $RegCommands) {
+    try {
+        Write-Verbose $Command
+        $params = @{
+            FilePath     = "$Env:SystemRoot\System32\reg.exe"
+            ArgumentList = $Command
+            Wait         = $True
+            WindowStyle  = "Hidden"
+            ErrorAction  = "SilentlyContinue"
+        }
+        Start-Process @params
+    }
+    catch {
+        Throw "Failed to run: [$Command]."
+    }
+}
+
 # Configure services
 If ((Get-WindowsFeature -Name "RDS-RD-Server").InstallState -eq "Installed") {
     ForEach ($service in "Audiosrv", "WSearch") {
