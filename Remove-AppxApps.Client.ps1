@@ -120,9 +120,15 @@ Param (
         "Microsoft.HEIFImageExtension_8wekyb3d8bbwe",
         "Microsoft.WebpImageExtension_8wekyb3d8bbwe",
         "Microsoft.WindowsStore_8wekyb3d8bbwe"
-    )
+    ),
+
+    [Parameter(Mandatory = $False)]
+    [System.String] $Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
 )
 
+Begin {
+    Write-Verbose -Message "Execution path: $Path."
+    
 #region Functions
 Function Edit-ProtectedApp {
     <# Filter out a set of apps that we'll never try to remove #>
@@ -198,7 +204,9 @@ Switch ($Operation) {
         }
     }
 }
+}
 
+Process {
 # Remove the apps; Walk through each package in the array
 ForEach ($app in $packagesToRemove) {
            
@@ -253,3 +261,6 @@ ForEach ($app in $packagesToRemove) {
         }
     }
 }
+}
+
+End {}

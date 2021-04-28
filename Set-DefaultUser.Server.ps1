@@ -98,7 +98,7 @@ catch {
 $MinBuild = "14393"
 $CurrentBuild = ([System.Environment]::OSVersion.Version).Build
 If (!(Test-Path("$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows"))) {
-    New-Item -Value "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows" -ItemType "Directory" > $Null
+    New-Item -Path "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows" -ItemType "Directory" > $Null
 }
 
 If ($CurrentBuild -ge $MinBuild) {
@@ -122,7 +122,7 @@ If ($CurrentBuild -ge $MinBuild) {
 If ((Get-WindowsFeature -Name "RDS-RD-Server").InstallState -eq "Installed") {
     $Target = "$env:SystemDrive\Users\Default\AppData\Roaming\Microsoft\Teams"
     If (!(Test-Path -Path $Target)) {
-        New-Item -Value $Target -ItemType "Directory" > $Null
+        New-Item -Path $Target -ItemType "Directory" > $Null
     }
 
     try {

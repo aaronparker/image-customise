@@ -19,7 +19,7 @@ Write-Verbose -Message "Execution path: $Path."
 
 # Configure the default Start menu
 If (!(Test-Path -Path "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows")) {
-    New-Item -Value "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows" -ItemType "Directory" > $Null
+    New-Item -Path "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows" -ItemType "Directory" > $Null
 }
 
 try {
@@ -34,7 +34,7 @@ catch {
 # Configure Microsoft Teams defaults
 $Target = "$env:SystemDrive\Users\Default\AppData\Roaming\Microsoft\Teams"
 If (!(Test-Path -Path $Target)) {
-    New-Item -Value $Target -ItemType "Directory" > $Null
+    New-Item -Path $Target -ItemType "Directory" > $Null
 }
 
 try {
