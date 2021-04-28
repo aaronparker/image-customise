@@ -32,7 +32,15 @@ Else {
         Try {
             [String]$newVersion = New-Object -TypeName System.Version -ArgumentList ((Get-Date -Format "yyMM"), (Get-Date -Format "dd"), $env:APPVEYOR_BUILD_NUMBER)
             Write-Output -InputObject "New Version: $newVersion"
-            $newVersion | Out-File -FilePath (Join-Path -Path $projectRoot -ChildPath "VERSION.txt") -Encoding "utf8" -Force -NoNewLine
+            
+            # Update the version string in VERSION.txt
+            $newVersion | Out-File -FilePath (Join-Path -Path $projectRoot -ChildPath "VERSION.txt") -Encoding "utf8" -Force -NoNewline
+
+            # Update major version format appveyor.yml as month changes
+            $yml = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER -ChildPath "appveyor.yml"
+            $replaceString = "version: .*\.\{build\}"
+            $versionString = "version: $(Get-Date -Format "yyMM").{build}"
+            (Get-Content -Path $yml) -replace $replaceString, $versionString | Set-Content -Path $yml
         }
         Catch {
             Throw $_
