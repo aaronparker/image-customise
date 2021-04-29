@@ -30,6 +30,7 @@ Param (
 )
 
 Write-Verbose -Message "Execution path: $Path."
+Write-Verbose -Message "Customisation scripts version: $Version."
 
 # Get system properties
 Switch -Regex ((Get-WmiObject -Class "Win32_OperatingSystem").Caption) {
