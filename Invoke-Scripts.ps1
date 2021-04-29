@@ -26,7 +26,7 @@ Param (
     [System.String] $RunOn = $(Get-Date -Format "yyyy-MM-dd"),
     
     [Parameter(Mandatory = $False)]
-    [System.String] $Version = (Get-Content -Path (Join-Path -Path $Path -ChildPath "VERSION.txt"))
+    [System.String] $Version = (Get-Content -Raw -Path (Join-Path -Path $Path -ChildPath "VERSION.txt"))
 )
 
 Write-Verbose -Message "Execution path: $Path."
