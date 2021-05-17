@@ -18,8 +18,8 @@ Param (
 Write-Verbose -Message "Execution path: $Path."
 
 # Process Registry Commands
-$RegCommands =
-'add "HKLM\SOFTWARE\Microsoft\Windows Defender\Features" /v "TamperProtection" /d 5 /t REG_DWORD /f'
+$RegCommands = @()
+#'add "HKLM\SOFTWARE\Microsoft\Windows Defender\Features" /v "TamperProtection" /d 5 /t REG_DWORD /f'
 ForEach ($Command in $RegCommands) {
     try {
         Write-Verbose -Message "reg $Command"
@@ -27,6 +27,7 @@ ForEach ($Command in $RegCommands) {
             FilePath     = "$Env:SystemRoot\System32\reg.exe"
             ArgumentList = $Command
             Wait         = $True
+            NoNewWindow  = $True
             WindowStyle  = "Hidden"
             ErrorAction  = "SilentlyContinue"
         }

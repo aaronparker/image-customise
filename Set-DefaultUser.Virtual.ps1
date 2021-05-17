@@ -44,7 +44,7 @@ $RegCommands =
 'add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v TaskbarAnimations /t REG_DWORD /d 0 /f',
 'add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" /v VisualFXSetting /t REG_DWORD /d 3 /f',
 'add "HKCU\Software\Microsoft\Windows\DWM" /v EnableAeroPeek /t REG_DWORD /d 0 /f',
-'add "HKCU\Software\Microsoft\Windows\DWM" /v AlwaysHiberNateThumbnails /t REG_DWORD /d 0 /f',
+'add "HKCU\Software\Microsoft\Windows\DWM" /v AlwaysHibernateThumbnails /t REG_DWORD /d 0 /f',
 'add "HKCU\Control Panel\Desktop" /v DragFullWindows /t REG_SZ /d 0 /f',
 'add "HKCU\Control Panel\Desktop" /v UserPreferencesMask /t REG_BINARY /d 9032078010000000 /f',
 'add "HKCU\Control Panel\Desktop\WindowMetrics" /v MinAnimate /t REG_SZ /d 0 /f',
@@ -73,6 +73,7 @@ ForEach ($Command in $RegCommands) {
                 FilePath     = "$Env:SystemRoot\System32\reg.exe"
                 ArgumentList = $Command
                 Wait         = $True
+                NoNewWindow  = $True
                 WindowStyle  = "Hidden"
                 ErrorAction  = "SilentlyContinue"
             }
@@ -89,6 +90,7 @@ ForEach ($Command in $RegCommands) {
                 FilePath     = "$Env:SystemRoot\System32\reg.exe"
                 ArgumentList = $Command
                 Wait         = $True
+                NoNewWindow  = $True
                 WindowStyle  = "Hidden"
                 ErrorAction  = "SilentlyContinue"
             }
@@ -107,6 +109,7 @@ try {
         FilePath     = "$Env:SystemRoot\System32\reg.exe"
         ArgumentList = "unload HKLM\MountDefaultUser"
         Wait         = $True
+        NoNewWindow  = $True
         WindowStyle  = "Hidden"
         ErrorAction  = "SilentlyContinue"
     }

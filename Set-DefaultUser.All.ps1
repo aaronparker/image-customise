@@ -77,6 +77,7 @@ ForEach ($Command in $RegCommands) {
                 FilePath     = "$Env:SystemRoot\System32\reg.exe"
                 ArgumentList = $Command
                 Wait         = $True
+                NoNewWindow  = $True
                 WindowStyle  = "Hidden"
                 ErrorAction  = "SilentlyContinue"
             }
@@ -93,6 +94,7 @@ ForEach ($Command in $RegCommands) {
                 FilePath     = "$Env:SystemRoot\System32\reg.exe"
                 ArgumentList = $Command
                 Wait         = $True
+                NoNewWindow  = $True
                 WindowStyle  = "Hidden"
                 ErrorAction  = "SilentlyContinue"
             }
@@ -111,6 +113,7 @@ try {
         FilePath     = "$Env:SystemRoot\System32\reg.exe"
         ArgumentList = "unload HKLM\MountDefaultUser"
         Wait         = $True
+        NoNewWindow  = $True
         WindowStyle  = "Hidden"
         ErrorAction  = "SilentlyContinue"
     }
