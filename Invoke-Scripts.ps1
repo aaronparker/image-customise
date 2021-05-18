@@ -20,13 +20,13 @@ Param (
     [System.String] $Publisher = "stealthpuppy",
 
     [Parameter(Mandatory = $False)]
-    [System.String] $DisplayName = "Install detection for Image customisations",
+    [System.String] $DisplayName = "Install detection for image customisations",
     
     [Parameter(Mandatory = $False)]
     [System.String] $RunOn = $(Get-Date -Format "yyyy-MM-dd"),
     
     [Parameter(Mandatory = $False)]
-    [System.String] $Version = (Get-Content -Raw -Path (Join-Path -Path $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent) -ChildPath "VERSION.txt"))
+    [System.String] $Version = (Get-Content -Raw -Path $Path -ChildPath "VERSION.txt")
 )
 
 Write-Verbose -Message "Execution path: $Path."
