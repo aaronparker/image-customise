@@ -53,10 +53,10 @@ Else {
 }
 
 # Gather scripts
-$AllScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.All.ps1" -Recurse) -ErrorAction "SilentlyContinue")
-$PlatformScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Platform.ps1" -Recurse) -ErrorAction "SilentlyContinue")
-$BuildScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Build.ps1" -Recurse) -ErrorAction "SilentlyContinue")
-$ModelScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Model.ps1" -Recurse) -ErrorAction "SilentlyContinue")
+$AllScripts = @(Get-ChildItem -Path $PWD -Filter "*.All.ps1" -Recurse -ErrorAction "SilentlyContinue")
+$PlatformScripts = @(Get-ChildItem -Path $PWD -Filter "*.$Platform.ps1" -Recurse -ErrorAction "SilentlyContinue")
+$BuildScripts = @(Get-ChildItem -Path $PWD -Filter "*.$Build.ps1" -Recurse -ErrorAction "SilentlyContinue")
+$ModelScripts = @(Get-ChildItem -Path $PWD -Filter "*.$Model.ps1" -Recurse -ErrorAction "SilentlyContinue")
 
 # Run all scripts
 ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScripts)) {
