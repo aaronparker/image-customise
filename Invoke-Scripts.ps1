@@ -26,7 +26,7 @@ Param (
     [System.String] $RunOn = $(Get-Date -Format "yyyy-MM-dd"),
     
     [Parameter(Mandatory = $False)]
-    [System.String] $Version = (Get-Content -Raw -Path $Path -ChildPath "VERSION.txt")
+    [System.String] $Version = (Get-ChildItem -Path $PWD -Filter "VERSION.txt" -Recurse | Get-Content -Raw)
 )
 
 Write-Verbose -Message "Execution path: $Path."
@@ -53,10 +53,10 @@ Else {
 }
 
 # Gather scripts
-$AllScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.All.ps1") -ErrorAction "SilentlyContinue")
-$PlatformScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Platform.ps1") -ErrorAction "SilentlyContinue")
-$BuildScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Build.ps1") -ErrorAction "SilentlyContinue")
-$ModelScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Model.ps1") -ErrorAction "SilentlyContinue")
+$AllScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.All.ps1" -Recurse) -ErrorAction "SilentlyContinue")
+$PlatformScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Platform.ps1" -Recurse) -ErrorAction "SilentlyContinue")
+$BuildScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Build.ps1" -Recurse) -ErrorAction "SilentlyContinue")
+$ModelScripts = @(Get-ChildItem -Path (Join-Path -Path $PWD -ChildPath "*.$Model.ps1" -Recurse) -ErrorAction "SilentlyContinue")
 
 # Run all scripts
 ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScripts)) {

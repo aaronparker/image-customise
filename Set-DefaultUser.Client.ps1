@@ -23,9 +23,9 @@ If (!(Test-Path -Path "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Wi
 }
 
 try {
-    $Layout = Resolve-Path -Path $(Join-Path -Path $Path -ChildPath "Windows10StartMenuLayout.xml")
+    $Layout = Get-ChildItem -Path $Path -Filter "Windows10StartMenuLayout.xml" -Recurse
     Write-Verbose -Message "Importing Start layout file: $Layout."
-    Import-StartLayout -LayoutPath $Layout -MountPath "$($env:SystemDrive)\"
+    Import-StartLayout -LayoutPath $Layout.FullName -MountPath "$($env:SystemDrive)\"
 }
 catch {
     Throw "Failed to import Start menu layout: $Layout."
@@ -38,15 +38,15 @@ If (!(Test-Path -Path $Target)) {
 }
 
 try {
-    $Config = Resolve-Path -Path $(Join-Path -Path $Path -ChildPath "desktop-config.json")
-    Write-Verbose -Message "Copy Teams config file file: $Config."
+    $Config = Get-ChildItem -Path $Path -Filter "desktop-config.json" -Recurse
+    Write-Verbose -Message "Copy Teams config file file: $($Config.FullName)."
     $params = @{
-        Path        = $Config
+        Path        = $Config.FullName
         Destination = $Target
         ErrorAction = "SilentlyContinue"
     }
     Copy-Item @params
 }
 catch {
-    Throw "Failed to copy Microsoft Teams default config: $Config."
+    Throw "Failed to copy Microsoft Teams default config: $($Config.FullName)."
 }

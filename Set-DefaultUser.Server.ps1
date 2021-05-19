@@ -104,10 +104,10 @@ If (!(Test-Path("$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows"
 If ($CurrentBuild -ge $MinBuild) {
     try {
         If ((Get-WindowsFeature -Name "RDS-RD-Server").InstallState -eq "Installed") {
-            $Layout = Resolve-Path -Path $(Join-Path -Path $Path -ChildPath "WindowsRDSStartMenuLayout.xml")
+            $Layout = Get-ChildItem -Path $Path -Filter "WindowsRDSStartMenuLayout.xml" -Recurse
         }
         Else {
-            $Layout = Resolve-Path -Path $(Join-Path -Path $Path -ChildPath "WindowsServerStartMenuLayout.xml")
+            $Layout = Get-ChildItem -Path $Path -Filter "WindowsServerStartMenuLayout.xml" -Recurse
         }
         Write-Verbose -Message "Importing Start layout file: $Layout."
         Import-StartLayout -LayoutPath $Layout -MountPath "$($env:SystemDrive)\"
@@ -126,16 +126,16 @@ If ((Get-WindowsFeature -Name "RDS-RD-Server").InstallState -eq "Installed") {
     }
 
     try {
-        $Config = Resolve-Path -Path $(Join-Path -Path $Path -ChildPath "desktop-config.json")
-        Write-Verbose -Message "Copy Teams config file file: $Config."
+        $Config = Get-ChildItem -Path $Path -Filter "desktop-config.json" -Recurse
+        Write-Verbose -Message "Copy Teams config file file: $($Config.FullName)."
         $params = @{
-            Path        = $Config
+            Path        = $Config.FullName
             Destination = $Target
             ErrorAction = "SilentlyContinue"
         }
         Copy-Item @params
     }
     catch {
-        Throw "Failed to copy Microsoft Teams default config: $Config."
+        Throw "Failed to copy Microsoft Teams default config: $($Config.FullName)."
     }
 }
