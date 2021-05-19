@@ -53,16 +53,16 @@ Else {
 }
 
 # Gather scripts
-$AllScripts = @(Get-ChildItem -Path $PWD -Filter "*.All.ps1" -Recurse -ErrorAction "SilentlyContinue")
-$PlatformScripts = @(Get-ChildItem -Path $PWD -Filter "*.$Platform.ps1" -Recurse -ErrorAction "SilentlyContinue")
-$BuildScripts = @(Get-ChildItem -Path $PWD -Filter "*.$Build.ps1" -Recurse -ErrorAction "SilentlyContinue")
-$ModelScripts = @(Get-ChildItem -Path $PWD -Filter "*.$Model.ps1" -Recurse -ErrorAction "SilentlyContinue")
+try { $AllScripts = @(Get-ChildItem -Path $PWD -Filter "*.All.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
+try { $PlatformScripts = @(Get-ChildItem -Path $PWD -Filter "*.$Platform.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw Throw $_.Exception.Message }
+try { $BuildScripts = @(Get-ChildItem -Path $PWD -Filter "*.$Build.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw Throw $_.Exception.Message }
+try { $ModelScripts = @(Get-ChildItem -Path $PWD -Filter "*.$Model.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw Throw $_.Exception.Message }
 
 # Run all scripts
 ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScripts)) {
     Try {
         Write-Verbose -Message "Running script: $($script.FullName)."
-        . $script.FullName
+        & $script.FullName
     }
     Catch {
         Write-Warning -Message "Failed to run script: $($script.FullName)."

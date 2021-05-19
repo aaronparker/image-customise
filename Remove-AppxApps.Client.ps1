@@ -89,20 +89,20 @@ Param (
         "Microsoft.ZuneMusic_8wekyb3d8bbwe", # Zune Music
         "Microsoft.ZuneVideo_8wekyb3d8bbwe", # Zune Video
         # "Microsoft.Getstarted_8wekyb3d8bbwe",                 # Windows Tips
-        "Microsoft.Microsoft3DViewer_8wekyb3d8bbwe",          # 3D Viewer
+        "Microsoft.Microsoft3DViewer_8wekyb3d8bbwe", # 3D Viewer
         # "Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe",         # Office 365 hub
         # "Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe",       # Stick Notes
-        "Microsoft.MixedReality.Portal_8wekyb3d8bbwe",        # Mixed Reality Portal
+        "Microsoft.MixedReality.Portal_8wekyb3d8bbwe", # Mixed Reality Portal
         # "Microsoft.MSPaint_8wekyb3d8bbwe",                    # Paint 3D
         # "Microsoft.Office.OneNote_8wekyb3d8bbwe",             # Microsoft OneNote
         # "Microsoft.PPIProjection_cw5n1h2txyewy",              # Connect (Miracast)
-        "Microsoft.Print3D_8wekyb3d8bbwe",                    # Print 3D
+        "Microsoft.Print3D_8wekyb3d8bbwe", # Print 3D
         # "Microsoft.ScreenSketch_8wekyb3d8bbwe",               # Snip & Sketch
         # "Microsoft.Windows.Photos_8wekyb3d8bbwe",             # Photos
         # "Microsoft.WindowsAlarms_8wekyb3d8bbwe",              # Alarms
         # "Microsoft.WindowsCalculator_8wekyb3d8bbwe",          # Calculator
         # "Microsoft.WindowsCamera_8wekyb3d8bbwe",              # Camera
-        "Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe",         # Feedback Hub
+        "Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe", # Feedback Hub
         # "Microsoft.WindowsMaps_8wekyb3d8bbwe",                # Maps
         # "Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe",       # Voice Recorder
         "Microsoft.YourPhone_8wekyb3d8bbwe"                   # Your Phone
@@ -129,138 +129,138 @@ Param (
 Begin {
     Write-Verbose -Message "Execution path: $Path."
     
-#region Functions
-Function Edit-ProtectedApp {
-    <# Filter out a set of apps that we'll never try to remove #>
-    Param (
-        [Parameter(Mandatory = $False)]
-        [System.String[]] $ProtectList = (
-            "Microsoft.WindowsStore_8wekyb3d8bbwe",
-            "Microsoft.MicrosoftEdge_8wekyb3d8bbwe",
-            "Microsoft.Windows.Cortana_cw5n1h2txyewy",
-            "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe",
-            "Microsoft.StorePurchaseApp_8wekyb3d8bbwe",
-            "Microsoft.Wallet_8wekyb3d8bbwe",
-            "Microsoft.Advertising.Xaml*",
-            "Microsoft.NET*",
-            "Microsoft.Services*",
-            "Microsoft.UI*",
-            "Microsoft.VCLibs*"
-        ),
-        [Parameter(Mandatory = $False)]
-        [System.String[]] $PackageList
-    )
-    [System.Array] $FilteredList = @()
-    ForEach ($package in $PackageList) {
-        $appMatch = $False
-        ForEach ($app in $ProtectList) {
-            If ($package -match $app) {
-                Write-Verbose -Message "$($MyInvocation.MyCommand): Excluding package from removal: [$package]"
-                $appMatch = $True
+    #region Functions
+    Function Edit-ProtectedApp {
+        <# Filter out a set of apps that we'll never try to remove #>
+        Param (
+            [Parameter(Mandatory = $False)]
+            [System.String[]] $ProtectList = (
+                "Microsoft.WindowsStore_8wekyb3d8bbwe",
+                "Microsoft.MicrosoftEdge_8wekyb3d8bbwe",
+                "Microsoft.Windows.Cortana_cw5n1h2txyewy",
+                "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe",
+                "Microsoft.StorePurchaseApp_8wekyb3d8bbwe",
+                "Microsoft.Wallet_8wekyb3d8bbwe",
+                "Microsoft.Advertising.Xaml*",
+                "Microsoft.NET*",
+                "Microsoft.Services*",
+                "Microsoft.UI*",
+                "Microsoft.VCLibs*"
+            ),
+            [Parameter(Mandatory = $False)]
+            [System.String[]] $PackageList
+        )
+        [System.Array] $FilteredList = @()
+        ForEach ($package in $PackageList) {
+            $appMatch = $False
+            ForEach ($app in $ProtectList) {
+                If ($package -match $app) {
+                    Write-Verbose -Message "$($MyInvocation.MyCommand): Excluding package from removal: [$package]"
+                    $appMatch = $True
+                }
+            }
+            If ($appMatch -eq $False) { $FilteredList += $package }
+        }
+        Write-Output -InputObject $FilteredList
+    }
+    #endregion
+
+    # Get elevated status. If elevated we'll remove packages from all users and provisioned packages
+    [System.Boolean] $Elevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
+    If ($Elevated) { Write-Verbose -Message "$($MyInvocation.MyCommand): Running with elevated privileges. Removing provisioned packages as well." }
+
+    Switch ($Operation) {
+        "BlockList" {
+            # Filter list if it contains apps from the $protectList
+            $packagesToRemove = Edit-ProtectedApp -PackageList $BlockList
+        }
+        "AllowList" {
+            Write-Warning -Message "$($MyInvocation.MyCommand): AllowList action may break stuff."
+            If ($Elevated) {
+                # Get packages from the current system for all users
+                Write-Verbose -Message "$($MyInvocation.MyCommand): Enumerating all users apps."
+                $packagesAllUsers = Get-AppxPackage -AllUsers -PackageTypeFilter Main, Resource | `
+                    Where-Object { $_.NonRemovable -eq $False } | Select-Object -Property PackageFamilyName
+            }
+            Else {
+                # Get packages for the current user
+                Write-Verbose -Message "$($MyInvocation.MyCommand): Enumerating current user apps only."
+                $packagesAllUsers = Get-AppxPackage -PackageTypeFilter Main, Resource | `
+                    Where-Object { $_.NonRemovable -eq $False } | Select-Object -Property PackageFamilyName
+            }
+            # Select unique packages
+            $uniquePackagesAllUsers = $packagesAllUsers.PackageFamilyName | Sort-Object -Unique
+
+            If ($Null -ne $uniquePackagesAllUsers) {
+                # Filter out the AllowListed apps
+                Write-Verbose -Message "$($MyInvocation.MyCommand): Filtering AllowListed apps."
+                $packagesWithoutAllowList = Compare-Object -ReferenceObject $uniquePackagesAllUsers -DifferenceObject $AllowList -PassThru
+
+                # Filter list if it contains apps from the $protectList
+                $packagesToRemove = Edit-ProtectedApp -PackageList $packagesWithoutAllowList
+            }
+            Else {
+                $packagesToRemove = $Null
             }
         }
-        If ($appMatch -eq $False) { $FilteredList += $package }
     }
-    Write-Output -InputObject $FilteredList
-}
-#endregion
-
-# Get elevated status. If elevated we'll remove packages from all users and provisioned packages
-[System.Boolean] $Elevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
-If ($Elevated) { Write-Verbose -Message "$($MyInvocation.MyCommand): Running with elevated privileges. Removing provisioned packages as well." }
-
-Switch ($Operation) {
-    "BlockList" {
-        # Filter list if it contains apps from the $protectList
-        $packagesToRemove = Edit-ProtectedApp -PackageList $BlockList
-    }
-    "AllowList" {
-        Write-Warning -Message "$($MyInvocation.MyCommand): AllowList action may break stuff."
-        If ($Elevated) {
-            # Get packages from the current system for all users
-            Write-Verbose -Message "$($MyInvocation.MyCommand): Enumerating all users apps."
-            $packagesAllUsers = Get-AppxPackage -AllUsers -PackageTypeFilter Main, Resource | `
-                Where-Object { $_.NonRemovable -eq $False } | Select-Object -Property PackageFamilyName
-        }
-        Else {
-            # Get packages for the current user
-            Write-Verbose -Message "$($MyInvocation.MyCommand): Enumerating current user apps only."
-            $packagesAllUsers = Get-AppxPackage -PackageTypeFilter Main, Resource | `
-                Where-Object { $_.NonRemovable -eq $False } | Select-Object -Property PackageFamilyName
-        }
-        # Select unique packages
-        $uniquePackagesAllUsers = $packagesAllUsers.PackageFamilyName | Sort-Object -Unique
-
-        If ($Null -ne $uniquePackagesAllUsers) {
-            # Filter out the AllowListed apps
-            Write-Verbose -Message "$($MyInvocation.MyCommand): Filtering AllowListed apps."
-            $packagesWithoutAllowList = Compare-Object -ReferenceObject $uniquePackagesAllUsers -DifferenceObject $AllowList -PassThru
-
-            # Filter list if it contains apps from the $protectList
-            $packagesToRemove = Edit-ProtectedApp -PackageList $packagesWithoutAllowList
-        }
-        Else {
-            $packagesToRemove = $Null
-        }
-    }
-}
 }
 
 Process {
-# Remove the apps; Walk through each package in the array
-ForEach ($app in $packagesToRemove) {
+    # Remove the apps; Walk through each package in the array
+    ForEach ($app in $packagesToRemove) {
            
-    # Get the AppX package object by passing the string to the left of the underscore
-    # to Get-AppxPackage and passing the resulting package object to Remove-AppxPackage
-    $Name = ($app -split "_")[0]
-    Write-Verbose -Message "$($MyInvocation.MyCommand): Evaluating: [$Name]."
-    If ($Elevated) {
-        $package = Get-AppxPackage -Name $Name -AllUsers
-    }
-    Else {
-        $package = Get-AppxPackage -Name $Name
-    }
-    If ($package) {
-        If ($PSCmdlet.ShouldProcess($package.PackageFullName, "Remove User app")) {
-            try {
-                $package | Remove-AppxPackage -ErrorAction "SilentlyContinue"
-            }
-            catch [System.Exception] {
-                Write-Warning -Message "$($MyInvocation.MyCommand): Failed to remove: [$($package.PackageFullName)]."
-                Throw $_.Exception.Message
-                Break
-            }
-            finally {
-                $removedPackage = New-Object -TypeName System.Management.Automation.PSObject
-                $removedPackage | Add-Member -Type "NoteProperty" -Name 'RemovedPackage' -Value $app
-                Write-Output -InputObject $removedPackage
-            }
+        # Get the AppX package object by passing the string to the left of the underscore
+        # to Get-AppxPackage and passing the resulting package object to Remove-AppxPackage
+        $Name = ($app -split "_")[0]
+        Write-Verbose -Message "$($MyInvocation.MyCommand): Evaluating: [$Name]."
+        If ($Elevated) {
+            $package = Get-AppxPackage -Name $Name -AllUsers
         }
-    }
-
-    # Remove the provisioned package as well, completely from the system
-    If ($Elevated) {
-        $package = Get-AppxProvisionedPackage -Online | Where-Object DisplayName -eq (($app -split "_")[0])
+        Else {
+            $package = Get-AppxPackage -Name $Name
+        }
         If ($package) {
-            If ($PSCmdlet.ShouldProcess($package.PackageName, "Remove Provisioned app")) {
+            If ($PSCmdlet.ShouldProcess($package.PackageFullName, "Remove User app")) {
                 try {
-                    $action = Remove-AppxProvisionedPackage -Online -PackageName $package.PackageName -ErrorAction "SilentlyContinue"
+                    $package | Remove-AppxPackage -ErrorAction "SilentlyContinue"
                 }
                 catch [System.Exception] {
-                    Write-Warning -Message "$($MyInvocation.MyCommand): Failed to remove: [$($package.PackageName)]."
+                    Write-Warning -Message "$($MyInvocation.MyCommand): Failed to remove: [$($package.PackageFullName)]."
                     Throw $_.Exception.Message
                     Break
                 }
                 finally {
                     $removedPackage = New-Object -TypeName System.Management.Automation.PSObject
-                    $removedPackage | Add-Member -Type "NoteProperty" -Name 'RemovedProvisionedPackage' -Value $app
+                    $removedPackage | Add-Member -Type "NoteProperty" -Name 'RemovedPackage' -Value $app
                     Write-Output -InputObject $removedPackage
-                    If ($action.RestartNeeded -eq $True) { Write-Warning -Message "$($MyInvocation.MyCommand): Reboot required: [$($package.PackageName)]" }
+                }
+            }
+        }
+
+        # Remove the provisioned package as well, completely from the system
+        If ($Elevated) {
+            $package = Get-AppxProvisionedPackage -Online | Where-Object DisplayName -EQ (($app -split "_")[0])
+            If ($package) {
+                If ($PSCmdlet.ShouldProcess($package.PackageName, "Remove Provisioned app")) {
+                    try {
+                        $action = Remove-AppxProvisionedPackage -Online -PackageName $package.PackageName -ErrorAction "SilentlyContinue"
+                    }
+                    catch [System.Exception] {
+                        Write-Warning -Message "$($MyInvocation.MyCommand): Failed to remove: [$($package.PackageName)]."
+                        Throw $_.Exception.Message
+                        Break
+                    }
+                    finally {
+                        $removedPackage = New-Object -TypeName System.Management.Automation.PSObject
+                        $removedPackage | Add-Member -Type "NoteProperty" -Name 'RemovedProvisionedPackage' -Value $app
+                        Write-Output -InputObject $removedPackage
+                        If ($action.RestartNeeded -eq $True) { Write-Warning -Message "$($MyInvocation.MyCommand): Reboot required: [$($package.PackageName)]" }
+                    }
                 }
             }
         }
     }
-}
 }
 
 End {}

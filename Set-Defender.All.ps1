@@ -19,6 +19,7 @@ Write-Verbose -Message "Execution path: $Path."
 
 # Defender settings. DisableRealtimeMonitoring is not explicitly set so that it can be disabled during OS deployment
 # https://docs.microsoft.com/en-us/powershell/module/defender/set-mppreference?view=win10-ps
+<#
 If (Get-Module -Name "ConfigDefender" -ListAvailable -ErrorAction "SilentlyContinue") {
     try {
         $params = @{
@@ -39,3 +40,4 @@ If (Get-Module -Name "ConfigDefender" -ListAvailable -ErrorAction "SilentlyConti
         Write-Error -Message "Set-MpPreference failed with: $($_.Exception.Message)."
     }
 }
+#>

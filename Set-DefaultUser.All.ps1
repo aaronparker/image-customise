@@ -70,7 +70,7 @@ $RegCommands =
 # Process Registry Commands
 ForEach ($Command in $RegCommands) {
     If ($Command -like "*HKCU*") {
-        $Command = $Command -replace "HKCU","HKLM\MountDefaultUser"
+        $Command = $Command -replace "HKCU", "HKLM\MountDefaultUser"
         try {
             Write-Verbose -Message "reg $Command"
             $params = @{
