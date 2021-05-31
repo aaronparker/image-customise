@@ -6,7 +6,7 @@
   
     .NOTES
     NAME: Invoke-Scripts.ps1
-    AUTHOR: Aaron Parker, Insentra
+    AUTHOR: Aaron Parker
 #>
 [CmdletBinding()]
 Param (

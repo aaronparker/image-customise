@@ -8,7 +8,7 @@
     AUTHOR: Aaron Parker
  
     .LINK
-    http://stealthpuppy.com
+    https://stealthpuppy.com
 #>
 [CmdletBinding()]
 Param (

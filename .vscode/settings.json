@@ -1,10 +1,12 @@
 {
     "cSpell.words": [
         "ADAL",
+        "APPDATA",
         "Appx",
         "Audiosrv",
         "DWORD",
         "HKCU",
+        "HKEY",
         "Insentra",
         "Listview",
         "NTUSER",
@@ -12,7 +14,9 @@
         "Tahoma",
         "Tipband",
         "Winlogon",
+        "aaronparker",
         "bbwe",
+        "defaultlayout",
         "txyewy",
         "wekyb"
     ]

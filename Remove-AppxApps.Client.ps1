@@ -228,7 +228,6 @@ Process {
                 catch [System.Exception] {
                     Write-Warning -Message "$($MyInvocation.MyCommand): Failed to remove: [$($package.PackageFullName)]."
                     Throw $_.Exception.Message
-                    Break
                 }
                 finally {
                     $removedPackage = New-Object -TypeName System.Management.Automation.PSObject
@@ -249,7 +248,6 @@ Process {
                     catch [System.Exception] {
                         Write-Warning -Message "$($MyInvocation.MyCommand): Failed to remove: [$($package.PackageName)]."
                         Throw $_.Exception.Message
-                        Break
                     }
                     finally {
                         $removedPackage = New-Object -TypeName System.Management.Automation.PSObject
