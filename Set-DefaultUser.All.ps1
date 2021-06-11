@@ -79,7 +79,6 @@ ForEach ($Command in $RegCommands) {
                 ArgumentList = $Command
                 Wait         = $True
                 NoNewWindow  = $True
-                WindowStyle  = "Hidden"
                 ErrorAction  = "SilentlyContinue"
             }
             Start-Process @params
@@ -96,7 +95,6 @@ ForEach ($Command in $RegCommands) {
                 ArgumentList = $Command
                 Wait         = $True
                 NoNewWindow  = $True
-                WindowStyle  = "Hidden"
                 ErrorAction  = "SilentlyContinue"
             }
             Start-Process @params
@@ -115,7 +113,6 @@ try {
         ArgumentList = "unload HKLM\MountDefaultUser"
         Wait         = $True
         NoNewWindow  = $True
-        WindowStyle  = "Hidden"
         ErrorAction  = "SilentlyContinue"
     }
     Start-Process @params

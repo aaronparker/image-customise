@@ -26,7 +26,7 @@ If (Test-Path -Path $RegDefaultUser) {
         FilePath     = "$Env:SystemRoot\System32\reg.exe"
         ArgumentList = "load HKLM\MountDefaultUser $RegDefaultUser"
         Wait         = $True
-        WindowStyle  = "Hidden"
+        NoNewWindow  = $True
         ErrorAction  = "SilentlyContinue"
     }
     Start-Process @params
@@ -74,7 +74,6 @@ ForEach ($Command in $RegCommands) {
                 ArgumentList = $Command
                 Wait         = $True
                 NoNewWindow  = $True
-                WindowStyle  = "Hidden"
                 ErrorAction  = "SilentlyContinue"
             }
             Start-Process @params
@@ -91,7 +90,6 @@ ForEach ($Command in $RegCommands) {
                 ArgumentList = $Command
                 Wait         = $True
                 NoNewWindow  = $True
-                WindowStyle  = "Hidden"
                 ErrorAction  = "SilentlyContinue"
             }
             Start-Process @params
@@ -110,7 +108,6 @@ try {
         ArgumentList = "unload HKLM\MountDefaultUser"
         Wait         = $True
         NoNewWindow  = $True
-        WindowStyle  = "Hidden"
         ErrorAction  = "SilentlyContinue"
     }
     Start-Process @params

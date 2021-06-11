@@ -31,7 +31,6 @@ ForEach ($Command in $RegCommands) {
             ArgumentList = $Command
             Wait         = $True
             NoNewWindow  = $True
-            WindowStyle  = "Hidden"
             ErrorAction  = "SilentlyContinue"
         }
         Start-Process @params
@@ -49,5 +48,5 @@ $Paths =
 "$env:PUBLIC\Recorded TV\Sample Media",
 "$env:SystemDrive\Logs"
 ForEach ($Path in $Paths) {
-    If (Test-Path -Path $Path) { Remove-Item $Path -Recurse -Force }
+    If (Test-Path -Path $Path) { Remove-Item $Path -Recurse -Force -Confirm:$False }
 }

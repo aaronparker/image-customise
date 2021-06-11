@@ -31,7 +31,6 @@ ForEach ($Command in $RegCommands) {
             ArgumentList = $Command
             Wait         = $True
             NoNewWindow  = $True
-            WindowStyle  = "Hidden"
             ErrorAction  = "SilentlyContinue"
         }
         Start-Process @params

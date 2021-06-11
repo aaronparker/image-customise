@@ -4,15 +4,13 @@ summary:
 authors:
     - Aaron Parker
 ---
-## Invoke-Scripts
-
 All scripts should be invoked by `Invoke-Scripts.ps1` so that those scripts for each platform are detected and invoked appropriately. `Invoke-Scripts.ps1` determines which scripts to run based on various   invokes scripts based on the script name and the target platform:
 
 ## Any Platform
 
 Scripts with `.All.ps1` in the file name will be executed on any version of Windows. These scripts will include configuration changes that will apply to any version or SKU of Windows, including Windows 10 and Windows Server.
 
-## Platform Specific
+## Client or Server
 
 `Get-WmiObject -Class "Win32_OperatingSystem"` is used to determine the SKU or edition of Windows and determine whether the local operating system is a client or server OS. Scripts with either `.Client.ps1` or `.Server.ps1` in the file name will then be invoked.
 
