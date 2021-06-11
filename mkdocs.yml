@@ -37,13 +37,13 @@ theme:
       primary: blue
       accent: blue
       toggle:
-        icon: material/toggle-switch-off-outline
+        icon: material/weather-sunny
         name: Switch to dark mode
     - scheme: slate
       primary: blue
       accent: blue
       toggle:
-        icon: material/toggle-switch
+        icon: material/weather-night
         name: Switch to light mode
   font:
     text: Roboto

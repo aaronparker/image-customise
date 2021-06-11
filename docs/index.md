@@ -6,9 +6,20 @@ authors:
 ---
 # Windows Image Customisation scripts
 
-[![Build status](https://ci.appveyor.com/api/projects/status/hf5m780p8w431bc0/branch/main?svg=true)](https://ci.appveyor.com/project/aaronparker/image-customise/branch/main)
+The PowerShell scripts hosted in the repository are used to customise a Windows 10, Windows Server 2016 or Windows Server 2019 image. Primarily aimed at deployment for physical PCs and virtual desktops, however, the customisations will also work for Windows Server infrastructure roles.
 
-These scripts are used to customise a Windows 10, Windows Server 2016 or Windows Server 2019 image. Primarily aimed at deployment for physical PCs and virtual desktops, however, the customisations will also work for Windows Server infrastructure roles.
+## Installation
+
+To use the scripts in an operating system deployment pipeline, download [the zip file](https://github.com/aaronparker/image-customise/archive/refs/heads/main.zip) of the repository and import the extracted files into your OS deployment solution (e.g. MDT, ConfigMgr, Packer etc.).
+
+You only need to keep the .ps1, .json, and .xml in the root of the repository. All other files and folders are not required.
+
+```powershell
+$ZipFile = "https://github.com/aaronparker/image-customise/archive/refs/heads/main.zip"
+Invoke-WebRequest -URI $ZipFile -OutFile .\main.zip
+Expand-Archive -Path .\main.zip -DestinationPath .\image-customise
+Get-ChildItem -Path .\image-customise -Recurse | Unblock-File
+```
 
 ## Invoke-Scripts
 
