@@ -67,7 +67,7 @@ ForEach ($Command in $RegCommands) {
                 FilePath     = "$Env:SystemRoot\System32\reg.exe"
                 ArgumentList = $Command
                 Wait         = $True
-                WindowStyle  = "Hidden"
+                NoNewWindow  = $True
                 ErrorAction  = "SilentlyContinue"
             }
             Start-Process @params

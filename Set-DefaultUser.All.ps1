@@ -26,7 +26,7 @@ If (Test-Path -Path $RegDefaultUser) {
             FilePath     = "$Env:SystemRoot\System32\reg.exe"
             ArgumentList = "load HKLM\MountDefaultUser $RegDefaultUser"
             Wait         = $True
-            WindowStyle  = "Hidden"
+            NoNewWindow  = $True
             ErrorAction  = "SilentlyContinue"
         }
         Start-Process @params
