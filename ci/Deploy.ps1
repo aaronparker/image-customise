@@ -30,11 +30,12 @@ Else {
     # Tests success, push to GitHub
     If ($res.FailedCount -eq 0) {
         Try {
-            [System.String] $newVersion = New-Object -TypeName System.Version -ArgumentList ((Get-Date -Format "yyMM"), (Get-Date -Format "dd"), $env:APPVEYOR_BUILD_NUMBER)
+            [System.String] $newVersion = New-Object -TypeName "System.Version" -ArgumentList ((Get-Date -Format "yyMM"), (Get-Date -Format "dd"), $env:APPVEYOR_BUILD_NUMBER)
             Write-Output -InputObject "New Version: $newVersion"
             
             # Update the version string in VERSION.txt
-            $newVersion | Out-File -FilePath (Join-Path -Path $projectRoot -ChildPath "VERSION.txt") -Encoding "utf8" -Force -NoNewline
+            $VersionTxt = [System.IO.Path]::Combine($projectRoot, "src", "VERSION.txt")
+            $newVersion | Out-File -FilePath $VersionTxt -Encoding "utf8" -Force -NoNewline
 
             # Update major version format appveyor.yml as month changes
             $yml = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER -ChildPath "appveyor.yml"
