@@ -9,10 +9,12 @@ Param()
 If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
     # AppVeyor Testing
     $projectRoot = Resolve-Path -Path $env:APPVEYOR_BUILD_FOLDER
+    $ScriptsFolder = Join-Path -Path $projectRoot -ChildPath "src"
 }
 Else {
     # Local Testing
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
+    $ScriptsFolder = Join-Path -Path $projectRoot -ChildPath "src"
 }
 
 # Set $VerbosePreference so full details are sent to the log; Make Invoke-WebRequest faster
@@ -21,7 +23,7 @@ $ProgressPreference = "SilentlyContinue"
 
 # All scripts validation
 Describe "General project validation" {
-    $scripts = Get-ChildItem -Path $projectRoot -Filter *.ps1
+    $scripts = Get-ChildItem -Path $ScriptsFolder -Filter *.ps1
     Write-Host "Found $($scripts.count) scripts."
 
     # TestCases are splatted to the script so we need hashtables
@@ -52,15 +54,15 @@ Describe "General project validation" {
 }
 
 # Gather scripts to test
-Push-Location -Path $projectRoot
-$Scripts = @(Get-ChildItem -Path (Join-Path -Path $projectRoot -ChildPath "*.ps1") -Exclude Invoke-Scripts.ps1 -ErrorAction "SilentlyContinue")
+Push-Location -Path $ScriptsFolder
+$Scripts = @(Get-ChildItem -Path (Join-Path -Path $ScriptsFolder -ChildPath "*.ps1") -Exclude Invoke-Scripts.ps1 -ErrorAction "SilentlyContinue")
 
 # Per script tests
 Describe "Script execution validation" -Tag "Windows" {
     ForEach ($script in $Scripts) {
         Write-Host "`tRunning: $script" -ForegroundColor Gray
         It "$($script.Name) should not Throw" {
-            { . $script.FullName -Path $projectRoot -Verbose } | Should -Not -Throw
+            { . $script.FullName -Path $ScriptsFolder -Verbose } | Should -Not -Throw
         }
     }
 }
