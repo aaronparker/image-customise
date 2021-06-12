@@ -66,3 +66,6 @@ Describe "Script execution validation" -Tag "Windows" {
         }
     }
 }
+
+# Move back to the project root
+Push-Location -Path $projectRoot
