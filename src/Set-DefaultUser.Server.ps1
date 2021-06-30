@@ -97,12 +97,14 @@ catch {
 # Configure the default Start menu
 $MinBuild = "14393"
 $CurrentBuild = ([System.Environment]::OSVersion.Version).Build
-If (!(Test-Path("$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows"))) {
-    New-Item -Path "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows" -ItemType "Directory" > $Null
-}
-
 If ($CurrentBuild -ge $MinBuild) {
     try {
+        $params = @{
+            Path        = "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows\Shell"
+            ItemType    = "Directory"
+            ErrorAction = "SilentlyContinue"
+        }
+        New-Item @params > $Null
         If ((Get-WindowsFeature -Name "RDS-RD-Server").InstallState -eq "Installed") {
             $Layout = Get-ChildItem -Path $Path -Filter "WindowsRDSStartMenuLayout.xml" -Recurse
         }
@@ -120,17 +122,18 @@ If ($CurrentBuild -ge $MinBuild) {
 
 # Configure Microsoft Teams defaults
 If ((Get-WindowsFeature -Name "RDS-RD-Server").InstallState -eq "Installed") {
-    $Target = "$env:SystemDrive\Users\Default\AppData\Roaming\Microsoft\Teams"
-    If (!(Test-Path -Path $Target)) {
-        New-Item -Path $Target -ItemType "Directory" > $Null
-    }
-
     try {
+        $params = @{
+            Path        = "$env:SystemDrive\Users\Default\AppData\Roaming\Microsoft\Teams"
+            ItemType    = "Directory"
+            ErrorAction = "SilentlyContinue"
+        }
+        New-Item @params > $Null
         $Config = Get-ChildItem -Path $Path -Filter "desktop-config.json" -Recurse
         Write-Verbose -Message "Copy Teams config file file: $($Config.FullName)."
         $params = @{
             Path        = $Config.FullName
-            Destination = $Target
+            Destination = "$env:SystemDrive\Users\Default\AppData\Roaming\Microsoft\Teams"
             ErrorAction = "SilentlyContinue"
         }
         Copy-Item @params
