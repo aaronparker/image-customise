@@ -35,7 +35,7 @@ Else {
             
             # Update the version string in VERSION.txt
             $VersionTxt = [System.IO.Path]::Combine($projectRoot, "src", "VERSION.txt")
-            $newVersion | Out-File -FilePath $VersionTxt -Encoding "utf8" -Force -NoNewline
+            $newVersion | Out-File -FilePath $VersionTxt -Encoding "ascii" -Force -NoNewline
 
             # Update major version format appveyor.yml as month changes
             $yml = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER -ChildPath "appveyor.yml"
