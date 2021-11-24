@@ -27,8 +27,8 @@ jobs:
       - uses: actions/checkout@v2
 
       # Run PowerShell commands
-      - name: Get directory
-        shell: pwsh
+      - name: Run Pester tests
+        shell: powershell
         run: |
           . .\ci\Install.ps1
           . .\ci\Build.ps1
