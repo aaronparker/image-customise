@@ -1,0 +1,22 @@
+<LayoutModificationTemplate xmlns:defaultlayout="http://schemas.microsoft.com/Start/2014/FullDefaultLayout"
+  xmlns:start="http://schemas.microsoft.com/Start/2014/StartLayout" Version="1"
+  xmlns="http://schemas.microsoft.com/Start/2014/LayoutModification">
+  <LayoutOptions StartTileGroupCellWidth="6" />
+  <DefaultLayoutOverride>
+    <StartLayoutCollection>
+      <defaultlayout:StartLayout GroupCellWidth="6">
+        <start:Group Name="">
+          <start:DesktopApplicationTile Size="1x1" Column="4" Row="4" DesktopApplicationID="Microsoft.Office.EXCEL.EXE.15" />
+          <start:DesktopApplicationTile Size="2x2" Column="0" Row="2" DesktopApplicationID="MSEdge" />
+          <start:Tile Size="4x2" Column="2" Row="2" AppUserModelID="Microsoft.Office.OneNote_8wekyb3d8bbwe!microsoft.onenoteim" />
+          <start:DesktopApplicationTile Size="1x1" Column="4" Row="5" DesktopApplicationID="Microsoft.Office.POWERPNT.EXE.15" />
+          <start:Tile Size="2x2" Column="0" Row="0" AppUserModelID="Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe!Microsoft.MicrosoftOfficeHub" />
+          <start:DesktopApplicationTile Size="2x2" Column="0" Row="4" DesktopApplicationID="com.squirrel.Teams.Teams" />
+          <start:DesktopApplicationTile Size="2x2" Column="2" Row="4" DesktopApplicationID="Microsoft.SkyDrive.Desktop" />
+          <start:DesktopApplicationTile Size="2x2" Column="4" Row="0" DesktopApplicationID="Microsoft.Office.OUTLOOK.EXE.15" />
+          <start:DesktopApplicationTile Size="2x2" Column="2" Row="0" DesktopApplicationID="Microsoft.Office.WINWORD.EXE.15" />
+        </start:Group>
+      </defaultlayout:StartLayout>
+    </StartLayoutCollection>
+  </DefaultLayoutOverride>
+</LayoutModificationTemplate>

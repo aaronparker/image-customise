@@ -18,7 +18,7 @@ Param (
 Write-Verbose -Message "Execution path: $Path."
 
 # Remove Windows capabilities
-$Capabilities = @("Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0",
+$Capabilities = @(#"Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0",
     "Microsoft.Windows.WordPad~~~~0.0.1.0",
     "Print.Fax.Scan~~~~0.0.1.0",
     "Print.Management.Console~~~~0.0.1.0")

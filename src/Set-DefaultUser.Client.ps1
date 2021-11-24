@@ -17,6 +17,15 @@ Param (
 
 Write-Verbose -Message "Execution path: $Path."
 
+Switch -Regex ((Get-WmiObject -Class "Win32_OperatingSystem").Caption) {
+    "Microsoft Windows 10*" {
+        $StartMenuFile = "Windows10StartMenuLayout.xml"
+    }
+    "Microsoft Windows 11*" {
+        $StartMenuFile = "Windows11StartMenuLayout.xml"
+    }
+}
+
 # Configure the default Start menu
 try {
     $params = @{
@@ -25,7 +34,7 @@ try {
         ErrorAction = "SilentlyContinue"
     }
     New-Item @params > $Null
-    $Layout = Get-ChildItem -Path $Path -Filter "Windows10StartMenuLayout.xml" -Recurse
+    $Layout = Get-ChildItem -Path $Path -Filter $StartMenuFile -Recurse
     Write-Verbose -Message "Importing Start layout file: $Layout."
     Import-StartLayout -LayoutPath $Layout.FullName -MountPath "$($env:SystemDrive)\"
 }

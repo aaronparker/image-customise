@@ -77,6 +77,7 @@ Param (
         "Microsoft.Office.Desktop.PowerPoint_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
         "Microsoft.Office.Desktop.Publisher_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
         "Microsoft.Office.Desktop.Word_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
+        "MicrosoftTeams_8wekyb3d8bbwe", # Microsoft Teams package on Windows 11
         "Microsoft.OneConnect_8wekyb3d8bbwe", # Mobile Plans
         "Microsoft.People_8wekyb3d8bbwe", # People
         "Microsoft.SkypeApp_kzf8qxf38zg5c", # Skype

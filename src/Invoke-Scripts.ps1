@@ -12,9 +12,6 @@
 [CmdletBinding()]
 Param (
     [Parameter(Mandatory = $False)]
-    [System.String] $Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent),
-
-    [Parameter(Mandatory = $False)]
     [System.String] $Guid = "f38de27b-799e-4c30-8a01-bfdedc622944",
 
     [Parameter(Mandatory = $False)]
@@ -27,9 +24,10 @@ Param (
     [System.String] $RunOn = $(Get-Date -Format "yyyy-MM-dd"),
     
     [Parameter(Mandatory = $False)]
-    [System.String] $Version = (Get-ChildItem -Path $PWD -Filter "VERSION.txt" -Recurse | Get-Content -Raw)
+    [System.String] $Version = (Get-ChildItem -Path $Path -Filter "VERSION.txt" -Recurse | Get-Content -Raw)
 )
 
+$Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
 Write-Verbose -Message "Execution path: $Path."
 Write-Verbose -Message "Customisation scripts version: $Version."
 
@@ -39,9 +37,17 @@ Switch -Regex ((Get-WmiObject -Class "Win32_OperatingSystem").Caption) {
         $Platform = "Server"
     }
     "Microsoft Windows 10 Enterprise for Virtual Desktops" {
-        $Platform = "Multi"
+        #$Platform = "Multi"
+        $Platform = "Client"
+    }
+    "Microsoft Windows 11 Enterprise for Virtual Desktops" {
+        #$Platform = "Multi"
+        $Platform = "Client"
     }
     "Microsoft Windows 10*" {
+        $Platform = "Client"
+    }
+    "Microsoft Windows 11*" {
         $Platform = "Client"
     }
 }
@@ -53,13 +59,18 @@ Else {
     $Model = "Physical"
 }
 
+Write-Verbose -Message "Platform: $Platform."
+Write-Verbose -Message "   Build: $Build."
+Write-Verbose -Message "   Model: $Model."
+
 # Gather scripts
-try { $AllScripts = @(Get-ChildItem -Path $PWD -Filter "*.All.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
-try { $PlatformScripts = @(Get-ChildItem -Path $PWD -Filter "*.$Platform.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
-try { $BuildScripts = @(Get-ChildItem -Path $PWD -Filter "*.$Build.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
-try { $ModelScripts = @(Get-ChildItem -Path $PWD -Filter "*.$Model.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
+try { $AllScripts = @(Get-ChildItem -Path $Path -Filter "*.All.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
+try { $PlatformScripts = @(Get-ChildItem -Path $Path -Filter "*.$Platform.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
+try { $BuildScripts = @(Get-ChildItem -Path $Path -Filter "*.$Build.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
+try { $ModelScripts = @(Get-ChildItem -Path $Path -Filter "*.$Model.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
 
 # Run all scripts
+Write-Verbose -Message "Scripts: $(($AllScripts + $PlatformScripts + $BuildScripts + $ModelScripts).Count)."
 ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScripts)) {
     try {
         Write-Verbose -Message "Running script: $($script.FullName)."
