@@ -33,6 +33,7 @@ Write-Host ""
 Write-Host "PowerShell Version:" $PSVersionTable.PSVersion.ToString()
 
 # Install packages
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.208
 If (Get-PSRepository -Name PSGallery | Where-Object { $_.InstallationPolicy -ne "Trusted" }) {
     Set-PSRepository -Name PSGallery -InstallationPolicy Trusted

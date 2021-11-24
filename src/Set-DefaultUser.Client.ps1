@@ -25,7 +25,7 @@ Switch -Regex ((Get-WmiObject -Class "Win32_OperatingSystem").Caption) {
         $StartMenuFile = "Windows11StartMenuLayout.xml"
     }
     Default {
-        "Windows10StartMenuLayout.xml"
+        $StartMenuFile = "Windows10StartMenuLayout.xml"
     }
 }
 
