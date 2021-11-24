@@ -1,12 +1,12 @@
 ---
-title: Home
+title: Introduction
 summary: 
 authors:
     - Aaron Parker
 ---
 # Windows Image Customisation scripts
 
-The PowerShell scripts hosted in the repository are used to customise a Windows 10, Windows Server 2016 or Windows Server 2019 image. Primarily aimed at deployment for physical PCs and virtual desktops, however, the customisations will also work for Windows Server infrastructure roles.
+The PowerShell scripts hosted in this repository are used to customise a Windows 10, Windows 11, Windows Server 2016, Windows Server 2019 or Windows Server 2022 image. Primarily aimed at deployment of images for virtual desktops or provisioning physical PCs, the customisations will also work for Windows Server infrastructure roles.
 
 ## Download
 

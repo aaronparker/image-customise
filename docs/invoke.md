@@ -30,9 +30,15 @@ Switch -Regex ((Get-WmiObject -Class "Win32_OperatingSystem").Caption) {
         $Platform = "Server"
     }
     "Microsoft Windows 10 Enterprise for Virtual Desktops" {
-        $Platform = "Multi"
+        $Platform = "Client"
+    }
+    "Microsoft Windows 11 Enterprise for Virtual Desktops" {
+        $Platform = "Client"
     }
     "Microsoft Windows 10*" {
+        $Platform = "Client"
+    }
+    "Microsoft Windows 11*" {
         $Platform = "Client"
     }
 }
