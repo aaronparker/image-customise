@@ -6,30 +6,36 @@
 Param()
 
 # Set variables
-If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
-    # AppVeyor Testing
-    $projectRoot = Resolve-Path -Path $env:APPVEYOR_BUILD_FOLDER
-    $ScriptsFolder = Join-Path -Path $projectRoot -ChildPath "src"
+If (Test-Path -Path "$env:GITHUB_WORKSPACE") {
+    $projectRoot = Resolve-Path -Path $env:GITHUB_WORKSPACE
+    $module = $env:Module
 }
 Else {
-    # Local Testing
+    # Local Testing 
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
-    $ScriptsFolder = Join-Path -Path $projectRoot -ChildPath "src"
+    $module = Split-Path -Path $projectRoot -Leaf
 }
 
 # Set $VerbosePreference so full details are sent to the log; Make Invoke-WebRequest faster
 #$VerbosePreference = "Continue"
 $ProgressPreference = "SilentlyContinue"
 
-# All scripts validation
-Describe "General project validation" {
-    $scripts = Get-ChildItem -Path $ScriptsFolder -Filter *.ps1
-    Write-Host "Found $($scripts.count) scripts."
 
-    # TestCases are splatted to the script so we need hashtables
-    $testCase = $scripts | ForEach-Object { @{file = $_ } }
-    It "Script <file> should be valid PowerShell" -TestCases $testCase {
-        param($file)
+BeforeDiscovery {
+    # Get the scripts to test
+    $Scripts = @(Get-ChildItem -Path (Join-Path -Path $ScriptsFolder -ChildPath "*.ps1") -Exclude Invoke-Scripts.ps1 -ErrorAction "SilentlyContinue")
+    $testCase = $Scripts | ForEach-Object { @{file = $_ } }
+
+    # Get the ScriptAnalyzer rules
+    $scriptAnalyzerRules = Get-ScriptAnalyzerRule
+}
+
+
+# All scripts validation
+Describe "General project validation" {    
+    It "Script <file.Name> should be valid PowerShell" -TestCases $testCase {
+        param ($file)
+
         $file.FullName | Should -Exist
 
         $contents = Get-Content -Path $file.FullName -ErrorAction Stop
@@ -37,10 +43,10 @@ Describe "General project validation" {
         $null = [System.Management.Automation.PSParser]::Tokenize($contents, [ref]$errors)
         $errors.Count | Should -Be 0
     }
-    $scriptAnalyzerRules = Get-ScriptAnalyzerRule
-    It "<file> should pass ScriptAnalyzer" -TestCases $testCase {
-        param($file)
-        $analysis = Invoke-ScriptAnalyzer -Path $file.FullName -ExcludeRule @('PSAvoidUsingWMICmdlet') -Severity @('Warning', 'Error')   
+
+    It "Script <file.Name> should pass ScriptAnalyzer" -TestCases $testCase {
+        param ($file)
+        $analysis = Invoke-ScriptAnalyzer -Path  $file.FullName -ExcludeRule @('PSAvoidGlobalVars', 'PSAvoidUsingWMICmdlet') -Severity @('Warning', 'Error')   
         
         ForEach ($rule in $scriptAnalyzerRules) {
             If ($analysis.RuleName -contains $rule) {
@@ -53,19 +59,16 @@ Describe "General project validation" {
     }
 }
 
-# Gather scripts to test
-Push-Location -Path $ScriptsFolder
-$Scripts = @(Get-ChildItem -Path (Join-Path -Path $ScriptsFolder -ChildPath "*.ps1") -Exclude Invoke-Scripts.ps1 -ErrorAction "SilentlyContinue")
-
 # Per script tests
-Describe "Script execution validation" -Tag "Windows" {
-    ForEach ($script in $Scripts) {
-        Write-Host "`tRunning: $script" -ForegroundColor Gray
-        It "$($script.Name) should not Throw" {
+Describe "Script execution validation" -Tag "Windows" -ForEach $Scripts {
+    BeforeAll {
+        # Renaming the automatic $_ variable to $application to make it easier to work with
+        $script = $_
+    }
+
+    Context "Validate <script.Name>." {
+        It "<script.Name> should not Throw" {
             { . $script.FullName -Path $ScriptsFolder -Verbose } | Should -Not -Throw
         }
     }
 }
-
-# Move back to the project root
-Push-Location -Path $projectRoot

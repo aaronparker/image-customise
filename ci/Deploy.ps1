@@ -10,21 +10,22 @@ Write-Host ""
 
 # Make sure we're using the Main branch and that it's not a pull request
 # Environmental Variables Guide: https://www.appveyor.com/docs/environment-variables/
-If ($env:APPVEYOR_REPO_BRANCH -ne 'main') {
-    Write-Warning -Message "Skipping version increment and push for branch $env:APPVEYOR_REPO_BRANCH"
+If ($env:GITHUB_REF -ne 'main') {
+    Write-Warning -Message "Skipping version increment and push for branch $env:GITHUB_REF"
 }
 ElseIf ($env:APPVEYOR_PULL_REQUEST_NUMBER -gt 0) {
     Write-Warning -Message "Skipping version increment and push for pull request #$env:APPVEYOR_PULL_REQUEST_NUMBER"
 }
 Else {
 
-    If (Test-Path 'env:APPVEYOR_BUILD_FOLDER') {
-        # AppVeyor Testing
-        $projectRoot = Resolve-Path -Path $env:APPVEYOR_BUILD_FOLDER
+    If (Test-Path -Path "$env:GITHUB_WORKSPACE") {
+        $projectRoot = Resolve-Path -Path $env:GITHUB_WORKSPACE
+        $module = $env:Module
     }
     Else {
         # Local Testing 
         $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
+        $module = Split-Path -Path $projectRoot -Leaf
     }
     
     # Tests success, push to GitHub
