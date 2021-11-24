@@ -24,6 +24,9 @@ Switch -Regex ((Get-WmiObject -Class "Win32_OperatingSystem").Caption) {
     "Microsoft Windows 11*" {
         $StartMenuFile = "Windows11StartMenuLayout.xml"
     }
+    Default {
+        "Windows10StartMenuLayout.xml"
+    }
 }
 
 # Configure the default Start menu
