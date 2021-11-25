@@ -57,7 +57,7 @@ Else {
         git status
         git commit -s -m "$newVersion"
         #git commit -s -m "GitHub validate: $newVersion"
-        # Invoke-Process -FilePath "git" -ArgumentList "push origin main"
+        Invoke-Process -FilePath "git" -ArgumentList "push origin main"
         Write-Host "$module $newVersion pushed to GitHub." -ForegroundColor Cyan
     }
     catch {
