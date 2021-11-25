@@ -44,6 +44,12 @@ jobs:
         run: |
           . .\ci\New-Package.ps1
 
+      - name: New release
+        uses: softprops/action-gh-release@v1
+        #if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: releases\Invoke-Scripts.intunewin
+
 #      - name: Push to repo
 #        uses: actions-x/commit@v2
 #        with:

@@ -34,3 +34,6 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Exclude the releases folder
+releases/**

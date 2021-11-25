@@ -66,7 +66,7 @@ Describe "Script execution validation" -Tag "Windows" -ForEach $Scripts {
 
     Context "Validate <script.Name>." {
         It "<script.Name> should not Throw" {
-            { . $script.FullName -Path $([System.IO.Path]::Combine($projectRoot, "src")) -Verbose } | Should -Not -Throw
+            { . $script.FullName -Path $([System.IO.Path]::Combine($projectRoot, "src")) } | Should -Not -Throw
         }
     }
 }
