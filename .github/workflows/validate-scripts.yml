@@ -5,9 +5,9 @@ on:
   push:
     branches:
       - main
-  #pull_request:
-  #  branches:
-  #    - main
+    paths:
+      - 'src/**'
+      - '!srv/VERSION.txt'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -16,8 +16,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
-    # Change back to Ubuntu once we fix the script
+  validate:
     runs-on: windows-2022
     #runs-on: windows-latest
 
@@ -26,13 +25,14 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Run PowerShell commands
+      # Run Pester tests
       - name: Run Pester tests
         shell: powershell
         run: |
           . .\ci\Install.ps1
           . .\ci\Tests.ps1
 
+      # Update version number in VERSION.txt
       - name: Update version number
         shell: powershell
         run: |
