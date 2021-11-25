@@ -13,4 +13,5 @@ param (
 )
 
 # Run Remove-AppxApps.ps1 in block list mode
+Write-Verbose -Message "Path: $Path."
 & (Join-Path -Path $Path -ChildPath "Remove-AppxApps.ps1") -Operation "BlockList"

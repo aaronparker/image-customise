@@ -71,7 +71,7 @@ Write-Verbose -Message "Scripts: $(($AllScripts + $PlatformScripts + $BuildScrip
 ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScripts)) {
     try {
         Push-Location -Path $PSScriptRoot
-        Write-Verbose -Message "Running script: $($script.FullName)."
+        Write-Host -Message "Running script: $($script.FullName) from $PSScriptRoot."
         & $script.FullName -Path $PSScriptRoot
     }
     catch {
