@@ -5,11 +5,11 @@
         "Version": "",
         "SourceFolder": "Source",
         "OutputFolder": "Package",
-        "IconFile": "Icon.png"
+        "IconFile": "https://raw.githubusercontent.com/Insentra/intune-icons/main/icons/Package.png"
     },
     "Information": {
         "DisplayName": "stealthpuppy Image Customisations 2111.24.71",
-        "Description": "Installs image customisations for Windows 10/11, version 2111.24.71",
+        "Description": "Installs image customisations for Windows 10/11.",
         "Publisher": "stealthpuppy",
         "InformationURL": "https://stealthpuppy.com/image-customise/",
         "PrivacyURL": "https://stealthpuppy.com/image-customise/",
