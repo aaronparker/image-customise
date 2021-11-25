@@ -38,6 +38,12 @@ jobs:
         run: |
           . .\ci\Deploy.ps1
 
+      # Package the scripts
+      - name: New Intunewin package
+        shell: powershell
+        run: |
+          . .\ci\New-Package.ps1
+
 #      - name: Push to repo
 #        uses: actions-x/commit@v2
 #        with:
