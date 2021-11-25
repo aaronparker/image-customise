@@ -113,7 +113,7 @@ If ($CurrentBuild -ge $MinBuild) {
             $Layout = Get-ChildItem -Path $Path -Filter "WindowsServerStartMenuLayout.xml" -Recurse
         }
         Write-Verbose -Message "Importing Start layout file: $Layout."
-        Import-StartLayout -LayoutPath $Layout -MountPath "$($env:SystemDrive)\"
+        Import-StartLayout -LayoutPath $Layout.FullName -MountPath "$($env:SystemDrive)\"
     }
     catch {
         Throw "Failed to import Start menu layout: [$Layout]."
