@@ -45,6 +45,7 @@ $string += "| RUNNER_NAME | $env:RUNNER_NAME |"
 $string += "| RUNNER_OS | $env:RUNNER_OS |"
 $string += "| RUNNER_TEMP | $env:RUNNER_TEMP |"
 $string += "| RUNNER_TOOL_CACHE | $env:RUNNER_TOOL_CACHE |"
+Write-Host $string
 
 # Write $string out to $Path
 $Path = [System.IO.Path]::Combine($projectRoot, "ci", "Variables.md")

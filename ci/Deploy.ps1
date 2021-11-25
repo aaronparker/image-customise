@@ -43,6 +43,8 @@ Else {
         # Configure the git environment
         git config --global credential.helper store
         #Add-Content -Path (Join-Path -Path $env:USERPROFILE -ChildPath ".git-credentials") -Value "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
+        git remote set-url --push origin "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+        # "https://your_username:$GITHUB_TOKEN@github.com/your/repo"
         git config --global user.email release@stealthpuppy.com
         git config --global user.name "Aaron Parker"
         git config --global core.autocrlf true

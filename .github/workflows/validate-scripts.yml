@@ -1,5 +1,9 @@
 name: Validate customisation scripts
 
+# Environment variables
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 # Controls when the action will run. 
 on:
   push:
@@ -44,12 +48,12 @@ jobs:
           . .\ci\Deploy.ps1
 
       # Package the scripts
-      - name: New release
+      - name: New release package
         shell: powershell
         run: |
           . .\ci\New-Package.ps1
 
-      - name: New release
+      - name: Upload release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
