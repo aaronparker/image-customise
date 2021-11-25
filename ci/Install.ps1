@@ -34,12 +34,12 @@ Install-PackageProvider -Name "NuGet" -MinimumVersion "2.8.5.208" -Force -ErrorA
 If (Get-PSRepository -Name "PSGallery" | Where-Object { $_.InstallationPolicy -ne "Trusted" }) {
     Set-PSRepository -Name "PSGallery" -InstallationPolicy "Trusted"
 }
-If ([Version]((Find-Module -Name "Pester").Version) -gt (Get-Module -Name Pester).Version) {
-    Install-Module -Name "Pester" -SkipPublisherCheck -Force #-MaximumVersion "4.10.1"
-}
-If ([Version]((Find-Module -Name "PSScriptAnalyzer").Version) -gt (Get-Module -Name PSScriptAnalyzer).Version) {
-    Install-Module -Name "PSScriptAnalyzer" -SkipPublisherCheck -Force
-}
-If ([Version]((Find-Module -Name "posh-git").Version) -gt (Get-Module -Name posh-git).Version) {
-    Install-Module -Name "posh-git" -Force
+
+# Install modules
+$Modules = "Pester", "PSScriptAnalyzer", "posh-git"
+ForEach ($Module in $Modules ) {
+    If ([System.Version]((Find-Module -Name $Module).Version) -gt (Get-Module -Name $Module).Version) {
+        Install-Module -Name $Module -SkipPublisherCheck -Force #-MaximumVersion "4.10.1"
+    }
+    Import-Module -Name $Module -Force
 }
