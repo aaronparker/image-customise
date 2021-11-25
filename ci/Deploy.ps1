@@ -17,7 +17,7 @@ Else {
 }
     
 # Tests success, push to GitHub
-If ($res.FailedCount -eq 0) {
+#If ($res.FailedCount -eq 0) {
     try {
         [System.String] $newVersion = New-Object -TypeName "System.Version" -ArgumentList ((Get-Date -Format "yyMM"), (Get-Date -Format "dd"), $env:GITHUB_RUN_NUMBER)
         Write-Output -InputObject "New Version: $newVersion"
@@ -62,7 +62,7 @@ If ($res.FailedCount -eq 0) {
         Write-Warning -Message "Push to GitHub failed."
         Throw $_
     }
-}
+#}
 
 # Line break for readability in AppVeyor console
 Write-Host ""

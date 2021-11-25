@@ -83,8 +83,9 @@ try {
         Path            = "$PackagePath\*"
         DestinationPath = "$PackageOutput\image-customise.zip"
         ErrorAction     = "SilentlyContinue"
+        PassThru        = $True
     }
-    Compress-Archive @params
+    Compress-Archive @params | Select-Object -ExpandProperty "FullName"
 }
 catch {
     Throw "Failed compress scripts with: $($_.Exception.Message)"
