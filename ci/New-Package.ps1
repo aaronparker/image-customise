@@ -75,5 +75,17 @@ catch {
     Throw "Failed to find an Intunewin package in $PackageOutput with: $($_.Exception.Message)"
 }
 Write-Verbose -Message "Found package: $($IntuneWinFile.FullName)."
-Write-Output -InputObject $IntuneWinFile.FullName
+# Write-Output -InputObject $IntuneWinFile.FullName
 #endregion
+
+try {
+    $params = @{
+        Path            = "$PackagePath\*"
+        DestinationPath = "$PackageOutput\image-customise.zip"
+        ErrorAction     = "SilentlyContinue"
+    }
+    Compress-Archive @params
+}
+catch {
+    Throw "Failed compress scripts with: $($_.Exception.Message)"
+}

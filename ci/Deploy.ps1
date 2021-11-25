@@ -25,13 +25,13 @@ If ($res.FailedCount -eq 0) {
         # Update the version string in VERSION.txt
         $VersionTxt = [System.IO.Path]::Combine($projectRoot, "src", "VERSION.txt")
         $newVersion | Out-File -FilePath $VersionTxt -Encoding "ascii" -Force -NoNewline
+        [System.Environment]::SetEnvironmentVariable("NEWVERSION", $newVersion)
     }
     catch {
         throw $_
     }
 
     # Publish the new version back to Main on GitHub
-    <#
     try {
         # Set up a path to the git.exe cmd, import posh-git to give us control over git
         $env:Path += ";$env:ProgramFiles\Git\cmd"
@@ -41,19 +41,20 @@ If ($res.FailedCount -eq 0) {
         . $projectRoot\ci\Invoke-Process.ps1
 
         # Configure the git environment
-        git config --global credential.helper store
-        Add-Content -Path (Join-Path -Path $env:USERPROFILE -ChildPath ".git-credentials") -Value "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
-        git config --global user.email "$($env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL)"
-        git config --global user.name "$($env:APPVEYOR_REPO_COMMIT_AUTHOR)"
-        git config --global core.autocrlf true
-        git config --global core.safecrlf false
+        # git config --global credential.helper store
+        # Add-Content -Path (Join-Path -Path $env:USERPROFILE -ChildPath ".git-credentials") -Value "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
+        # git config --global user.email "$($env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL)"
+        # git config --global user.name "$($env:APPVEYOR_REPO_COMMIT_AUTHOR)"
+        # git config --global core.autocrlf true
+        # git config --global core.safecrlf false
 
         # Push changes to GitHub
         Invoke-Process -FilePath "git" -ArgumentList "checkout main"
         git add --all
         git status
-        git commit -s -m "AppVeyor validate: $newVersion"
-        Invoke-Process -FilePath "git" -ArgumentList "push origin main"
+        git commit -s -m "$newVersion"
+        #git commit -s -m "GitHub validate: $newVersion"
+        # Invoke-Process -FilePath "git" -ArgumentList "push origin main"
         Write-Host "$module $newVersion pushed to GitHub." -ForegroundColor Cyan
     }
     catch {
@@ -61,7 +62,6 @@ If ($res.FailedCount -eq 0) {
         Write-Warning -Message "Push to GitHub failed."
         Throw $_
     }
-    #>
 }
 
 # Line break for readability in AppVeyor console

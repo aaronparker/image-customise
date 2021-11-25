@@ -1,0 +1,45 @@
+{
+    "PackageInformation": {
+        "SetupType": "EXE",
+        "SetupFile": "Invoke-Scripts.ps1",
+        "Version": "",
+        "SourceFolder": "Source",
+        "OutputFolder": "Package",
+        "IconFile": "Icon.png"
+    },
+    "Information": {
+        "DisplayName": "stealthpuppy Image Customisations 2111.24.71",
+        "Description": "Installs image customisations for Windows 10/11, version 2111.24.71",
+        "Publisher": "stealthpuppy",
+        "InformationURL": "https://stealthpuppy.com/image-customise/",
+        "PrivacyURL": "https://stealthpuppy.com/image-customise/",
+        "Notes": "Source: https://github.com/aaronparker/image-customise"
+    },
+    "Program": {
+        "InstallCommand": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy RemoteSigned -File .\\Invoke-Scripts.ps1",
+        "UninstallCommand": "",
+        "InstallExperience": "system",
+        "DeviceRestartBehavior": "suppress"
+    },
+    "RequirementRule": {
+        "MinimumRequiredOperatingSystem": "1809",
+        "Architecture": "All"
+    },
+    "CustomRequirementRule": [],
+    "DetectionRule": [
+        {
+            "Type": "Registry",
+            "DetectionMethod": "VersionComparison",
+            "KeyPath": "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\f38de27b-799e-4c30-8a01-bfdedc622944",
+            "ValueName": "DisplayVersion",
+            "Operator": "greaterThanOrEqual",
+            "Value": "2111.24.71",
+            "Check32BitOn64System": "false"
+        }
+    ],
+    "TenantInformation": {
+        "Name": "tenant.onmicrosoft.com",
+        "PromptBehavior": "Always \\ Auto \\ Never",
+        "ApplicationID": "d1ddf0e4-d672-4dae-b554-9d5bdfd93547"
+    }
+}
