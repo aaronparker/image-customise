@@ -32,6 +32,11 @@ jobs:
           . .\ci\Install.ps1
           . .\ci\Tests.ps1
 
+      - name: Output variables
+        shell: powershell
+        run: |
+          . .\ci\Build.ps1
+
       # Update version number in VERSION.txt
       - name: Update version number
         shell: powershell
@@ -39,7 +44,7 @@ jobs:
           . .\ci\Deploy.ps1
 
       # Package the scripts
-      - name: New Intunewin package
+      - name: New release
         shell: powershell
         run: |
           . .\ci\New-Package.ps1

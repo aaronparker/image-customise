@@ -51,6 +51,7 @@ Else {
         # Push changes to GitHub
         Invoke-Process -FilePath "git" -ArgumentList "checkout main"
         git add --all
+        git tag "v$newVersion"
         git status
         git commit -s -m "$newVersion"
         #git commit -s -m "GitHub validate: $newVersion"
