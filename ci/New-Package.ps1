@@ -33,8 +33,9 @@ If (!(Test-Path -Path $PackageOutput)) { New-Item -Path $PackageOutput -ItemType
 #region Package the app
 try {
     # Download the Intune Win32 wrapper
+    If (!(Test-Path -Path $Path)) { New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $Null }
     $Win32Wrapper = "https://raw.githubusercontent.com/microsoft/Microsoft-Win32-Content-Prep-Tool/master/IntuneWinAppUtil.exe"
-    $wrapperBin = Join-Path -Path $Path -ChildPath (Split-Path -Path $Win32Wrapper -Leaf)
+    $wrapperBin = Join-Path -Path $Path -ChildPath $(Split-Path -Path $Win32Wrapper -Leaf)
     $params = @{
         Uri             = $Win32Wrapper
         OutFile         = $wrapperBin
