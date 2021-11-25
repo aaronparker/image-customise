@@ -32,11 +32,15 @@ jobs:
         run: |
           . .\ci\Install.ps1
           . .\ci\Tests.ps1
+
+      - name: Update version number
+        shell: powershell
+        run: |
           . .\ci\Deploy.ps1
 
-      - name: Push to repo
-        uses: actions-x/commit@v2
-        with:
-          branch: main
-          name: GitHubActions
-          email: actions@stealthpuppy.com
+#      - name: Push to repo
+#        uses: actions-x/commit@v2
+#        with:
+#          branch: main
+#          name: GitHubActions
+#          email: actions@stealthpuppy.com
