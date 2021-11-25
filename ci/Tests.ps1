@@ -17,7 +17,7 @@ If (Get-Variable -Name "projectRoot" -ErrorAction "SilentlyContinue") {
     # Configure the test environment
     $testsPath = Join-Path -Path $projectRoot -ChildPath "tests"
     $testOutput = Join-Path -Path $projectRoot -ChildPath "TestsResults.xml"
-    $testConfig = [PesterConfiguration]@{
+    $testConfig = [PesterConfiguration] @{
         Run        = @{
             Path     = $testsPath
             PassThru = $True
@@ -26,9 +26,7 @@ If (Get-Variable -Name "projectRoot" -ErrorAction "SilentlyContinue") {
             OutputFormat = "NUnitXml"
             OutputFile   = $testOutput
         }
-        Output     = @{
-            Verbosity = "Detailed"
-        }
+        Show = "Default"
     }
     Write-Host "Tests path:      $testsPath."
     Write-Host "Output path:     $testOutput."
@@ -38,7 +36,7 @@ If (Get-Variable -Name "projectRoot" -ErrorAction "SilentlyContinue") {
 
 
     # Invoke Pester tests
-    $params = @{
+    <#$params = @{
         Path         = $([System.IO.Path]::Combine($projectRoot, "tests"))
         OutputFormat = "NUnitXml"
         OutputFile   = $([System.IO.Path]::Combine($projectRoot, "TestsResults.xml"))
@@ -46,28 +44,11 @@ If (Get-Variable -Name "projectRoot" -ErrorAction "SilentlyContinue") {
     }
     $res = Invoke-Pester @params
     If ($res.FailedCount -gt 0) { Throw "$($res.FailedCount) tests failed." }
+    #>
 }
 Else {
     Write-Warning -Message "Required variable does not exist: projectRoot."
 }
-
-<#
-If (Get-Variable -Name "projectRoot" -ErrorAction "SilentlyContinue") {
-
-    # Invoke Pester tests and upload results to AppVeyor
-    $res = Invoke-Pester -Path $tests -OutputFormat NUnitXml -OutputFile $output -PassThru
-    If ($res.FailedCount -gt 0) { Throw "$($res.FailedCount) tests failed." }
-    If (Test-Path -Path env:APPVEYOR_JOB_ID) {
-        (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path -Path $output))
-    }
-    Else {
-        Write-Warning -Message "Cannot find: APPVEYOR_JOB_ID"
-    }
-}
-Else {
-    Write-Warning -Message "Required variable does not exist: projectRoot."
-}
-#>
 
 # Line break for readability in AppVeyor console
 Write-Host ""

@@ -42,7 +42,7 @@ jobs:
           . .\ci\Build.ps1
 
       # Update version number in VERSION.txt
-      - name: Update version number
+      - name: Update version number and push to repo
         shell: powershell
         run: |
           . .\ci\Deploy.ps1

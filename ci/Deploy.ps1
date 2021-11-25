@@ -43,7 +43,8 @@ Else {
         # Configure the git environment
         git config --global credential.helper store
         #Add-Content -Path (Join-Path -Path $env:USERPROFILE -ChildPath ".git-credentials") -Value "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
-        git remote set-url --push origin "https://$($GITHUB_ACTOR):$($GITHUB_TOKEN)@github.com/$($GITHUB_REPOSITORY).git"
+        Write-Host "Remote: https://$($env:GITHUB_ACTOR):$($env:GITHUB_TOKEN)@github.com/$($env:GITHUB_REPOSITORY).git"
+        git remote set-url --push origin "https://$($env:GITHUB_ACTOR):$($env:GITHUB_TOKEN)@github.com/$($env:GITHUB_REPOSITORY).git"
         # "https://your_username:$GITHUB_TOKEN@github.com/your/repo"
         git config --global user.email release@stealthpuppy.com
         git config --global user.name "Aaron Parker"
@@ -56,10 +57,8 @@ Else {
         git tag "v$newVersion"
         git status
         git commit -s -m "$newVersion"
-        #git commit -s -m "GitHub validate: $newVersion"
-        Write-Host "Remote: https://$($GITHUB_ACTOR):$($GITHUB_TOKEN)@github.com/$($GITHUB_REPOSITORY).git"
-        git push origin main
-        #Invoke-Process -FilePath "git" -ArgumentList "push origin main"
+
+        Invoke-Process -FilePath "git" -ArgumentList "push origin main"
         Write-Host "$module $newVersion pushed to GitHub." -ForegroundColor Cyan
     }
     catch {
