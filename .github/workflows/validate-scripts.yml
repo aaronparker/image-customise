@@ -5,9 +5,9 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+  #pull_request:
+  #  branches:
+  #    - main
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -31,7 +31,6 @@ jobs:
         shell: powershell
         run: |
           . .\ci\Install.ps1
-          . .\ci\Build.ps1
           . .\ci\Tests.ps1
           . .\ci\Deploy.ps1
 

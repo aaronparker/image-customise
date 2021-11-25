@@ -23,7 +23,7 @@ $ProgressPreference = "SilentlyContinue"
 
 BeforeDiscovery {
     # Get the scripts to test
-    $Scripts = @(Get-ChildItem -Path (Join-Path -Path $ScriptsFolder -ChildPath "*.ps1") -Exclude Invoke-Scripts.ps1 -ErrorAction "SilentlyContinue")
+    $Scripts = @(Get-ChildItem -Path $([System.IO.Path]::Combine($projectRoot, "src")) -ChildPath "*.ps1" -Exclude Invoke-Scripts.ps1 -ErrorAction "SilentlyContinue")
     $testCase = $Scripts | ForEach-Object { @{file = $_ } }
 
     # Get the ScriptAnalyzer rules
