@@ -30,8 +30,8 @@ jobs:
       - name: New release package
         shell: powershell
         run: |
-          . .\ci\New-Package.ps1
-
+          . .\ci\New-Package.ps1 -Verbose
+        
       - name: Upload release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')

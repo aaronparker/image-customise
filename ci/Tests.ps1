@@ -33,18 +33,6 @@ If (Get-Variable -Name "projectRoot" -ErrorAction "SilentlyContinue") {
 
     # Invoke Pester tests
     $res = Invoke-Pester -Configuration $testConfig
-
-
-    # Invoke Pester tests
-    <#$params = @{
-        Path         = $([System.IO.Path]::Combine($projectRoot, "tests"))
-        OutputFormat = "NUnitXml"
-        OutputFile   = $([System.IO.Path]::Combine($projectRoot, "TestsResults.xml"))
-        PassThru     = $True
-    }
-    $res = Invoke-Pester @params
-    If ($res.FailedCount -gt 0) { Throw "$($res.FailedCount) tests failed." }
-    #>
 }
 Else {
     Write-Warning -Message "Required variable does not exist: projectRoot."
