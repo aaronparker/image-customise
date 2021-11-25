@@ -5,11 +5,12 @@
 [OutputType()]
 Param()
 
-If (Get-Variable -Name "projectRoot" -ErrorAction "SilentlyContinue") {
-    # Do something
+If (Test-Path -Path env:GITHUB_WORKSPACE -ErrorAction "SilentlyContinue") {
+    $projectRoot = Resolve-Path -Path $env:GITHUB_WORKSPACE
 }
 Else {
-    Write-Warning -Message "Required variable does not exist: $projectRoot."
+    # Local Testing 
+    $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
 }
 
 # Build the markdown
@@ -46,34 +47,5 @@ $string += "| RUNNER_TEMP | $env:RUNNER_TEMP |"
 $string += "| RUNNER_TOOL_CACHE | $env:RUNNER_TOOL_CACHE |"
 
 # Write $string out to $Path
-$Path = "$projectRoot\ci\Variables.md"
-$string | Out-File -FilePath $Path -Force
-
-
-
-GITHUB_WORKFLOW
-GITHUB_RUN_ID
-GITHUB_RUN_NUMBER
-GITHUB_JOB
-GITHUB_ACTION
-GITHUB_ACTION_PATH
-GITHUB_ACTIONS
-GITHUB_ACTOR
-GITHUB_REPOSITORY
-GITHUB_EVENT_NAME
-GITHUB_EVENT_PATH
-GITHUB_WORKSPACE
-GITHUB_SHA
-GITHUB_REF
-GITHUB_REF_NAME
-GITHUB_REF_PROTECTED
-GITHUB_REF_TYPE
-GITHUB_HEAD_REF
-GITHUB_BASE_REF
-GITHUB_SERVER_URL
-GITHUB_API_URL
-GITHUB_GRAPHQL_URL
-RUNNER_NAME
-RUNNER_OS
-RUNNER_TEMP
-RUNNER_TOOL_CACHE
+$Path = [System.IO.Path]::Combine($projectRoot, "ci", "Variables.md")
+$string | Out-File -FilePath $Path -Force -ErrorAction "SilentlyContinue"
