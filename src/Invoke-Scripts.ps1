@@ -12,6 +12,9 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $False)]
+    [System.String] $Path = $PSScriptRoot,
+
+    [Parameter(Mandatory = $False)]
     [System.String] $Guid = "f38de27b-799e-4c30-8a01-bfdedc622944",
 
     [Parameter(Mandatory = $False)]
@@ -24,8 +27,8 @@ param (
     [System.String] $RunOn = $(Get-Date -Format "yyyy-MM-dd")
 )
 
-$Version = (Get-ChildItem -Path $PSScriptRoot -Filter "VERSION.txt" -Recurse | Get-Content -Raw)
-Write-Verbose -Message "Execution path: $PSScriptRoot."
+$Version = (Get-ChildItem -Path $Path -Filter "VERSION.txt" -Recurse | Get-Content -Raw)
+Write-Verbose -Message "Execution path: $Path."
 Write-Verbose -Message "Customisation scripts version: $Version."
 
 # Get system properties
@@ -61,18 +64,18 @@ Write-Verbose -Message "   Build: $Build."
 Write-Verbose -Message "   Model: $Model."
 
 # Gather scripts
-try { $AllScripts = @(Get-ChildItem -Path $PSScriptRoot -Filter "*.All.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
-try { $PlatformScripts = @(Get-ChildItem -Path $PSScriptRoot -Filter "*.$Platform.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
-try { $BuildScripts = @(Get-ChildItem -Path $PSScriptRoot -Filter "*.$Build.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
-try { $ModelScripts = @(Get-ChildItem -Path $PSScriptRoot -Filter "*.$Model.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
+try { $AllScripts = @(Get-ChildItem -Path $Path -Filter "*.All.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
+try { $PlatformScripts = @(Get-ChildItem -Path $Path -Filter "*.$Platform.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
+try { $BuildScripts = @(Get-ChildItem -Path $Path -Filter "*.$Build.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
+try { $ModelScripts = @(Get-ChildItem -Path $Path -Filter "*.$Model.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
 
 # Run all scripts
 Write-Verbose -Message "Scripts: $(($AllScripts + $PlatformScripts + $BuildScripts + $ModelScripts).Count)."
 ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScripts)) {
     try {
-        Push-Location -Path $PSScriptRoot
-        Write-Host -Message "Running script: $($script.FullName) from $PSScriptRoot."
-        & $script.FullName -Path $PSScriptRoot
+        Push-Location -Path $Path
+        Write-Host -Message "Running script: $($script.FullName) from $Path."
+        & $script.FullName -Path $Path
     }
     catch {
         Write-Warning -Message "Failed to run script: $($script.FullName)."
