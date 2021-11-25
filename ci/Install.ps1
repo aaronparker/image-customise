@@ -6,14 +6,12 @@
 Param()
 
 # Set variables
-If (Test-Path -Path "$env:GITHUB_WORKSPACE") {
+If (Test-Path -Path env:GITHUB_WORKSPACE -ErrorAction "SilentlyContinue") {
     $projectRoot = Resolve-Path -Path $env:GITHUB_WORKSPACE
-    $module = $env:Module
 }
 Else {
     # Local Testing 
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
-    $module = Split-Path -Path $projectRoot -Leaf
 }
 $tests = Join-Path $projectRoot "tests"
 $output = Join-Path $projectRoot "TestsResults.xml"
@@ -23,7 +21,6 @@ Write-Host ""
 Write-Host "OS version:      $((Get-WmiObject Win32_OperatingSystem).Caption)"
 Write-Host ""
 Write-Host "ProjectRoot:     $projectRoot."
-Write-Host "Project name:    $module."
 Write-Host "Tests path:      $tests."
 Write-Host "Output path:     $output."
 
@@ -37,12 +34,12 @@ Install-PackageProvider -Name "NuGet" -MinimumVersion "2.8.5.208" -Force -ErrorA
 If (Get-PSRepository -Name "PSGallery" | Where-Object { $_.InstallationPolicy -ne "Trusted" }) {
     Set-PSRepository -Name "PSGallery" -InstallationPolicy "Trusted"
 }
-#If ([Version]((Find-Module -Name Pester).Version) -gt (Get-Module -Name Pester).Version) {
-#    Install-Module -Name "Pester" -SkipPublisherCheck -Force -MaximumVersion "4.10.1"
-#}
-If ([Version]((Find-Module -Name PSScriptAnalyzer).Version) -gt (Get-Module -Name PSScriptAnalyzer).Version) {
+If ([Version]((Find-Module -Name "Pester").Version) -gt (Get-Module -Name Pester).Version) {
+    Install-Module -Name "Pester" -SkipPublisherCheck -Force #-MaximumVersion "4.10.1"
+}
+If ([Version]((Find-Module -Name "PSScriptAnalyzer").Version) -gt (Get-Module -Name PSScriptAnalyzer).Version) {
     Install-Module -Name "PSScriptAnalyzer" -SkipPublisherCheck -Force
 }
-If ([Version]((Find-Module -Name posh-git).Version) -gt (Get-Module -Name posh-git).Version) {
+If ([Version]((Find-Module -Name "posh-git").Version) -gt (Get-Module -Name posh-git).Version) {
     Install-Module -Name "posh-git" -Force
 }

@@ -10,11 +10,10 @@
     https://stealthpuppy.com
 #>
 [CmdletBinding()]
-Param (
-    [Parameter(Mandatory = $False)]
-    [System.String] $Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
-)
+param ()
 
+# Run Remove-AppxApps.ps1 in block list mode
+$Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
 Write-Verbose -Message "Execution path: $Path."
 
 # Registry Commands

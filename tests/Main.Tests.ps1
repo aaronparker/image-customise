@@ -6,14 +6,12 @@
 Param()
 
 # Set variables
-If (Test-Path -Path "$env:GITHUB_WORKSPACE") {
+If (Test-Path -Path env:GITHUB_WORKSPACE -ErrorAction "SilentlyContinue") {
     $projectRoot = Resolve-Path -Path $env:GITHUB_WORKSPACE
-    $module = $env:Module
 }
 Else {
     # Local Testing 
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
-    $module = Split-Path -Path $projectRoot -Leaf
 }
 
 # Set $VerbosePreference so full details are sent to the log; Make Invoke-WebRequest faster
@@ -23,7 +21,7 @@ $ProgressPreference = "SilentlyContinue"
 
 BeforeDiscovery {
     # Get the scripts to test
-    $Scripts = @(Get-ChildItem -Path $([System.IO.Path]::Combine($projectRoot, "src")) -ChildPath "*.ps1" -Exclude Invoke-Scripts.ps1 -ErrorAction "SilentlyContinue")
+    $Scripts = @(Get-ChildItem -Path $([System.IO.Path]::Combine($projectRoot, "src", "*.ps1")) -Exclude "Invoke-Scripts.ps1" -ErrorAction "SilentlyContinue")
     $testCase = $Scripts | ForEach-Object { @{file = $_ } }
 
     # Get the ScriptAnalyzer rules

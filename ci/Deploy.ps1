@@ -8,14 +8,12 @@ Param()
 # Line break for readability in the console
 Write-Host ""
 
-If (Test-Path -Path "$env:GITHUB_WORKSPACE") {
+If (Test-Path -Path env:GITHUB_WORKSPACE -ErrorAction "SilentlyContinue") {
     $projectRoot = Resolve-Path -Path $env:GITHUB_WORKSPACE
-    $module = $env:Module
 }
 Else {
     # Local Testing 
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
-    $module = Split-Path -Path $projectRoot -Leaf
 }
     
 # Tests success, push to GitHub
