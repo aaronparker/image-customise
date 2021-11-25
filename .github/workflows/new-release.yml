@@ -1,4 +1,4 @@
-name: Validate customisation scripts
+name: New release package
 
 # Environment variables
 env:
@@ -7,11 +7,8 @@ env:
 # Controls when the action will run. 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - 'src/**'
-      - '!srv/VERSION.txt'
+    tags:
+      - "v*.*.*"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -29,20 +26,17 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Run Pester tests
-      - name: Run Pester tests
+      # Package the scripts into an Intunewin file and zip
+      - name: New release package
         shell: powershell
         run: |
-          . .\ci\Install.ps1
-          . .\ci\Tests.ps1
+          . .\ci\New-Package.ps1
 
-      - name: Output variables
-        shell: powershell
-        run: |
-          . .\ci\Build.ps1
-
-      # Update version number in VERSION.txt
-      - name: Update version number and push to repo
-        shell: powershell
-        run: |
-          . .\ci\Deploy.ps1
+      - name: Upload release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          prerelease: true
+          files: |
+            releases\Invoke-Scripts.intunewin
+            releases\image-customise.zip
