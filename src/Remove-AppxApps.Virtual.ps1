@@ -9,7 +9,7 @@
 [CmdletBinding()]
 param (
     [Parameter()]
-    [System.String] $Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
+    [System.String] $Path = $PSScriptRoot
 )
 
 # Run Remove-AppxApps.ps1 in block list mode

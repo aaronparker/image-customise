@@ -124,7 +124,7 @@ param (
     ),
 
     [Parameter(Mandatory = $False)]
-    [System.String] $Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
+    [System.String] $Path = $PSScriptRoot
 )
 
 begin {

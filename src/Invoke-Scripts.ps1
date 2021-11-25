@@ -24,9 +24,8 @@ param (
     [System.String] $RunOn = $(Get-Date -Format "yyyy-MM-dd")
 )
 
-$Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
-$Version = (Get-ChildItem -Path $Path -Filter "VERSION.txt" -Recurse | Get-Content -Raw)
-Write-Verbose -Message "Execution path: $Path."
+$Version = (Get-ChildItem -Path $PSScriptRoot -Filter "VERSION.txt" -Recurse | Get-Content -Raw)
+Write-Verbose -Message "Execution path: $PSScriptRoot."
 Write-Verbose -Message "Customisation scripts version: $Version."
 
 # Get system properties
@@ -62,17 +61,18 @@ Write-Verbose -Message "   Build: $Build."
 Write-Verbose -Message "   Model: $Model."
 
 # Gather scripts
-try { $AllScripts = @(Get-ChildItem -Path $Path -Filter "*.All.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
-try { $PlatformScripts = @(Get-ChildItem -Path $Path -Filter "*.$Platform.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
-try { $BuildScripts = @(Get-ChildItem -Path $Path -Filter "*.$Build.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
-try { $ModelScripts = @(Get-ChildItem -Path $Path -Filter "*.$Model.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
+try { $AllScripts = @(Get-ChildItem -Path $PSScriptRoot -Filter "*.All.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
+try { $PlatformScripts = @(Get-ChildItem -Path $PSScriptRoot -Filter "*.$Platform.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
+try { $BuildScripts = @(Get-ChildItem -Path $PSScriptRoot -Filter "*.$Build.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
+try { $ModelScripts = @(Get-ChildItem -Path $PSScriptRoot -Filter "*.$Model.ps1" -Recurse -ErrorAction "SilentlyContinue") } catch { Throw $_.Exception.Message }
 
 # Run all scripts
 Write-Verbose -Message "Scripts: $(($AllScripts + $PlatformScripts + $BuildScripts + $ModelScripts).Count)."
 ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScripts)) {
     try {
+        Push-Location -Path $PSScriptRoot
         Write-Verbose -Message "Running script: $($script.FullName)."
-        & $script.FullName -Path $Path
+        & $script.FullName -Path $PSScriptRoot
     }
     catch {
         Write-Warning -Message "Failed to run script: $($script.FullName)."
