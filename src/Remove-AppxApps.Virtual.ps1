@@ -7,8 +7,10 @@
         TWITTER: @stealthpuppy
 #>
 [CmdletBinding()]
-param ()
+param (
+    [Parameter()]
+    [System.Path] $Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
+)
 
 # Run Remove-AppxApps.ps1 in block list mode
-$Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
 & (Join-Path -Path $Path -ChildPath "Remove-AppxApps.ps1") -Operation "AllowList"

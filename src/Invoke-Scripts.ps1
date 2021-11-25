@@ -10,7 +10,7 @@
     TWITTER: @stealthpuppy
 #>
 [CmdletBinding()]
-Param (
+param (
     [Parameter(Mandatory = $False)]
     [System.String] $Guid = "f38de27b-799e-4c30-8a01-bfdedc622944",
 
@@ -21,13 +21,11 @@ Param (
     [System.String] $DisplayName = "Install detection for image customisations",
     
     [Parameter(Mandatory = $False)]
-    [System.String] $RunOn = $(Get-Date -Format "yyyy-MM-dd"),
-    
-    [Parameter(Mandatory = $False)]
-    [System.String] $Version = (Get-ChildItem -Path $Path -Filter "VERSION.txt" -Recurse | Get-Content -Raw)
+    [System.String] $RunOn = $(Get-Date -Format "yyyy-MM-dd")
 )
 
 $Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
+$Version = (Get-ChildItem -Path $Path -Filter "VERSION.txt" -Recurse | Get-Content -Raw)
 Write-Verbose -Message "Execution path: $Path."
 Write-Verbose -Message "Customisation scripts version: $Version."
 
@@ -74,7 +72,7 @@ Write-Verbose -Message "Scripts: $(($AllScripts + $PlatformScripts + $BuildScrip
 ForEach ($script in ($AllScripts + $PlatformScripts + $BuildScripts + $ModelScripts)) {
     try {
         Write-Verbose -Message "Running script: $($script.FullName)."
-        & $script.FullName
+        & $script.FullName -Path $Path
     }
     catch {
         Write-Warning -Message "Failed to run script: $($script.FullName)."

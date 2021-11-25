@@ -50,7 +50,7 @@
             https://stealthpuppy.com
 #>
 [CmdletBinding(SupportsShouldProcess = $True, DefaultParameterSetName = "BlockList")]
-Param (
+param (
     [Parameter(Mandatory = $False, ParameterSetName = "BlockList", HelpMessage = "Specify whether the operation is a BlockList or AllowList.")]
     [Parameter(Mandatory = $False, ParameterSetName = "AllowList", HelpMessage = "Specify whether the operation is a BlockList or AllowList.")]
     [ValidateSet('BlockList', 'AllowList')]
@@ -127,7 +127,7 @@ Param (
     [System.String] $Path = $(Split-Path -Path $script:MyInvocation.MyCommand.Path -Parent)
 )
 
-Begin {
+begin {
     Write-Verbose -Message "Execution path: $Path."
     
     #region Functions
@@ -207,7 +207,7 @@ Begin {
     }
 }
 
-Process {
+process {
     # Remove the apps; Walk through each package in the array
     ForEach ($app in $packagesToRemove) {
            
@@ -262,4 +262,4 @@ Process {
     }
 }
 
-End {}
+end {}
