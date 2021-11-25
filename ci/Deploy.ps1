@@ -1,6 +1,6 @@
 <#
     .SYNOPSIS
-        AppVeyor pre-deploy script.
+        Update version number and push to GitHub
 #> 
 [OutputType()]
 Param()
@@ -42,10 +42,7 @@ Else {
 
         # Configure the git environment
         git config --global credential.helper store
-        #Add-Content -Path (Join-Path -Path $env:USERPROFILE -ChildPath ".git-credentials") -Value "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
-        Write-Host "Remote: https://$($env:GITHUB_ACTOR):$($env:GITHUB_TOKEN)@github.com/$($env:GITHUB_REPOSITORY).git"
         git remote set-url --push origin "https://$($env:GITHUB_ACTOR):$($env:GITHUB_TOKEN)@github.com/$($env:GITHUB_REPOSITORY).git"
-        # "https://your_username:$GITHUB_TOKEN@github.com/your/repo"
         git config --global user.email release@stealthpuppy.com
         git config --global user.name "Aaron Parker"
         git config --global core.autocrlf true
@@ -57,16 +54,15 @@ Else {
         git tag "v$newVersion"
         git status
         git commit -s -m "$newVersion"
-
         Invoke-Process -FilePath "git" -ArgumentList "push origin main"
-        Write-Host "$module $newVersion pushed to GitHub." -ForegroundColor Cyan
     }
     catch {
         # Sad panda; it broke
         Write-Warning -Message "Push to GitHub failed."
         Throw $_
     }
+    Write-Host "$module $newVersion pushed to GitHub."
 #}
 
-# Line break for readability in AppVeyor console
+# Line break for readability in console
 Write-Host ""

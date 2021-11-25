@@ -1,6 +1,6 @@
 <#
     .SYNOPSIS
-        AppVeyor tests script.
+        Tests script.
 #>
 [OutputType()]
 Param()
@@ -50,5 +50,5 @@ Else {
     Write-Warning -Message "Required variable does not exist: projectRoot."
 }
 
-# Line break for readability in AppVeyor console
+# Line break for readability in console
 Write-Host ""

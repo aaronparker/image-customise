@@ -1,6 +1,6 @@
 <#
     .SYNOPSIS
-        AppVeyor install script.
+        Install script.
 #>
 [OutputType()]
 Param()
@@ -24,7 +24,7 @@ Write-Host "ProjectRoot:     $projectRoot."
 Write-Host "Tests path:      $tests."
 Write-Host "Output path:     $output."
 
-# Line break for readability in AppVeyor console
+# Line break for readability in console
 Write-Host ""
 Write-Host "PowerShell Version:" $PSVersionTable.PSVersion.ToString()
 

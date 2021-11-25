@@ -1,6 +1,6 @@
 <#
     .SYNOPSIS
-        AppVeyor build script.
+        Build script.
 #>
 [OutputType()]
 Param()

@@ -55,16 +55,9 @@ jobs:
 
       - name: Upload release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        #if: startsWith(github.ref, 'refs/tags/')
         with:
           prerelease: true
           files: |
             releases\Invoke-Scripts.intunewin
             releases\image-customise.zip
-
-#      - name: Push to repo
-#        uses: actions-x/commit@v2
-#        with:
-#          branch: main
-#          name: GitHubActions
-#          email: actions@stealthpuppy.com

@@ -1,3 +1,3 @@
-# AppVeyor Continuous Integration scripts
+# Continuous Integration scripts
 
-The scripts are run by AppVeyor when an update is pushed to this repository.
+The scripts are run by GitHub workflows when an update is pushed to this repository.
