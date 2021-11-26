@@ -12,5 +12,5 @@ All scripts should be invoked by `src\Invoke-Scripts.ps1` so that the scripts fo
 
 * Scripts to run on all platforms - scripts named `*.All.ps1`
 * Windows 10/11 vs. Windows Server - scripts named `*.Server.ps1` or `*.Client.ps1`
-* Windows 10/11 or Windows Server build - scripts named `*.{Build}.ps1` (e.g., `*.18362.ps1`)
+* Windows 10/11 or Windows Server build - scripts named `*.{Build}.ps1` (e.g., `*.19042.ps1`)
 * Virtual machines - scripts named `*.Virtual.ps1`
