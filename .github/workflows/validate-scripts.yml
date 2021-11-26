@@ -40,7 +40,7 @@ jobs:
           git_commit_gpgsign: true
           git_config_global: true
           git_tag_gpgsign: true
-          git_push_gpgsign: true
+          git_push_gpgsign: false
           git_committer_name: Aaron Parker
           git_committer_email: aaron@stealthpuppy.com
 
