@@ -51,11 +51,6 @@ jobs:
           . .\ci\Install.ps1
           . .\ci\Tests.ps1
 
-      - name: Output variables
-        shell: powershell
-        run: |
-          . .\ci\Build.ps1
-
       # Update version number in VERSION.txt
       - name: Update version number and push to repo
         shell: powershell

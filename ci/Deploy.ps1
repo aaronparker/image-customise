@@ -33,7 +33,7 @@ catch {
 try {
     # Set up a path to the git.exe cmd, import posh-git to give us control over git
     $env:Path += ";$env:ProgramFiles\Git\cmd"
-    Import-Module posh-git -ErrorAction Stop
+    Import-Module posh-git -ErrorAction "Stop"
 
     # Dot source Invoke-Process.ps1. Prevent 'RemoteException' error when running specific git commands
     . $projectRoot\ci\Invoke-Process.ps1
@@ -49,7 +49,6 @@ try {
     # Push changes to GitHub
     Invoke-Process -FilePath "git" -ArgumentList "checkout main"
     git add --all
-    git tag "v$newVersion"
     git status
     git commit -s -m "$newVersion"
     Invoke-Process -FilePath "git" -ArgumentList "push origin main"
