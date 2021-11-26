@@ -41,8 +41,8 @@ try {
     # Configure the git environment
     git config --global credential.helper store
     git remote set-url --push origin "https://$($env:GITHUB_ACTOR):$($env:GITHUB_TOKEN)@github.com/$($env:GITHUB_REPOSITORY).git"
-    git config --global user.email release@stealthpuppy.com
-    git config --global user.name "Aaron Parker"
+    #git config --global user.email aaron@stealthpuppy.com
+    #git config --global user.name "Aaron Parker"
     git config --global core.autocrlf true
     git config --global core.safecrlf false
 
