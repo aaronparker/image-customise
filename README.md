@@ -2,6 +2,8 @@
 
 ![Build status](https://github.com/aaronparker/image-customise/actions/workflows/validate-scripts.yml/badge.svg)
 
+[![PSScriptAnalyzer](https://github.com/aaronparker/image-customise/actions/workflows/powershell-analysis.yml/badge.svg)](https://github.com/aaronparker/image-customise/actions/workflows/powershell-analysis.yml)
+
 The scripts in `/src` are used to customise a Windows 10/11, Windows Server 2016/2019/2022 image with default user customisations, in-box application removal/updates, and OS configurations. Aimed at deployment for physical PCs and virtual desktop gold images, the customisations will also work for Windows Server infrastructure roles.
 
 Documentation is found here: [https://stealthpuppy.com/image-customise/](https://stealthpuppy.com/image-customise/).

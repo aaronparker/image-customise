@@ -7,10 +7,7 @@
 
 #>
 [CmdletBinding()]
-param (
-    [Parameter(Mandatory = $False)]
-    [System.String] $Path = "$Env:Temp\Intune"
-)
+param ()
 
 If (Test-Path -Path env:GITHUB_WORKSPACE -ErrorAction "SilentlyContinue") {
     $projectRoot = Resolve-Path -Path $env:GITHUB_WORKSPACE
