@@ -1,0 +1,57 @@
+{
+    "MininumBuild": "10.0.14393",
+    "Registry": {
+        "Type": "Direct",
+        "Set": [
+            {
+                "path": "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\FontSubstitutes",
+                "name": "MS Shell Dlg",
+                "value": "Tahoma",
+                "type": "String"
+            },
+            {
+                "path": "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\FontSubstitutes",
+                "name": "MS Shell Dlg 2",
+                "value": "Tahoma",
+                "type": "String"
+            },
+            {
+                "path": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
+                "name": "DisableEdgeDesktopShortcutCreation",
+                "value": 1,
+                "type": "DWord"
+            }
+        ]
+    },
+    "Paths": {
+        "Remove": [
+            "$env:PUBLIC\\Music\\Sample Music",
+            "$env:PUBLIC\\Pictures\\Sample Pictures",
+            "$env:PUBLIC\\Videos\\Sample Videos",
+            "$env:PUBLIC\\Recorded TV\\Sample Media",
+            "$env:SystemDrive\\Logs"
+        ]
+    },
+    "Features": {
+        "Disable": [
+            "Printing-XPSServices-Features",
+            "SMB1Protocol",
+            "WorkFolders-Client",
+            "FaxServicesClientPackage",
+            "WindowsMediaPlayer"
+        ]
+    },
+    "Capabilities": {
+        "Remove": [
+            "App.Support.QuickAssist~~~~0.0.1.0",
+            "MathRecognizer~~~~0.0.1.0",
+            "Media.WindowsMediaPlayer~~~~0.0.12.0",
+            "XPS.Viewer~~~~0.0.1.0"
+        ]
+    },
+    "Packages": {
+        "Remove": [
+            "Microsoft-Windows-MediaPlayer-Package*"
+        ]
+    }
+}

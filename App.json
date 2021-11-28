@@ -8,8 +8,8 @@
         "IconFile": "https://raw.githubusercontent.com/Insentra/intune-icons/main/icons/Package.png"
     },
     "Information": {
-        "DisplayName": "stealthpuppy Image Customisations 2111.24.71",
-        "Description": "Installs image customisations for Windows 10/11.",
+        "DisplayName": "Windows Customised Defaults 2111.26.40",
+        "Description": "Default user and system settings (including default Start menu layout) for Windows 10/11 PCs provisioned via Windows Autopilot. Ensure this package is assigned in the Enrolment Status Page to enable install before user sign-in.",
         "Publisher": "stealthpuppy",
         "InformationURL": "https://stealthpuppy.com/image-customise/",
         "PrivacyURL": "https://stealthpuppy.com/image-customise/",
@@ -17,7 +17,7 @@
     },
     "Program": {
         "InstallCommand": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy RemoteSigned -File .\\Invoke-Scripts.ps1",
-        "UninstallCommand": "",
+        "UninstallCommand": "reg delete HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\f38de27b-799e-4c30-8a01-bfdedc622944",
         "InstallExperience": "system",
         "DeviceRestartBehavior": "suppress"
     },
@@ -33,7 +33,7 @@
             "KeyPath": "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\f38de27b-799e-4c30-8a01-bfdedc622944",
             "ValueName": "DisplayVersion",
             "Operator": "greaterThanOrEqual",
-            "Value": "2111.24.71",
+            "Value": "2111.26.40",
             "Check32BitOn64System": "false"
         }
     ],

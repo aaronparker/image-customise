@@ -1,0 +1,176 @@
+{
+    "MininumBuild": "10.0.14393",
+    "Registry": {
+        "Type": "DefaultProfile",
+        "Set": [
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                "name": "EnableBlurBehind",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
+                "name": "ShellState",
+                "value": "240000003C2800000000000000000000",
+                "type": "Binary"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "IconsOnly",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "ListviewAlphaSelect",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "ListviewShadow",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "ShowCompColor",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "ShowInfoTip",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "TaskbarAnimations",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\VisualEffects",
+                "name": "VisualFXSetting",
+                "value": 3,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\DWM",
+                "name": "EnableAeroPeek",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\DWM",
+                "name": "AlwaysHibernateThumbnails",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Control Panel\\Desktop",
+                "name": "DragFullWindows",
+                "value": "0",
+                "type": "String"
+            },
+            {
+                "path": "HKCU:\\Control Panel\\Desktop",
+                "name": "UserPreferencesMask",
+                "value": "9032078010000000",
+                "type": "Binary"
+            },
+            {
+                "path": "HKCU:\\Control Panel\\Desktop\\WindowMetrics",
+                "name": "MinAnimate",
+                "value": "0",
+                "type": "String"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\StorageSense\\Parameters\\StoragePolicy",
+                "name": "01",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                "name": "SubscribedContent-338393Enabled",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                "name": "SubscribedContent-353694Enabled",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                "name": "SubscribedContent-353696Enabled",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                "name": "SubscribedContent-338388Enabled",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                "name": "SubscribedContent-338389Enabled",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                "name": "SystemPaneSuggestionsEnabled",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Control Panel\\International\\User Profile",
+                "name": "HttpAcceptLanguageOptOut",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.Windows.Photos_8wekyb3d8bbwe",
+                "name": "Disabled",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.Windows.Photos_8wekyb3d8bbwe",
+                "name": "DisabledByUser",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.SkypeApp_kzf8qxf38zg5c",
+                "name": "Disabled",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.SkypeApp_kzf8qxf38zg5c",
+                "name": "DisabledByUser",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.YourPhone_8wekyb3d8bbwe",
+                "name": "Disabled",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.YourPhone_8wekyb3d8bbwe",
+                "name": "DisabledByUser",
+                "value": 1,
+                "type": "DWord"
+            }
+        ]
+    }
+}

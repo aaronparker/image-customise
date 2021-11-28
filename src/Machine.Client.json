@@ -1,0 +1,13 @@
+{
+    "MininumBuild": "10.0.14393",
+    "Registry": {
+        "Set": [
+            {
+                "path": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
+                "name": "DisableEdgeDesktopShortcutCreation",
+                "value": 1,
+                "type": "DWord"
+            }
+        ]
+    }
+}

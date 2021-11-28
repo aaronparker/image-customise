@@ -224,17 +224,14 @@ process {
         If ($package) {
             If ($PSCmdlet.ShouldProcess($package.PackageFullName, "Remove User app")) {
                 try {
+                    $Value = "Removed"; $Status = 0
                     $package | Remove-AppxPackage -ErrorAction "SilentlyContinue"
                 }
                 catch [System.Exception] {
                     Write-Warning -Message "$($MyInvocation.MyCommand): Failed to remove: [$($package.PackageFullName)]."
-                    Throw $_.Exception.Message
+                    $Value = "Failed"; $Status = 1
                 }
-                finally {
-                    $removedPackage = New-Object -TypeName System.Management.Automation.PSObject
-                    $removedPackage | Add-Member -Type "NoteProperty" -Name 'RemovedPackage' -Value $app
-                    Write-Output -InputObject $removedPackage
-                }
+                Write-Output -InputObject ([PSCustomObject]@{Name = $package.PackageFullName; Value = $Value; Status = $Status })
             }
         }
 
@@ -244,18 +241,15 @@ process {
             If ($package) {
                 If ($PSCmdlet.ShouldProcess($package.PackageName, "Remove Provisioned app")) {
                     try {
+                        $Value = "Removed"; $Status = 0
                         $action = Remove-AppxProvisionedPackage -Online -PackageName $package.PackageName -ErrorAction "SilentlyContinue"
                     }
                     catch [System.Exception] {
                         Write-Warning -Message "$($MyInvocation.MyCommand): Failed to remove: [$($package.PackageName)]."
-                        Throw $_.Exception.Message
+                        $Value = "Failed"; $Status = 1
                     }
-                    finally {
-                        $removedPackage = New-Object -TypeName System.Management.Automation.PSObject
-                        $removedPackage | Add-Member -Type "NoteProperty" -Name 'RemovedProvisionedPackage' -Value $app
-                        Write-Output -InputObject $removedPackage
-                        If ($action.RestartNeeded -eq $True) { Write-Warning -Message "$($MyInvocation.MyCommand): Reboot required: [$($package.PackageName)]" }
-                    }
+                    Write-Output -InputObject ([PSCustomObject]@{Name = $package.PackageFullName; Value = $Value; Status = $Status })
+                    If ($action.RestartNeeded -eq $True) { Write-Warning -Message "$($MyInvocation.MyCommand): Reboot required: [$($package.PackageName)]" }
                 }
             }
         }

@@ -1,0 +1,134 @@
+{
+    "MininumBuild": "10.0.14393",
+    "Registry": {
+        "Type": "DefaultProfile",
+        "Set": [
+            {
+                "path": "HKCU:\\Software\\Microsoft\\TabletTip\\1.7",
+                "name": "TipbandDesiredVisibility",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Network\\Persistent Connections",
+                "name": "SaveConnections",
+                "value": "No",
+                "Type": "String"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo",
+                "name": "Enabled",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\AppHost",
+                "name": "EnableWebContentEvaluation",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                "name": "SystemPaneSuggestionsEnabled",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Accent",
+                "name": "AccentColor",
+                "value": 4289992518,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Accent",
+                "name": "AccentPalette",
+                "value": "86CAFF005FB2F2001E91EA000063B10000427500002D4F000020380000CC6A00",
+                "Type": "String"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "LaunchTo",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "MMTaskbarGlomLevel",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "SeparateProcess",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "TaskbarGlomLevel",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "TaskbarDa",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "TaskbarMn",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced\\People",
+                "name": "PeopleBand",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\PenWorkspace",
+                "name": "PenWorkspaceButtonDesiredVisibility",
+                "value": 0,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+                "name": "SearchboxTaskbarMode",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                "name": "EnableTransparency",
+                "value": "0",
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\DWM",
+                "name": "AccentColor",
+                "value": 4289815296,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\DWM",
+                "name": "ColorizationAfterglow",
+                "value": 3288359857,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\DWM",
+                "name": "ColorizationColor",
+                "value": 3288359857,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\DWM",
+                "name": "ColorPrevalence",
+                "value": 1,
+                "type": "DWord"
+            }
+        ]
+    }
+}

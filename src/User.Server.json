@@ -1,0 +1,34 @@
+{
+    "MininumBuild": "10.0.14393",
+    "Registry": {
+        "Type": "DefaultProfile",
+        "Set": [
+            {
+                "path": "HKCU:\\Software\\Microsoft\\ServerManager",
+                "name": "DoNotOpenServerManagerAtLogon",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                "name": "EnableBlurBehind",
+                "value": 1,
+                "Type": "DWord"
+            }
+        ]
+    },
+    "StartMenu": {
+        "Type": "Server",
+        "Feature": "RDS-RD-Server",
+        "Exists": "WindowsRDSStartMenuLayout.xml",
+        "NotExists": "WindowsServerStartMenuLayout.xml"
+    },
+    "Paths": {
+        "Copy": [
+            {
+                "Source": "desktop-config.json",
+                "Destination": "$env:SystemDrive\\Users\\Default\\AppData\\Roaming\\Microsoft\\Teams"
+            }
+        ]
+    }
+}
