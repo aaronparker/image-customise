@@ -17,8 +17,6 @@ Else {
 # Set $VerbosePreference so full details are sent to the log; Make Invoke-WebRequest faster
 #$VerbosePreference = "Continue"
 $ProgressPreference = "SilentlyContinue"
-Push-Location -Path $([System.IO.Path]::Combine($projectRoot, "src")
-
 
 BeforeDiscovery {
     # Get the scripts to test
@@ -66,10 +64,12 @@ Describe "Script execution validation" -Tag "Windows" -ForEach $Scripts {
     }
 
     Context "Validate <script.Name>." {
+        Push-Location -Path $([System.IO.Path]::Combine($projectRoot, "src"))
         It "<script.Name> should execute OK" {
             Write-Host "Running script: $($script.FullName)."
             $Result = . $script.FullName -Verbose
             $Result | Should -Be 0
         }
+        Pop-Location
     }
 }
