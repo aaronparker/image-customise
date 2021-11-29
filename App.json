@@ -16,8 +16,8 @@
         "Notes": "Source: https://github.com/aaronparker/image-customise"
     },
     "Program": {
-        "InstallCommand": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy RemoteSigned -File .\\Invoke-Scripts.ps1",
-        "UninstallCommand": "reg delete HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\f38de27b-799e-4c30-8a01-bfdedc622944",
+        "InstallCommand": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy RemoteSigned -File .\\Install-Defaults.ps1",
+        "UninstallCommand": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy RemoteSigned -File .\\Remove-Defaults.ps1",
         "InstallExperience": "system",
         "DeviceRestartBehavior": "suppress"
     },

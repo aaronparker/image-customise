@@ -16,7 +16,7 @@ try {
     reg delete "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{$Guid}" /f > $Null
 }
 catch {
-    $_.Exception.Message
+    $_
     Exit 1
 }
 Exit 0

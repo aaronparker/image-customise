@@ -6,6 +6,4 @@ Designed for use with deploying physical PCs and virtual desktop gold images, th
 
 Documentation on how to use and implement these scripts is found here: [https://stealthpuppy.com/image-customise/](https://stealthpuppy.com/image-customise/).
 
-![Build status](https://github.com/aaronparker/image-customise/actions/workflows/validate-scripts.yml/badge.svg)
-
-[![PSScriptAnalyzer](https://github.com/aaronparker/image-customise/actions/workflows/powershell-analysis.yml/badge.svg)](https://github.com/aaronparker/image-customise/actions/workflows/powershell-analysis.yml)
+![Build status](https://github.com/aaronparker/image-customise/actions/workflows/validate-scripts.yml/badge.svg) [![Twitter Follow](https://img.shields.io/twitter/follow/stealthpuppy?logo=twitter&style=flat-square)](https://twitter.com/stealthpuppy?ref_src=twsrc%5Etfw)

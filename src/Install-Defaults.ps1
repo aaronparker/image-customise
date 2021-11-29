@@ -30,7 +30,7 @@ param (
     [System.String] $Helplink = "https://stealthpuppy.com/image-customise/",
 
     [Parameter(Mandatory = $False)]
-    [System.String[]] $Properties = @("Registry", "Paths", "StartMenu", "Features", "Capabilities", "Packages", "Apps")
+    [System.String[]] $Properties = @("General", "Registry", "Paths", "StartMenu", "Features", "Capabilities", "Packages", "Apps")
 )
 
 #region Functions
@@ -397,32 +397,49 @@ Function Copy-Path ($Path) {
 }
 #endregion
 
+# Configure working path
+If ($Path.Length -eq 0) { $WorkingPath = $PWD.Path } Else { $WorkingPath = $Path }
+Push-Location -Path $WorkingPath
+Write-Verbose -Message "Execution path: $WorkingPath."
 
 try {
-    Push-Location -Path $Path
-    $Version = Get-ChildItem -Path $Path -Filter "VERSION.txt" -Recurse | Get-Content -Raw
-    Write-Verbose -Message "Execution path: $Path."
-    Write-Verbose -Message "Customisation scripts version: $Version."
-
     # Setup logging
     New-ScriptEventLog -EventLog $Project -Property $Properties
+    
+    # Start logging
+    $PSProcesses = Get-CimInstance -ClassName "Win32_Process" -Filter "Name = 'powershell.exe'" | Select-Object -Property "CommandLine"
+    ForEach ($Process in $PSProcesses) {
+        $Object = ([PSCustomObject]@{Name = "CommandLine"; Value = $Process.CommandLine; Status = 0 })
+        Write-Log -EventLog $Project -Property "General" -Object $Object
+    }
 
     # Get system properties
     $Platform = Get-Platform
-    #$Build = ([System.Environment]::OSVersion.Version).Build
-    $Build = [System.Environment]::OSVersion.Version
+    Write-Verbose -Message "Platform: $Platform."
+    Write-Log -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Platform"; Value = $Platform; Status = 0 })
+
+    $Build = ([System.Environment]::OSVersion.Version).Build
+    $Version = [System.Environment]::OSVersion.Version
+    Write-Verbose -Message "   Build: $Build."
+    Write-Log -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Build/version"; Value = $Version; Status = 0 })
+    
     $Model = Get-Model
+    Write-Verbose -Message "   Model: $Model."
+    Write-Log -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Model"; Value = $Model; Status = 0 })
+    
     $OSName = Get-OSName
     Write-Verbose -Message "      OS: $OSName."
-    Write-Verbose -Message "Platform: $Platform."
-    Write-Verbose -Message "   Build: $Build."
-    Write-Verbose -Message "   Model: $Model."
+    Write-Log -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "OSName"; Value = $OSName; Status = 0 })
+    
+    $Version = Get-ChildItem -Path $WorkingPath -Filter "VERSION.txt" -Recurse | Get-Content -Raw
+    Write-Verbose -Message "Customisation scripts version: $Version."
+    Write-Log -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Version"; Value = $Version; Status = 0 })
 
     #region Gather configs and run
-    $AllConfigs = @(Get-ChildItem -Path $Path -Filter "*.All.json" -Recurse -ErrorAction "SilentlyContinue")
-    $PlatformConfigs = @(Get-ChildItem -Path $Path -Filter "*.$Platform.json" -Recurse -ErrorAction "SilentlyContinue")
-    $BuildConfigs = @(Get-ChildItem -Path $Path -Filter "*.$Build.json" -Recurse -ErrorAction "SilentlyContinue")
-    $ModelConfigs = @(Get-ChildItem -Path $Path -Filter "*.$Model.json" -Recurse -ErrorAction "SilentlyContinue")
+    $AllConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.All.json" -Recurse -ErrorAction "SilentlyContinue")
+    $PlatformConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.$Platform.json" -Recurse -ErrorAction "SilentlyContinue")
+    $BuildConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.$Build.json" -Recurse -ErrorAction "SilentlyContinue")
+    $ModelConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.$Model.json" -Recurse -ErrorAction "SilentlyContinue")
     Write-Verbose -Message "   Found: $(($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs).Count) configs."
     ForEach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs)) {
 
@@ -430,7 +447,7 @@ try {
         $Settings = Get-Settings -Path $Config.FullName
 
         # Implement the settings only if the local build is greater or equal that what's specified in the JSON
-        If ([System.Version]$Build -ge [System.Version]$Settings.MininumBuild) {
+        If ([System.Version]$Version -ge [System.Version]$Settings.MininumBuild) {
 
             # Implement each setting in the JSON
             $Results = Remove-Feature -Feature $Settings.Features.Disable
@@ -439,8 +456,8 @@ try {
             $Results = Remove-Capability -Capability $Settings.Capabilities.Remove
             Write-Log -EventLog $Project -Property "Capabilities" -Object $Results
 
-            $Results = Remove-Package -Package $Settings.Packages.Remove
-            Write-Log -EventLog $Project -Property "Packages" -Object $Results
+            #$Results = Remove-Package -Package $Settings.Packages.Remove
+            #Write-Log -EventLog $Project -Property "Packages" -Object $Results
 
             $Results = Remove-Path -Path $Settings.Paths.Remove
             Write-Log -EventLog $Project -Property "Paths" -Object $Results
@@ -464,15 +481,15 @@ try {
             Switch ($Settings.StartMenu.Type) {
                 "Server" {
                     If ((Get-WindowsFeature -Name $Settings.StartMenu.Feature).InstallState -eq "Installed") {
-                        $File = $(Join-Path -Path $Path -ChildPath $Settings.StartMenu.Exists)
+                        $File = $(Join-Path -Path $WorkingPath -ChildPath $Settings.StartMenu.Exists)
                     }
                     Else {
-                        $File = $(Join-Path -Path $Path -ChildPath $Settings.StartMenu.NotExists)
+                        $File = $(Join-Path -Path $WorkingPath -ChildPath $Settings.StartMenu.NotExists)
                     }
                     $Results = Import-StartMenu -StartMenuLayout $File
                 }
                 "Client" {
-                    $Results = Import-StartMenu -StartMenuLayout $(Join-Path -Path $Path -ChildPath $Settings.StartMenu.$OSName)
+                    $Results = Import-StartMenu -StartMenuLayout $(Join-Path -Path $WorkingPath -ChildPath $Settings.StartMenu.$OSName)
                     
                 }
                 Default {
@@ -490,14 +507,16 @@ try {
     # If on a client OS, run the script to remove AppX / UWP apps
     If ($Platform -eq "Client") {
         Switch ($Model) {
-            "Physical" { $Apps = & (Join-Path -Path $Path -ChildPath "Remove-AppxApps.ps1") -Operation "BlockList" }
-            "Virtual" { $Apps = & (Join-Path -Path $Path -ChildPath "Remove-AppxApps.ps1") -Operation "AllowList" }
+            "Physical" { $Apps = & (Join-Path -Path $WorkingPath -ChildPath "Remove-AppxApps.ps1") -Operation "BlockList" }
+            "Virtual" { $Apps = & (Join-Path -Path $WorkingPath -ChildPath "Remove-AppxApps.ps1") -Operation "AllowList" }
         }
         Write-Log -EventLog $Project -Property "AppX" -Object $Apps
     }
 }
 catch {
-    $_.Exception.Message
+    $Object = ([PSCustomObject]@{Name = "Result"; Value = $_.Exception.Message; Status = 1 })
+    Write-Log -EventLog $Project -Property "General" -Object $Object
+    $_
     Return 1
 }
 
@@ -509,4 +528,7 @@ reg add "$Key\{$Guid}" /v "DisplayVersion" /d $Version /t REG_SZ /f 4> $Null
 reg add "$Key\{$Guid}" /v "RunOn" /d $RunOn /t REG_SZ /f 4> $Null
 reg add "$Key\{$Guid}" /v "SystemComponent" /d 1 /t REG_DWORD /f 4> $Null
 reg add "$Key\{$Guid}" /v "HelpLink" /d $Helplink /t REG_SZ /f 4> $Null
+
+$Object = ([PSCustomObject]@{Name = "Result"; Value = "Success"; Status = 0 })
+Write-Log -EventLog $Project -Property "General" -Object $Object
 Return 0
