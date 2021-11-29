@@ -66,7 +66,8 @@ Describe "Script execution validation" -Tag "Windows" -ForEach $Scripts {
 
     Context "Validate <script.Name>." {
         It "<script.Name> should execute OK" {
-            { . $script.FullName -Path $([System.IO.Path]::Combine($projectRoot, "src")) -Verbose } | Should -Be 0
+            Write-Host "Running script: $($script.FullName)."
+            { . $script.FullName -Verbose } | Should -Be 0
         }
     }
 }
