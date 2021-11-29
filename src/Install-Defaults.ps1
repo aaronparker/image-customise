@@ -514,6 +514,7 @@ try {
     }
 }
 catch {
+    # Write last entry to the event log and output failure
     $Object = ([PSCustomObject]@{Name = "Result"; Value = $_.Exception.Message; Status = 1 })
     Write-Log -EventLog $Project -Property "General" -Object $Object
     $_
@@ -522,13 +523,14 @@ catch {
 
 # Set uninstall registry value for detecting as an installed application
 $Key = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
-reg add "$Key\{$Guid}" /v "DisplayName" /d $Project /t REG_SZ /f 4> $Null
-reg add "$Key\{$Guid}" /v "Publisher" /d $Publisher /t REG_SZ /f 4> $Null
-reg add "$Key\{$Guid}" /v "DisplayVersion" /d $Version /t REG_SZ /f 4> $Null
-reg add "$Key\{$Guid}" /v "RunOn" /d $RunOn /t REG_SZ /f 4> $Null
-reg add "$Key\{$Guid}" /v "SystemComponent" /d 1 /t REG_DWORD /f 4> $Null
-reg add "$Key\{$Guid}" /v "HelpLink" /d $Helplink /t REG_SZ /f 4> $Null
+Set-ItemProperty -Path "$Key\{$Guid}" -Name "DisplayName" -Value $Project -Type "String" | Out-Null
+Set-ItemProperty -Path "$Key\{$Guid}" -Name "Publisher" -Value $Publisher -Type "String" | Out-Null
+Set-ItemProperty -Path "$Key\{$Guid}" -Name "DisplayVersion" -Value $Version -Type "String" | Out-Null
+Set-ItemProperty -Path "$Key\{$Guid}" -Name "RunOn" -Value $RunOn -Type "String" | Out-Null
+Set-ItemProperty -Path "$Key\{$Guid}" -Name "SystemComponent" -Value 1 -Type "DWord" | Out-Null
+Set-ItemProperty -Path "$Key\{$Guid}" -Name "HelpLink" -Value $HelpLink -Type "String" | Out-Null
 
+# Write last entry to the event log and output success
 $Object = ([PSCustomObject]@{Name = "Result"; Value = "Success"; Status = 0 })
 Write-Log -EventLog $Project -Property "General" -Object $Object
 Return 0
