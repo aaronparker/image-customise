@@ -64,12 +64,12 @@ Describe "Script execution validation" -Tag "Windows" -ForEach $Scripts {
     }
 
     Context "Validate <script.Name>." {
-        Push-Location -Path $([System.IO.Path]::Combine($projectRoot, "src"))
         It "<script.Name> should execute OK" {
+            Push-Location -Path $([System.IO.Path]::Combine($projectRoot, "src"))
             Write-Host "Running script: $($script.FullName)."
-            $Result = . $script.FullName -Verbose
+            $Result = . $script.FullName -Path $([System.IO.Path]::Combine($projectRoot, "src")) -Verbose
             $Result | Should -Be 0
+            Pop-Location
         }
-        Pop-Location
     }
 }
