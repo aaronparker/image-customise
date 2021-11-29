@@ -53,5 +53,5 @@ jobs:
         with:
           prerelease: false
           files: |
-            releases\Invoke-Scripts.intunewin
+            releases\Install-Defaults.intunewin
             releases\image-customise.zip
