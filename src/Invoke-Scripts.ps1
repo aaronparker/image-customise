@@ -27,7 +27,7 @@ param (
     [System.String] $Project = "Customised Defaults",
 
     [Parameter(Mandatory = $False)]
-    [System.String] $HelpLink = "https://stealthpuppy.com/image-customise/",
+    [System.String] $Helplink = "https://stealthpuppy.com/image-customise/",
 
     [Parameter(Mandatory = $False)]
     [System.String[]] $Properties = @("Registry", "Paths", "StartMenu", "Features", "Capabilities", "Packages", "Apps")
@@ -44,22 +44,25 @@ Function New-ScriptEventLog ($EventLog, $Property) {
 }
 
 Function Write-Log ($EventLog, $Property, $Object) {
-    Switch ($Object.Status) {
-        0 { $EntryType = "Information" }
-        1 { $EntryType = "Error" }
-        Default { $EntryType = "Information" }
+    ForEach ($Item in $Object) {
+        Write-Verbose -Message "Write-Log: $($Property): $($Item.Name)."
+        Switch ($Item.Status) {
+            0 { $EntryType = "Information" }
+            1 { $EntryType = "Warning" }
+            Default { $EntryType = "Information" }
+        }
+        $params = @{
+            LogName     = $EventLog
+            Source      = $Property
+            EventID     = (100 + [System.Int16]$Item.Status)
+            EntryType   = $EntryType
+            Message     = "$($Item.Name), $($Item.Value), $($Item.Status)"
+            #Category    = 1
+            #RawData   = 10, 20
+            ErrorAction = "SilentlyContinue"
+        }
+        Write-EventLog @params
     }
-    $params = @{
-        LogName     = $EventLog
-        Source      = $Property
-        EventID     = (100 + $Object.Value)
-        EntryType   = $EntryType
-        Message     = "$($Object.Name), $($Object.Value), $($Object.Status)"
-        #Category    = 1
-        #RawData   = 10, 20
-        ErrorAction = "SilentlyContinue"
-    }
-    Write-EventLog @params
 }
 
 Function Get-Platform {
@@ -91,25 +94,25 @@ Function Get-Platform {
 Function Get-OSName {
     Switch -Regex ((Get-WmiObject -Class "Win32_OperatingSystem").Caption) {
         "Microsoft Windows Server 2022*" {
-            $Caption = "Windows2022"
+            $Caption = "Windows2022"; Break
         }
         "Microsoft Windows Server 2019*" {
-            $Caption = "Windows2019"
+            $Caption = "Windows2019"; Break
         }
         "Microsoft Windows Server 2016*" {
-            $Caption = "Windows2016"
+            $Caption = "Windows2016"; Break
         }
         "Microsoft Windows 10 Enterprise for Virtual Desktops" {
-            $Caption = "Windows10"
+            $Caption = "Windows10"; Break
         }
         "Microsoft Windows 11 Enterprise for Virtual Desktops" {
-            $Caption = "Windows10"
+            $Caption = "Windows10"; Break
         }
         "Microsoft Windows 10*" {
-            $Caption = "Windows10"
+            $Caption = "Windows10"; Break
         }
         "Microsoft Windows 11*" {
-            $Caption = "Windows11"
+            $Caption = "Windows11"; Break
         }
         Default {
             $Caption = "Unknown"
@@ -130,6 +133,7 @@ Function Get-Model {
 }
 
 Function Get-Settings ($Path) {
+    Write-Verbose -Message "Importing: $Path."
     try {
         $params = @{
             Path        = $Path
@@ -162,6 +166,7 @@ Function Set-DefaultUserProfile ($Setting) {
 
     # Load registry hive
     try {
+        Write-Verbose -Message "Load: $RegDefaultUser."
         $RegPath = $DefaultUserPath -replace ":", ""
         $params = @{
             FilePath     = "reg"
@@ -196,6 +201,7 @@ Function Set-DefaultUserProfile ($Setting) {
                 Force       = $True
                 ErrorAction = "SilentlyContinue"
             }
+            Write-Verbose -Message "Set: $RegPath, $($Item.name), $($Item.value)."
             Set-ItemProperty @params > $Null
             $Result = 0
         }
@@ -207,6 +213,7 @@ Function Set-DefaultUserProfile ($Setting) {
 
     # Unload Registry Hive
     try {
+        Write-Verbose -Message "Unload: $RegDefaultUser."
         $params = @{
             FilePath     = "reg"
             ArgumentList = "unload $($DefaultUserPath -replace ':', '')"
@@ -224,83 +231,100 @@ Function Set-DefaultUserProfile ($Setting) {
 
 # Import default Start layout
 Function Import-StartMenu ($StartMenuLayout) {
-    If (!(Test-Path -Path $StartPath -ErrorAction "SilentlyContinue")) {
-        $params = @{
-            Value       = "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows\Shell"
-            ItemType    = "Directory"
-            ErrorAction = "SilentlyContinue"
+    If ($Null -ne $StartMenuLayout) {
+        $StartPath = "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows\Shell"
+        If (!(Test-Path -Path $StartPath -ErrorAction "SilentlyContinue")) {
+            $params = @{
+                Value       = $StartPath
+                ItemType    = "Directory"
+                ErrorAction = "SilentlyContinue"
+            }
+            New-Item @params > $Null
         }
-        New-Item @params > $Null
-    }
-    try {
-        $params = @{
-            LayoutPath  = $StartMenuLayout
-            MountPath   = "$($env:SystemDrive)\"
-            ErrorAction = "SilentlyContinue"
+        try {
+            $params = @{
+                LayoutPath  = $StartMenuLayout
+                MountPath   = "$($env:SystemDrive)\"
+                ErrorAction = "SilentlyContinue"
+            }
+            Write-Verbose -Message "Import-StartLayout: $StartMenuLayout."
+            Import-StartLayout @params > $Null
+            $Result = 0
         }
-        Import-StartLayout @params > $Null
-    }
-    catch {
-        $_.Exception.Message
-        Return 1
+        catch {
+            $Result = 1
+        }
+        Write-Output -InputObject ([PSCustomObject]@{Name = "Import-StartLayout"; Value = $StartMenuLayout; Status = $Result })
     }
 }
 
 Function Remove-Feature ($Feature) {
-    $Feature | ForEach-Object { Get-WindowsOptionalFeature -Online -FeatureName $_ } | `
-        ForEach-Object { 
-        try {
-            $params = @{
-                FeatureName = $_.FeatureName
-                Online      = $True
-                NoRestart   = $True
-                ErrorAction = "SilentlyContinue"
-            }
-            Disable-WindowsOptionalFeature @params
-            $Result = 0
-        }
-        catch {
-            $Result = 1
-        }
-        Write-Output -InputObject @{Name = "Disable-WindowsOptionalFeature"; Value = $_.FeatureName; Status = $Result }
-    }
-}
-
-Function Remove-Capability ($Capability) {
-    ForEach ($Item in $Capability) {
-        try {    
-            $params = @{
-                Name        = $Item
-                Online      = $True
-                ErrorAction = "SilentlyContinue"
-            }
-            Remove-WindowsCapability @params
-            $Result = 0
-        }
-        catch {
-            $Result = 1
-        }
-        Write-Output -InputObject @{Name = "Remove-WindowsCapability"; Value = $Item; Status = $Result }
-    }
-}
-
-Function Remove-Package ($Package) {
-    ForEach ($Item in $Package) {
-        Get-WindowsPackage -Online -PackageName $Item | `
-            ForEach-Object {
+    If ($Null -ne $Feature) {
+        Write-Verbose -Message "Remove features."
+        $Feature | ForEach-Object { Get-WindowsOptionalFeature -Online -FeatureName $_ -ErrorAction "SilentlyContinue" } | `
+            ForEach-Object { 
             try {
+                Write-Verbose -Message "Disable-WindowsOptionalFeature: $($_.FeatureName)."
                 $params = @{
-                    PackageName = $_.PackageName
+                    FeatureName = $_.FeatureName
                     Online      = $True
+                    NoRestart   = $True
                     ErrorAction = "SilentlyContinue"
                 }
-                Remove-WindowsPackage @params
+                Disable-WindowsOptionalFeature @params
                 $Result = 0
             }
             catch {
                 $Result = 1
             }
-            Write-Output -InputObject @{Name = "Remove-WindowsPackage"; Value = $Item; Status = $Result }
+            Write-Output -InputObject ([PSCustomObject]@{Name = "Disable-WindowsOptionalFeature"; Value = $_.FeatureName; Status = $Result })
+        }
+    }
+}
+
+Function Remove-Capability ($Capability) {
+    If ($Null -ne $Capability) {
+        Write-Verbose -Message "Remove capabilities."
+        ForEach ($Item in $Capability) {
+            try {    
+                Write-Verbose -Message "Remove-WindowsCapability: $Item."
+                $params = @{
+                    Name        = $Item
+                    Online      = $True
+                    ErrorAction = "SilentlyContinue"
+                }
+                Remove-WindowsCapability @params
+                $Result = 0
+            }
+            catch {
+                $Result = 1
+            }
+            Write-Output -InputObject ([PSCustomObject]@{Name = "Remove-WindowsCapability"; Value = $Item; Status = $Result })
+        }
+    }
+}
+
+Function Remove-Package ($Package) {
+    If ($Null -ne $Package) {
+        Write-Verbose -Message "Remove packages."
+        ForEach ($Item in $Package) {
+            Get-WindowsPackage -Online -ErrorAction "SilentlyContinue" | Where-Object { $_.PackageName -match $Item } | `
+                ForEach-Object {
+                try {
+                    Write-Verbose -Message "Remove-WindowsPackage: $($_.PackageName)."
+                    $params = @{
+                        PackageName = $_.PackageName
+                        Online      = $True
+                        ErrorAction = "SilentlyContinue"
+                    }
+                    Remove-WindowsPackage @params
+                    $Result = 0
+                }
+                catch {
+                    $Result = 1
+                }
+                Write-Output -InputObject ([PSCustomObject]@{Name = "Remove-WindowsPackage"; Value = $Item; Status = $Result })
+            }
         }
     }
 }
@@ -308,6 +332,7 @@ Function Remove-Package ($Package) {
 Function Remove-Path ($Path) {
     ForEach ($Item in $Path) {
         If (Test-Path -Path $Item -ErrorAction "SilentlyContinue") {
+            Write-Verbose -Message "Remove-Item: $Item."
             try {
                 $params = @{
                     Path        = $Item 
@@ -330,7 +355,7 @@ Function Remove-Path ($Path) {
 Function Set-Registry ($Setting) {
     ForEach ($Item in $Setting) {
         try {
-            New-Item -Path $Item.path -Type "RegistryKey" -Force -ErrorAction $ErrorAction > $Null
+            New-Item -Path $Item.path -Type "RegistryKey" -Force -ErrorAction "SilentlyContinue" > $Null
             $params = @{
                 Path        = $Item.path
                 Name        = $Item.name
@@ -384,7 +409,8 @@ try {
 
     # Get system properties
     $Platform = Get-Platform
-    $Build = ([System.Environment]::OSVersion.Version).Build
+    #$Build = ([System.Environment]::OSVersion.Version).Build
+    $Build = [System.Environment]::OSVersion.Version
     $Model = Get-Model
     $OSName = Get-OSName
     Write-Verbose -Message "      OS: $OSName."
@@ -397,7 +423,7 @@ try {
     $PlatformConfigs = @(Get-ChildItem -Path $Path -Filter "*.$Platform.json" -Recurse -ErrorAction "SilentlyContinue")
     $BuildConfigs = @(Get-ChildItem -Path $Path -Filter "*.$Build.json" -Recurse -ErrorAction "SilentlyContinue")
     $ModelConfigs = @(Get-ChildItem -Path $Path -Filter "*.$Model.json" -Recurse -ErrorAction "SilentlyContinue")
-    Write-Verbose -Message "Found: $(($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs).Count) configs."
+    Write-Verbose -Message "   Found: $(($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs).Count) configs."
     ForEach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs)) {
 
         # Read the settings JSON
@@ -408,29 +434,19 @@ try {
 
             # Implement each setting in the JSON
             $Results = Remove-Feature -Feature $Settings.Features.Disable
-            ForEach ($Result in $Results) {
-                Write-Log -EventLog $Project -Property "Features" -Object $Result
-            }
+            Write-Log -EventLog $Project -Property "Features" -Object $Results
 
             $Results = Remove-Capability -Capability $Settings.Capabilities.Remove
-            ForEach ($Result in $Results) {
-                Write-Log -EventLog $Project -Property "Capabilities" -Object $Result
-            }
+            Write-Log -EventLog $Project -Property "Capabilities" -Object $Results
 
             $Results = Remove-Package -Package $Settings.Packages.Remove
-            ForEach ($Result in $Results) {
-                Write-Log -EventLog $Project -Property "Packages" -Object $Result
-            }
+            Write-Log -EventLog $Project -Property "Packages" -Object $Results
 
             $Results = Remove-Path -Path $Settings.Paths.Remove
-            ForEach ($Result in $Results) {
-                Write-Log -EventLog $Project -Property "Paths" -Object $Result
-            }
+            Write-Log -EventLog $Project -Property "Paths" -Object $Results
 
             $Results = Copy-Path -Path $Settings.Paths.Copy
-            ForEach ($Result in $Results) {
-                Write-Log -EventLog $Project -Property "Paths" -Object $Result
-            }
+            Write-Log -EventLog $Project -Property "Paths" -Object $Result
 
             Switch ($Settings.Registry.Type) {
                 "Direct" {
@@ -443,9 +459,7 @@ try {
                     Write-Verbose -Message "Skip registry."
                 }
             }
-            ForEach ($Result in $Results) {
-                Write-Log -EventLog $Project -Property "StartMenu" -Object $Result
-            }
+            Write-Log -EventLog $Project -Property "Registry" -Object $Results
 
             Switch ($Settings.StartMenu.Type) {
                 "Server" {
@@ -455,17 +469,17 @@ try {
                     Else {
                         $File = $(Join-Path -Path $Path -ChildPath $Settings.StartMenu.NotExists)
                     }
-                    $Result = Import-StartMenu -StartMenuLayout $File
+                    $Results = Import-StartMenu -StartMenuLayout $File
                 }
                 "Client" {
-                    $Result = Import-StartMenu -StartMenuLayout $(Join-Path -Path $Path -ChildPath $Settings.StartMenu.$OSName)
+                    $Results = Import-StartMenu -StartMenuLayout $(Join-Path -Path $Path -ChildPath $Settings.StartMenu.$OSName)
                     
                 }
                 Default {
-                    $Result = ([PSCustomObject]@{Name = "Start menu layout"; Value = "Skipped"; Status = 0 })
+                    $Results = ([PSCustomObject]@{Name = "Start menu layout"; Value = "Skipped"; Status = 0 })
                 }
             }
-            Write-Log -EventLog $Project -Property "StartMenu" -Object $Result
+            Write-Log -EventLog $Project -Property "StartMenu" -Object $Results
         }
         Else {
             Write-Verbose -Message "Skip config: $($Config.FullName)."
@@ -476,12 +490,10 @@ try {
     # If on a client OS, run the script to remove AppX / UWP apps
     If ($Platform -eq "Client") {
         Switch ($Model) {
-            "Physical" { $Packages = & (Join-Path -Path $Path -ChildPath "Remove-AppxApps.ps1") -Operation "BlockList" }
-            "Virtual" { $Packages = & (Join-Path -Path $Path -ChildPath "Remove-AppxApps.ps1") -Operation "AllowList" }
+            "Physical" { $Apps = & (Join-Path -Path $Path -ChildPath "Remove-AppxApps.ps1") -Operation "BlockList" }
+            "Virtual" { $Apps = & (Join-Path -Path $Path -ChildPath "Remove-AppxApps.ps1") -Operation "AllowList" }
         }
-        ForEach ($Package in $Packages) {
-            Write-Log -EventLog $Project -Property "Apps" -Object $Package
-        }
+        Write-Log -EventLog $Project -Property "AppX" -Object $Apps
     }
 }
 catch {
@@ -491,10 +503,10 @@ catch {
 
 # Set uninstall registry value for detecting as an installed application
 $Key = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
-reg add "$Key\{$Guid}" /v "DisplayName" /d $Project /t REG_SZ /f
-reg add "$Key\{$Guid}" /v "Publisher" /d $Publisher /t REG_SZ /f
-reg add "$Key\{$Guid}" /v "DisplayVersion" /d $Version /t REG_SZ /f
-reg add "$Key\{$Guid}" /v "RunOn" /d $RunOn /t REG_SZ /f
-reg add "$Key\{$Guid}" /v "SystemComponent" /d 1 /t REG_DWORD /f
-reg add "$Key\{$Guid}" /v "HelpLink" /d $HelpLink /t REG_DWORD /f
+reg add "$Key\{$Guid}" /v "DisplayName" /d $Project /t REG_SZ /f 4> $Null
+reg add "$Key\{$Guid}" /v "Publisher" /d $Publisher /t REG_SZ /f 4> $Null
+reg add "$Key\{$Guid}" /v "DisplayVersion" /d $Version /t REG_SZ /f 4> $Null
+reg add "$Key\{$Guid}" /v "RunOn" /d $RunOn /t REG_SZ /f 4> $Null
+reg add "$Key\{$Guid}" /v "SystemComponent" /d 1 /t REG_DWORD /f 4> $Null
+reg add "$Key\{$Guid}" /v "HelpLink" /d $Helplink /t REG_SZ /f 4> $Null
 Return 0

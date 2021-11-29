@@ -103,10 +103,10 @@ param (
         # "Microsoft.WindowsAlarms_8wekyb3d8bbwe",              # Alarms
         # "Microsoft.WindowsCalculator_8wekyb3d8bbwe",          # Calculator
         # "Microsoft.WindowsCamera_8wekyb3d8bbwe",              # Camera
-        "Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe", # Feedback Hub
         # "Microsoft.WindowsMaps_8wekyb3d8bbwe",                # Maps
         # "Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe",       # Voice Recorder
-        "Microsoft.YourPhone_8wekyb3d8bbwe"                   # Your Phone
+        # "Microsoft.YourPhone_8wekyb3d8bbwe"                   # Your Phone
+        "Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe" # Feedback Hub
     ),
 
     [Parameter(Mandatory = $False, ParameterSetName = "AllowList", HelpMessage = "Specify an AppX package or packages to keep, removing all others.")]
