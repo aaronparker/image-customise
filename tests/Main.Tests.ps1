@@ -21,7 +21,7 @@ $ProgressPreference = "SilentlyContinue"
 
 BeforeDiscovery {
     # Get the scripts to test
-    $Scripts = @(Get-ChildItem -Path $([System.IO.Path]::Combine($projectRoot, "src", "*.ps1")) -Exclude "Remove-AppxApps.ps1" -ErrorAction "SilentlyContinue")
+    $Scripts = @(Get-ChildItem -Path $([System.IO.Path]::Combine($projectRoot, "src", "*.ps1")) -Include "Install-Defaults.ps1" -ErrorAction "SilentlyContinue")
     $testCase = $Scripts | ForEach-Object { @{file = $_ } }
 
     # Get the ScriptAnalyzer rules
@@ -65,8 +65,8 @@ Describe "Script execution validation" -Tag "Windows" -ForEach $Scripts {
     }
 
     Context "Validate <script.Name>." {
-        It "<script.Name> should not Throw" {
-            { . $script.FullName -Path $([System.IO.Path]::Combine($projectRoot, "src")) } | Should -Be 1
+        It "<script.Name> should execute OK" {
+            { . $script.FullName -Path $([System.IO.Path]::Combine($projectRoot, "src")) -Verbose } | Should -Be 0
         }
     }
 }

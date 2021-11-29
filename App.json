@@ -1,7 +1,7 @@
 {
     "PackageInformation": {
         "SetupType": "EXE",
-        "SetupFile": "Invoke-Scripts.ps1",
+        "SetupFile": "Install-Defaults.ps1",
         "Version": "",
         "SourceFolder": "Source",
         "OutputFolder": "Package",
