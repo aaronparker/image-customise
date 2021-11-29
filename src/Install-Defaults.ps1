@@ -522,13 +522,14 @@ catch {
 }
 
 # Set uninstall registry value for detecting as an installed application
-$Key = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
-Set-ItemProperty -Path "$Key\{$Guid}" -Name "DisplayName" -Value $Project -Type "String" | Out-Null
-Set-ItemProperty -Path "$Key\{$Guid}" -Name "Publisher" -Value $Publisher -Type "String" | Out-Null
-Set-ItemProperty -Path "$Key\{$Guid}" -Name "DisplayVersion" -Value $Version -Type "String" | Out-Null
-Set-ItemProperty -Path "$Key\{$Guid}" -Name "RunOn" -Value $RunOn -Type "String" | Out-Null
-Set-ItemProperty -Path "$Key\{$Guid}" -Name "SystemComponent" -Value 1 -Type "DWord" | Out-Null
-Set-ItemProperty -Path "$Key\{$Guid}" -Name "HelpLink" -Value $HelpLink -Type "String" | Out-Null
+$Key = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
+New-Item -Path "$Key\{$Guid}" -Type "RegistryKey" -Force -ErrorAction "SilentlyContinue" | Out-Null
+Set-ItemProperty -Path "$Key\{$Guid}" -Name "DisplayName" -Value $Project -Type "String" -Force $True -ErrorAction "SilentlyContinue" | Out-Null
+Set-ItemProperty -Path "$Key\{$Guid}" -Name "Publisher" -Value $Publisher -Type "String" -Force $True -ErrorAction "SilentlyContinue" | Out-Null
+Set-ItemProperty -Path "$Key\{$Guid}" -Name "DisplayVersion" -Value $Version -Type "String" -Force $True -ErrorAction "SilentlyContinue" | Out-Null
+Set-ItemProperty -Path "$Key\{$Guid}" -Name "RunOn" -Value $RunOn -Type "String" -Force $True -ErrorAction "SilentlyContinue" | Out-Null
+Set-ItemProperty -Path "$Key\{$Guid}" -Name "SystemComponent" -Value 1 -Type "DWord" -Force $True -ErrorAction "SilentlyContinue" | Out-Null
+Set-ItemProperty -Path "$Key\{$Guid}" -Name "HelpLink" -Value $HelpLink -Type "String" -Force $True -ErrorAction "SilentlyContinue" | Out-Null
 
 # Write last entry to the event log and output success
 $Object = ([PSCustomObject]@{Name = "Result"; Value = "Success"; Status = 0 })
