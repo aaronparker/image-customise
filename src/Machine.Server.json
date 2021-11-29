@@ -1,0 +1,10 @@
+{
+    "MininumBuild": "10.0.14393",
+    "Services": {
+        "Feature": "RDS-RD-Server",
+        "Enable": [
+            "Audiosrv",
+            "WSearch"
+        ]
+    }
+}

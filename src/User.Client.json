@@ -1,0 +1,17 @@
+{
+    "MininumBuild": "10.0.14393",
+    "StartMenu": {
+        "Type": "Client",
+        "Feature": "",
+        "Windows10": "Windows10StartMenuLayout.xml",
+        "Windows11": "Windows11StartMenuLayout.xml"
+    },
+    "Paths": {
+        "Copy": [
+            {
+                "Source": "desktop-config.json",
+                "Destination": "$env:SystemDrive\\Users\\Default\\AppData\\Roaming\\Microsoft\\Teams"
+            }
+        ]
+    }
+}
