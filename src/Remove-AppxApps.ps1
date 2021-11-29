@@ -22,19 +22,19 @@
 
         .EXAMPLE
             PS C:\> .\Remove-AppxApps.ps1 -Operation BlockList
-            
+
             Remove the default list of BlockListed AppX packages stored in the function.
  
         .EXAMPLE
             PS C:\> .\Remove-AppxApps.ps1 -Operation AllowList
-            
+
             Remove the default list of AllowListed AppX packages stored in the function.
 
          .EXAMPLE
             PS C:\> .\Remove-AppxApps.ps1 -Operation BlockList -BlockList "Microsoft.3DBuilder_8wekyb3d8bbwe", "Microsoft.XboxApp_8wekyb3d8bbwe"
-            
+
             Remove a specific set of AppX packages a specified in the -BlockList argument.
- 
+
          .EXAMPLE
             PS C:\> .\Remove-AppxApps.ps1 -Operation AllowList -AllowList "Microsoft.BingNews_8wekyb3d8bbwe", "Microsoft.BingWeather_8wekyb3d8bbwe"
             
@@ -129,7 +129,7 @@ param (
 
 begin {
     Write-Verbose -Message "Execution path: $Path."
-    
+
     #region Functions
     Function Edit-ProtectedApp {
         <# Filter out a set of apps that we'll never try to remove #>
@@ -210,7 +210,7 @@ begin {
 process {
     # Remove the apps; Walk through each package in the array
     ForEach ($app in $packagesToRemove) {
-           
+
         # Get the AppX package object by passing the string to the left of the underscore
         # to Get-AppxPackage and passing the resulting package object to Remove-AppxPackage
         $Name = ($app -split "_")[0]

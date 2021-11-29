@@ -9,7 +9,7 @@ If (Test-Path -Path env:GITHUB_WORKSPACE -ErrorAction "SilentlyContinue") {
     $projectRoot = Resolve-Path -Path $env:GITHUB_WORKSPACE
 }
 Else {
-    # Local Testing 
+    # Local Testing
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
 }
 If (Get-Variable -Name "projectRoot" -ErrorAction "SilentlyContinue") {

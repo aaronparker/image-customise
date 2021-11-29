@@ -29,7 +29,7 @@ BeforeDiscovery {
 
 
 # All scripts validation
-Describe "General project validation" {    
+Describe "General project validation" {
     It "Script <file.Name> should be valid PowerShell" -TestCases $testCase {
         param ($file)
 

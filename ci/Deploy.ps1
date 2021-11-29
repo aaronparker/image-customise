@@ -12,14 +12,14 @@ If (Test-Path -Path env:GITHUB_WORKSPACE -ErrorAction "SilentlyContinue") {
     $projectRoot = Resolve-Path -Path $env:GITHUB_WORKSPACE
 }
 Else {
-    # Local Testing 
+    # Local Testing
     $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
 }
-    
+
 try {
     [System.String] $newVersion = New-Object -TypeName "System.Version" -ArgumentList ((Get-Date -Format "yyMM"), (Get-Date -Format "dd"), $env:GITHUB_RUN_NUMBER)
     Write-Output -InputObject "New Version: $newVersion"
-            
+
     # Update the version string in VERSION.txt
     $VersionTxt = [System.IO.Path]::Combine($projectRoot, "src", "VERSION.txt")
     $newVersion | Out-File -FilePath $VersionTxt -Encoding "ascii" -Force -NoNewline
@@ -60,7 +60,6 @@ catch {
     Throw $_
 }
 Write-Host "$module $newVersion pushed to GitHub."
-
 
 # Line break for readability in console
 Write-Host ""

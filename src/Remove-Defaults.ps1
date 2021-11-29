@@ -13,7 +13,10 @@ param (
     [System.String] $Guid = "f38de27b-799e-4c30-8a01-bfdedc622944"
 )
 try {
-    reg delete "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{$Guid}" /f > $Null
+    $RegPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{$Guid}"
+    If (Test-Path -Path $RegPath -ErrorAction "SilentlyContinue") {
+        Remove-Item -Path $RegPath -Force
+    }
 }
 catch {
     $_

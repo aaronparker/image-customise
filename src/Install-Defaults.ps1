@@ -203,12 +203,14 @@ Function Set-DefaultUserProfile ($Setting) {
             }
             Write-Verbose -Message "Set: $RegPath, $($Item.name), $($Item.value)."
             Set-ItemProperty @params > $Null
+            $Msg = "Success"
             $Result = 0
         }
         catch {
+            $Msg = $_.Exception.Message
             $Result = 1
         }
-        Write-Output -InputObject @{Name = $Item.name; Value = $Item.value; Status = $Result }
+        Write-Output -InputObject @{Name = "$RegPath / $($Item.name) / $($Item.value)"; Value = $Msg; Status = $Result }
     }
 
     # Unload Registry Hive
@@ -249,12 +251,14 @@ Function Import-StartMenu ($StartMenuLayout) {
             }
             Write-Verbose -Message "Import-StartLayout: $StartMenuLayout."
             Import-StartLayout @params > $Null
+            $Msg = "Success"
             $Result = 0
         }
         catch {
+            $Msg = $_.Exception.Message
             $Result = 1
         }
-        Write-Output -InputObject ([PSCustomObject]@{Name = "Import-StartLayout"; Value = $StartMenuLayout; Status = $Result })
+        Write-Output -InputObject ([PSCustomObject]@{Name = $StartMenuLayout; Value = $Msg; Status = $Result })
     }
 }
 
@@ -272,12 +276,14 @@ Function Remove-Feature ($Feature) {
                     ErrorAction = "SilentlyContinue"
                 }
                 Disable-WindowsOptionalFeature @params
+                $Msg = "Success"
                 $Result = 0
             }
             catch {
+                $Msg = $_.Exception.Message
                 $Result = 1
             }
-            Write-Output -InputObject ([PSCustomObject]@{Name = "Disable-WindowsOptionalFeature"; Value = $_.FeatureName; Status = $Result })
+            Write-Output -InputObject ([PSCustomObject]@{Name = "Disable-WindowsOptionalFeature / $($_.FeatureName)"; Value = $Msg; Status = $Result })
         }
     }
 }
@@ -294,12 +300,14 @@ Function Remove-Capability ($Capability) {
                     ErrorAction = "SilentlyContinue"
                 }
                 Remove-WindowsCapability @params
+                $Msg = "Success"
                 $Result = 0
             }
             catch {
+                $Msg = $_.Exception.Message
                 $Result = 1
             }
-            Write-Output -InputObject ([PSCustomObject]@{Name = "Remove-WindowsCapability"; Value = $Item; Status = $Result })
+            Write-Output -InputObject ([PSCustomObject]@{Name = "Remove-WindowsCapability / $Item"; Value = $Msg; Status = $Result })
         }
     }
 }
@@ -318,12 +326,14 @@ Function Remove-Package ($Package) {
                         ErrorAction = "SilentlyContinue"
                     }
                     Remove-WindowsPackage @params
+                    $Msg = "Success"
                     $Result = 0
                 }
                 catch {
+                    $Msg = $_.Exception.Message
                     $Result = 1
                 }
-                Write-Output -InputObject ([PSCustomObject]@{Name = "Remove-WindowsPackage"; Value = $Item; Status = $Result })
+                Write-Output -InputObject ([PSCustomObject]@{Name = "Remove-WindowsPackage / $Item;"; Value = $Msg; Status = $Result })
             }
         }
     }
@@ -342,12 +352,14 @@ Function Remove-Path ($Path) {
                     ErrorAction = "SilentlyContinue"
                 }
                 Remove-Item @params
+                $Msg = "Success"
                 $Result = 0
             }
             catch {
+                $Msg = $_.Exception.Message
                 $Result = 1
             }
-            Write-Output -InputObject ([PSCustomObject]@{Name = $Item; Value = "Remove"; Status = $Result })
+            Write-Output -InputObject ([PSCustomObject]@{Name = "Remove: $Item"; Value = $Msg; Status = $Result })
         }
     }
 }
@@ -365,33 +377,37 @@ Function Set-Registry ($Setting) {
                 ErrorAction = "SilentlyContinue"
             }
             Set-ItemProperty @params > $Null
+            $Msg = "Success"
             $Result = 0
         }
         catch {
+            $Msg = $_.Exception.Message
             $Result = 1
         }
-        Write-Output -InputObject ([PSCustomObject]@{Name = $Item.name; Value = $Item.value; Status = $Result })
+        Write-Output -InputObject @{Name = "$RegPath / $($Item.name) / $($Item.value)"; Value = $Msg; Status = $Result }
     }
 }
 
-Function Copy-Path ($Path) {
+Function Copy-Path ($Parent, $Path) {
     ForEach ($Item in $Path) {
         If (Test-Path -Path $Item -ErrorAction "SilentlyContinue") {
             try {
                 $params = @{
-                    Path        = $Item.Source
+                    Path        = $(Join -Path $Parent -ChildPath $Item.Source)
                     Destination = $Item.Destination
-                    Confirm     = $False
+                    Confirm      = $False
                     Force       = $True
                     ErrorAction = "SilentlyContinue"
                 }
                 Copy-Item @params
+                $Msg = "Success"
                 $Result = 0
             }
             catch {
+                $Msg = $_.Exception.Message
                 $Result = 1
             }
-            Write-Output -InputObject ([PSCustomObject]@{Name = $Item.Source; Value = $Item.Destination; Status = $Result })
+            Write-Output -InputObject ([PSCustomObject]@{Name = "$($Item.Source) / $($Item.Destination)"; Value = $Msg; Status = $Result })
         }
     }
 }
@@ -405,7 +421,7 @@ Write-Verbose -Message "Execution path: $WorkingPath."
 try {
     # Setup logging
     New-ScriptEventLog -EventLog $Project -Property $Properties
-    
+
     # Start logging
     $PSProcesses = Get-CimInstance -ClassName "Win32_Process" -Filter "Name = 'powershell.exe'" | Select-Object -Property "CommandLine"
     ForEach ($Process in $PSProcesses) {
@@ -422,15 +438,15 @@ try {
     $Version = [System.Environment]::OSVersion.Version
     Write-Verbose -Message "   Build: $Build."
     Write-Log -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Build/version"; Value = $Version; Status = 0 })
-    
+
     $Model = Get-Model
     Write-Verbose -Message "   Model: $Model."
     Write-Log -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Model"; Value = $Model; Status = 0 })
-    
+
     $OSName = Get-OSName
     Write-Verbose -Message "      OS: $OSName."
     Write-Log -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "OSName"; Value = $OSName; Status = 0 })
-    
+
     $Version = Get-ChildItem -Path $WorkingPath -Filter "VERSION.txt" -Recurse | Get-Content -Raw
     Write-Verbose -Message "Customisation scripts version: $Version."
     Write-Log -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Version"; Value = $Version; Status = 0 })
@@ -456,13 +472,13 @@ try {
             $Results = Remove-Capability -Capability $Settings.Capabilities.Remove
             Write-Log -EventLog $Project -Property "Capabilities" -Object $Results
 
-            #$Results = Remove-Package -Package $Settings.Packages.Remove
-            #Write-Log -EventLog $Project -Property "Packages" -Object $Results
+            $Results = Remove-Package -Package $Settings.Packages.Remove
+            Write-Log -EventLog $Project -Property "Packages" -Object $Results
 
             $Results = Remove-Path -Path $Settings.Paths.Remove
             Write-Log -EventLog $Project -Property "Paths" -Object $Results
 
-            $Results = Copy-Path -Path $Settings.Paths.Copy
+            $Results = Copy-Path -Path $Settings.Paths.Copy -Parent $WorkingPath
             Write-Log -EventLog $Project -Property "Paths" -Object $Result
 
             Switch ($Settings.Registry.Type) {
@@ -490,7 +506,6 @@ try {
                 }
                 "Client" {
                     $Results = Import-StartMenu -StartMenuLayout $(Join-Path -Path $WorkingPath -ChildPath $Settings.StartMenu.$OSName)
-                    
                 }
                 Default {
                     $Results = ([PSCustomObject]@{Name = "Start menu layout"; Value = "Skipped"; Status = 0 })
