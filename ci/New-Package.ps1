@@ -49,7 +49,7 @@ catch [System.Exception] {
 
 try {
     # Create the package
-    $Executable = Join-Path -Path $PackagePath -ChildPath "Invoke-Scripts.ps1"
+    $Executable = Join-Path -Path $PackagePath -ChildPath "Install-Defaults.ps1"
     Write-Verbose -Message "Package path: $($PackagePath)."
     Write-Verbose -Message "Executable path:  $($Executable)."
     $params = @{
