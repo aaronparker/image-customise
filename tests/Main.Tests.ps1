@@ -17,6 +17,7 @@ Else {
 # Set $VerbosePreference so full details are sent to the log; Make Invoke-WebRequest faster
 #$VerbosePreference = "Continue"
 $ProgressPreference = "SilentlyContinue"
+Push-Location -Path $([System.IO.Path]::Combine($projectRoot, "src")
 
 
 BeforeDiscovery {
