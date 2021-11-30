@@ -1,9 +1,10 @@
 <#
     .SYNOPSIS
         Update version number and push to GitHub
-#> 
-[OutputType()]
-Param()
+#>
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "")]
+[CmdletBinding()]
+param()
 
 # Line break for readability in the console
 Write-Host ""

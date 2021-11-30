@@ -2,8 +2,9 @@
     .SYNOPSIS
         Tests script.
 #>
-[OutputType()]
-Param()
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "")]
+[CmdletBinding()]
+param()
 
 If (Test-Path -Path env:GITHUB_WORKSPACE -ErrorAction "SilentlyContinue") {
     $projectRoot = Resolve-Path -Path $env:GITHUB_WORKSPACE

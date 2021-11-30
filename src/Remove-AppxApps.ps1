@@ -8,7 +8,7 @@
             If the script is run elevated, it will remove provisioned packages from the system and packages from all user accounts. Otherwise only packages for the current user account will be removed.
 
         .PARAMETER Operation
-            Specify the AppX removal operation - either BlockList or AllowList. 
+            Specify the AppX removal operation - either BlockList or AllowList.
 
         .PARAMETER BlockList
             Specify an array of AppX packages to 'BlockList' or remove from the current Windows instance, all other apps will remain installed. The script will use the BlockList by default.

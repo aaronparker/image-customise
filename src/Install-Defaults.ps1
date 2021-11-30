@@ -3,12 +3,14 @@
 <#
     .SYNOPSIS
     Configuration changes to a default install of Windows during provisioning.
-  
+
     .NOTES
     NAME: Invoke-Scripts.ps1
     AUTHOR: Aaron Parker
     TWITTER: @stealthpuppy
 #>
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "")]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $False)]
@@ -19,7 +21,7 @@ param (
 
     [Parameter(Mandatory = $False)]
     [System.String] $Publisher = "stealthpuppy",
-    
+
     [Parameter(Mandatory = $False)]
     [System.String] $RunOn = $(Get-Date -Format "yyyy-MM-dd"),
 
@@ -43,9 +45,9 @@ Function New-ScriptEventLog ($EventLog, $Property) {
     New-EventLog @params
 }
 
-Function Write-Log ($EventLog, $Property, $Object) {
+Function Write-ToEventLog ($EventLog, $Property, $Object) {
     ForEach ($Item in $Object) {
-        Write-Verbose -Message "Write-Log: $($Property): $($Item.Name)."
+        Write-Verbose -Message "Write-ToEventLog: $($Property): $($Item.Name)."
         Switch ($Item.Status) {
             0 { $EntryType = "Information" }
             1 { $EntryType = "Warning" }
@@ -132,7 +134,7 @@ Function Get-Model {
     Write-Output -InputObject $Model
 }
 
-Function Get-Settings ($Path) {
+Function Get-SettingsContent ($Path) {
     Write-Verbose -Message "Importing: $Path."
     try {
         $params = @{
@@ -426,30 +428,30 @@ try {
     $PSProcesses = Get-CimInstance -ClassName "Win32_Process" -Filter "Name = 'powershell.exe'" | Select-Object -Property "CommandLine"
     ForEach ($Process in $PSProcesses) {
         $Object = ([PSCustomObject]@{Name = "CommandLine"; Value = $Process.CommandLine; Status = 0 })
-        Write-Log -EventLog $Project -Property "General" -Object $Object
+        Write-ToEventLog -EventLog $Project -Property "General" -Object $Object
     }
 
     # Get system properties
     $Platform = Get-Platform
     Write-Verbose -Message "Platform: $Platform."
-    Write-Log -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Platform"; Value = $Platform; Status = 0 })
+    Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Platform"; Value = $Platform; Status = 0 })
 
     $Build = ([System.Environment]::OSVersion.Version).Build
     $Version = [System.Environment]::OSVersion.Version
     Write-Verbose -Message "   Build: $Build."
-    Write-Log -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Build/version"; Value = $Version; Status = 0 })
+    Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Build/version"; Value = $Version; Status = 0 })
 
     $Model = Get-Model
     Write-Verbose -Message "   Model: $Model."
-    Write-Log -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Model"; Value = $Model; Status = 0 })
+    Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Model"; Value = $Model; Status = 0 })
 
     $OSName = Get-OSName
     Write-Verbose -Message "      OS: $OSName."
-    Write-Log -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "OSName"; Value = $OSName; Status = 0 })
+    Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "OSName"; Value = $OSName; Status = 0 })
 
     $Version = Get-ChildItem -Path $WorkingPath -Filter "VERSION.txt" -Recurse | Get-Content -Raw
     Write-Verbose -Message "Customisation scripts version: $Version."
-    Write-Log -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Version"; Value = $Version; Status = 0 })
+    Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Version"; Value = $Version; Status = 0 })
 
     #region Gather configs and run
     $AllConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.All.json" -Recurse -ErrorAction "SilentlyContinue")
@@ -460,26 +462,26 @@ try {
     ForEach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs)) {
 
         # Read the settings JSON
-        $Settings = Get-Settings -Path $Config.FullName
+        $Settings = Get-SettingsContent -Path $Config.FullName
 
         # Implement the settings only if the local build is greater or equal that what's specified in the JSON
         If ([System.Version]$Version -ge [System.Version]$Settings.MininumBuild) {
 
             # Implement each setting in the JSON
             $Results = Remove-Feature -Feature $Settings.Features.Disable
-            Write-Log -EventLog $Project -Property "Features" -Object $Results
+            Write-ToEventLog -EventLog $Project -Property "Features" -Object $Results
 
             $Results = Remove-Capability -Capability $Settings.Capabilities.Remove
-            Write-Log -EventLog $Project -Property "Capabilities" -Object $Results
+            Write-ToEventLog -EventLog $Project -Property "Capabilities" -Object $Results
 
             $Results = Remove-Package -Package $Settings.Packages.Remove
-            Write-Log -EventLog $Project -Property "Packages" -Object $Results
+            Write-ToEventLog -EventLog $Project -Property "Packages" -Object $Results
 
             $Results = Remove-Path -Path $Settings.Paths.Remove
-            Write-Log -EventLog $Project -Property "Paths" -Object $Results
+            Write-ToEventLog -EventLog $Project -Property "Paths" -Object $Results
 
             $Results = Copy-Path -Path $Settings.Paths.Copy -Parent $WorkingPath
-            Write-Log -EventLog $Project -Property "Paths" -Object $Result
+            Write-ToEventLog -EventLog $Project -Property "Paths" -Object $Result
 
             Switch ($Settings.Registry.Type) {
                 "Direct" {
@@ -492,7 +494,7 @@ try {
                     Write-Verbose -Message "Skip registry."
                 }
             }
-            Write-Log -EventLog $Project -Property "Registry" -Object $Results
+            Write-ToEventLog -EventLog $Project -Property "Registry" -Object $Results
 
             Switch ($Settings.StartMenu.Type) {
                 "Server" {
@@ -511,7 +513,7 @@ try {
                     $Results = ([PSCustomObject]@{Name = "Start menu layout"; Value = "Skipped"; Status = 0 })
                 }
             }
-            Write-Log -EventLog $Project -Property "StartMenu" -Object $Results
+            Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
         }
         Else {
             Write-Verbose -Message "Skip config: $($Config.FullName)."
@@ -525,13 +527,13 @@ try {
             "Physical" { $Apps = & (Join-Path -Path $WorkingPath -ChildPath "Remove-AppxApps.ps1") -Operation "BlockList" }
             "Virtual" { $Apps = & (Join-Path -Path $WorkingPath -ChildPath "Remove-AppxApps.ps1") -Operation "AllowList" }
         }
-        Write-Log -EventLog $Project -Property "AppX" -Object $Apps
+        Write-ToEventLog -EventLog $Project -Property "AppX" -Object $Apps
     }
 }
 catch {
     # Write last entry to the event log and output failure
     $Object = ([PSCustomObject]@{Name = "Result"; Value = $_.Exception.Message; Status = 1 })
-    Write-Log -EventLog $Project -Property "General" -Object $Object
+    Write-ToEventLog -EventLog $Project -Property "General" -Object $Object
     $_
     Return 1
 }
@@ -548,5 +550,5 @@ Set-ItemProperty -Path "$Key\{$Guid}" -Name "HelpLink" -Value $HelpLink -Type "S
 
 # Write last entry to the event log and output success
 $Object = ([PSCustomObject]@{Name = "Result"; Value = "Success"; Status = 0 })
-Write-Log -EventLog $Project -Property "General" -Object $Object
+Write-ToEventLog -EventLog $Project -Property "General" -Object $Object
 Return 0
