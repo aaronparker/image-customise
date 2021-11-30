@@ -266,7 +266,7 @@ Function Remove-Feature ($Feature) {
     If ($Null -ne $Feature) {
         Write-Verbose -Message "Remove features."
         $Feature | ForEach-Object { Get-WindowsOptionalFeature -Online -FeatureName $_ -ErrorAction "SilentlyContinue" } | `
-            ForEach-Object { 
+            ForEach-Object {
             try {
                 Write-Verbose -Message "Disable-WindowsOptionalFeature: $($_.FeatureName)."
                 $params = @{
@@ -292,7 +292,7 @@ Function Remove-Capability ($Capability) {
     If ($Null -ne $Capability) {
         Write-Verbose -Message "Remove capabilities."
         ForEach ($Item in $Capability) {
-            try {    
+            try {
                 Write-Verbose -Message "Remove-WindowsCapability: $Item."
                 $params = @{
                     Name        = $Item
@@ -345,7 +345,7 @@ Function Remove-Path ($Path) {
             Write-Verbose -Message "Remove-Item: $Item."
             try {
                 $params = @{
-                    Path        = $Item 
+                    Path        = $Item
                     Recurse     = $True
                     Confirm     = $False
                     Force       = $True

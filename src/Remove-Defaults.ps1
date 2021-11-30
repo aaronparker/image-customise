@@ -2,7 +2,7 @@
 <#
     .SYNOPSIS
     Configuration changes to a default install of Windows during provisioning.
-  
+
     .NOTES
     NAME: Invoke-Scripts.ps1
     AUTHOR: Aaron Parker, Insentra

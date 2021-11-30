@@ -1,7 +1,7 @@
 <#
         .SYNOPSIS
             Removes a specified list of AppX packages from the current system.
- 
+
         .DESCRIPTION
             Removes a specified list of AppX packages from the current user account and the local system to prevent new installs of in-built apps when new users log onto the system.
 
@@ -14,7 +14,7 @@
             Specify an array of AppX packages to 'BlockList' or remove from the current Windows instance, all other apps will remain installed. The script will use the BlockList by default.
 
             The default BlockList is primarily aimed at configuring AppX packages for physical PCs.
-  
+
         .PARAMETER AllowList
             Specify an array of AppX packages to 'AllowList' or keep in the current Windows instance. All apps except this list will be removed from the current Windows instance.
 
@@ -24,7 +24,7 @@
             PS C:\> .\Remove-AppxApps.ps1 -Operation BlockList
 
             Remove the default list of BlockListed AppX packages stored in the function.
- 
+
         .EXAMPLE
             PS C:\> .\Remove-AppxApps.ps1 -Operation AllowList
 
@@ -37,7 +37,7 @@
 
          .EXAMPLE
             PS C:\> .\Remove-AppxApps.ps1 -Operation AllowList -AllowList "Microsoft.BingNews_8wekyb3d8bbwe", "Microsoft.BingWeather_8wekyb3d8bbwe"
-            
+
             Remove AppX packages from the system except those specified in the -AllowList argument.
 
         .NOTES
@@ -45,7 +45,7 @@
 	        VERSION: 3.0
 	        AUTHOR: Aaron Parker
 	        TWITTER: @stealthpuppy
- 
+
         .LINK
             https://stealthpuppy.com
 #>
