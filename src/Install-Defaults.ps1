@@ -161,75 +161,79 @@ Function Get-SettingsContent ($Path) {
 }
 
 Function Set-DefaultUserProfile ($Setting) {
-
-    # Variables
-    $RegDefaultUser = "$env:SystemDrive\Users\Default\NTUSER.DAT"
-    $DefaultUserPath = "HKLM:\MountDefaultUser"
-
-    # Load registry hive
     try {
-        Write-Verbose -Message "Load: $RegDefaultUser."
-        $RegPath = $DefaultUserPath -replace ":", ""
-        $params = @{
-            FilePath     = "reg"
-            ArgumentList = "load $RegPath $RegDefaultUser"
-            Wait         = $True
-            WindowStyle  = "Hidden"
-            ErrorAction  = "SilentlyContinue"
-        }
-        Start-Process @params > $Null
-    }
-    catch {
-        Write-Output -InputObject @{Name = "Load"; Value = $_.Exception.Message; Status = 1 }
-        Return 1
-    }
+        # Variables
+        $RegDefaultUser = "$env:SystemDrive\Users\Default\NTUSER.DAT"
+        $DefaultUserPath = "HKLM:\MountDefaultUser"
 
-    # Process Registry Commands
-    ForEach ($Item in $Setting) {
         try {
-            $RegPath = $Item.path -replace "HKCU:", $DefaultUserPath
+            # Load registry hive
+            Write-Verbose -Message "Load: $RegDefaultUser."
+            $RegPath = $DefaultUserPath -replace ":", ""
             $params = @{
-                Path        = $RegPath
-                Type        = "RegistryKey"
-                Force       = $True
-                ErrorAction = "SilentlyContinue"
+                FilePath     = "reg"
+                ArgumentList = "load $RegPath $RegDefaultUser"
+                Wait         = $True
+                NoNewWindow  = $True
+                WindowStyle  = "Hidden"
+                ErrorAction  = "SilentlyContinue"
             }
-            New-Item @params > $Null
-            $params = @{
-                Path        = $RegPath
-                Name        = $Item.name
-                Value       = $Item.value
-                Type        = $Item.type
-                Force       = $True
-                ErrorAction = "SilentlyContinue"
-            }
-            Write-Verbose -Message "Set: $RegPath, $($Item.name), $($Item.value)."
-            Set-ItemProperty @params > $Null
-            $Msg = "Success"
-            $Result = 0
+            Start-Process @params > $Null
         }
         catch {
-            $Msg = $_.Exception.Message
-            $Result = 1
+            Write-Output -InputObject @{Name = "Load"; Value = $_.Exception.Message; Status = 1 }
+            Return 1
         }
-        Write-Output -InputObject @{Name = "$RegPath / $($Item.name) / $($Item.value)"; Value = $Msg; Status = $Result }
-    }
 
-    # Unload Registry Hive
-    try {
-        Write-Verbose -Message "Unload: $RegDefaultUser."
-        $params = @{
-            FilePath     = "reg"
-            ArgumentList = "unload $($DefaultUserPath -replace ':', '')"
-            Wait         = $True
-            WindowStyle  = "Hidden"
-            ErrorAction  = "SilentlyContinue"
+        # Process Registry Commands
+        ForEach ($Item in $Setting) {
+            try {
+                $RegPath = $Item.path -replace "HKCU:", $DefaultUserPath
+                $params = @{
+                    Path        = $RegPath
+                    Type        = "RegistryKey"
+                    Force       = $True
+                    ErrorAction = "SilentlyContinue"
+                }
+                New-Item @params > $Null
+                $params = @{
+                    Path        = $RegPath
+                    Name        = $Item.name
+                    Value       = $Item.value
+                    Type        = $Item.type
+                    Force       = $True
+                    ErrorAction = "SilentlyContinue"
+                }
+                Write-Verbose -Message "Set: $RegPath, $($Item.name), $($Item.value)."
+                Set-ItemProperty @params > $Null
+                $Msg = "Success"
+                $Result = 0
+            }
+            catch {
+                $Msg = $_.Exception.Message
+                $Result = 1
+            }
+            Write-Output -InputObject @{Name = "$RegPath / $($Item.name) / $($Item.value)"; Value = $Msg; Status = $Result }
         }
-        Start-Process @params > $Null
     }
-    catch {
-        Write-Output -InputObject @{Name = "Unload"; Value = $_.Exception.Message; Status = 1 }
-        Return 1
+    catch {}
+    finally {
+        try {
+            # Unload Registry Hive
+            Write-Verbose -Message "Unload: $RegDefaultUser."
+            $params = @{
+                FilePath     = "reg"
+                ArgumentList = "unload $($DefaultUserPath -replace ':', '')"
+                Wait         = $True
+                NoNewWindow  = $True
+                WindowStyle  = "Hidden"
+                ErrorAction  = "SilentlyContinue"
+            }
+            Start-Process @params > $Null
+        }
+        catch {
+            Write-Output -InputObject @{Name = "Unload"; Value = $_.Exception.Message; Status = 1 }
+        }
     }
 }
 
@@ -397,7 +401,7 @@ Function Copy-Path ($Parent, $Path) {
                 $params = @{
                     Path        = $(Join -Path $Parent -ChildPath $Item.Source)
                     Destination = $Item.Destination
-                    Confirm      = $False
+                    Confirm     = $False
                     Force       = $True
                     ErrorAction = "SilentlyContinue"
                 }
@@ -468,29 +472,17 @@ try {
         If ([System.Version]$Version -ge [System.Version]$Settings.MininumBuild) {
 
             # Implement each setting in the JSON
-            $Results = Remove-Feature -Feature $Settings.Features.Disable
-            Write-ToEventLog -EventLog $Project -Property "Features" -Object $Results
-
-            $Results = Remove-Capability -Capability $Settings.Capabilities.Remove
-            Write-ToEventLog -EventLog $Project -Property "Capabilities" -Object $Results
-
-            $Results = Remove-Package -Package $Settings.Packages.Remove
-            Write-ToEventLog -EventLog $Project -Property "Packages" -Object $Results
-
-            $Results = Remove-Path -Path $Settings.Paths.Remove
-            Write-ToEventLog -EventLog $Project -Property "Paths" -Object $Results
-
-            $Results = Copy-Path -Path $Settings.Paths.Copy -Parent $WorkingPath
-            Write-ToEventLog -EventLog $Project -Property "Paths" -Object $Result
-
             Switch ($Settings.Registry.Type) {
-                "Direct" {
-                    $Results = Set-Registry -Setting $Settings.Registry.Set
-                }
                 "DefaultProfile" {
                     $Results = Set-DefaultUserProfile -Setting $Settings.Registry.Set
+                    Break
+                }
+                "Direct" {
+                    $Results = Set-Registry -Setting $Settings.Registry.Set
+                    Break
                 }
                 Default {
+                    Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Registry"; Value = "Skipped"; Status = 0 })
                     Write-Verbose -Message "Skip registry."
                 }
             }
@@ -514,8 +506,24 @@ try {
                 }
             }
             Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
+
+            $Results = Copy-Path -Path $Settings.Paths.Copy -Parent $WorkingPath
+            Write-ToEventLog -EventLog $Project -Property "Paths" -Object $Result
+
+            $Results = Remove-Path -Path $Settings.Paths.Remove
+            Write-ToEventLog -EventLog $Project -Property "Paths" -Object $Results
+
+            $Results = Remove-Feature -Feature $Settings.Features.Disable
+            Write-ToEventLog -EventLog $Project -Property "Features" -Object $Results
+
+            $Results = Remove-Capability -Capability $Settings.Capabilities.Remove
+            Write-ToEventLog -EventLog $Project -Property "Capabilities" -Object $Results
+
+            $Results = Remove-Package -Package $Settings.Packages.Remove
+            Write-ToEventLog -EventLog $Project -Property "Packages" -Object $Results
         }
         Else {
+            Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = $Config.FullName; Value = "Skipped"; Status = 0 })
             Write-Verbose -Message "Skip config: $($Config.FullName)."
         }
     }
