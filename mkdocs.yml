@@ -115,8 +115,8 @@ extra:
 
 nav:
   - Home: index.md
-  - Invoke Scripts: invoke.md
+  - Install Defaults: install.md
   - Scripts:
     - Remove UWP apps: appxapps.md
-    - Configure Machine settings: machine.md
-    - Customise the Default Profile: profile.md
+    - Machine settings: machine.md
+    - Default Profile customisations: profile.md

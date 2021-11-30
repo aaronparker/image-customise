@@ -2,7 +2,8 @@
     .SYNOPSIS
         Run local Pester tests
 #>
-[OutputType()]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "")]
+[CmdletBinding()]
 Param()
 
 # Invoke Pester tests

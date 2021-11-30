@@ -33,7 +33,7 @@ If (Get-Variable -Name "projectRoot" -ErrorAction "SilentlyContinue") {
     Write-Host "Output path:     $testOutput."
 
     # Invoke Pester tests
-    $res = Invoke-Pester -Configuration $testConfig
+    Invoke-Pester -Configuration $testConfig
 }
 Else {
     Write-Warning -Message "Required variable does not exist: projectRoot."

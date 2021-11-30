@@ -4,7 +4,7 @@ summary:
 authors:
     - Aaron Parker
 ---
-`Remove-AppxApps.Client.ps1` and `Remove-AppxApps.Virtual.ps1` will remove Universal Windows Platform (UWP) / Microsoft Store apps from the local Windows OS. These scripts call `Remove-AppxApps.ps1` that runs in an allow list or block list mode to either remove all but a specified list of applications or explicitly remove a specified list.
+`Remove-AppxApps.ps1` will remove Universal Windows Platform (UWP) / Microsoft Store apps from the local Windows OS.The script runs in an allow list or block list mode to either remove all but a specified list of applications or explicitly remove a specified list.
 
 This allows you to optimise a Windows install or gold image by removing a specified list of AppX packages from the current user account and the local system to prevent new installs of in-built apps when new users log onto the system.
 
