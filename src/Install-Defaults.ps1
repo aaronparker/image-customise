@@ -240,6 +240,21 @@ Function Set-DefaultUserProfile ($Setting) {
 # Import default Start layout
 Function Import-StartMenu ($StartMenuLayout) {
     If ($Null -ne $StartMenuLayout) {
+        try {
+            $params = @{
+                Name        = "StartLayout"
+                Force       = $True
+                ErrorAction = "SilentlyContinue"
+            }
+            Import-Module @params
+            $Msg = "Success"
+            $Result = 0
+        }
+        catch {
+            $Msg = $_.Exception.Message
+            $Result = 1
+        }
+        Write-Output -InputObject ([PSCustomObject]@{Name = "Import-Module StartLayout"; Value = $Msg; Status = $Result })
         $StartPath = "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows\Shell"
         If (!(Test-Path -Path $StartPath -ErrorAction "SilentlyContinue")) {
             $params = @{
