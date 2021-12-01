@@ -237,6 +237,30 @@ Function Set-DefaultUserProfile ($Setting) {
     }
 }
 
+Function Copy-Path ($Parent, $Path) {
+    ForEach ($Item in $Path) {
+        If (Test-Path -Path $Item -ErrorAction "SilentlyContinue") {
+            try {
+                $params = @{
+                    Path        = $(Join -Path $Parent -ChildPath $Item.Source)
+                    Destination = $Item.Destination
+                    Confirm     = $False
+                    Force       = $True
+                    ErrorAction = "SilentlyContinue"
+                }
+                Copy-Item @params
+                $Msg = "Success"
+                $Result = 0
+            }
+            catch {
+                $Msg = $_.Exception.Message
+                $Result = 1
+            }
+            Write-Output -InputObject ([PSCustomObject]@{Name = "$($Item.Source) / $($Item.Destination)"; Value = $Msg; Status = $Result })
+        }
+    }
+}
+
 # Import default Start layout
 Function Import-StartMenu ($StartMenuLayout) {
     If ($Null -ne $StartMenuLayout) {
@@ -255,6 +279,7 @@ Function Import-StartMenu ($StartMenuLayout) {
             $Result = 1
         }
         Write-Output -InputObject ([PSCustomObject]@{Name = "Import-Module StartLayout"; Value = $Msg; Status = $Result })
+
         $StartPath = "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows\Shell"
         If (!(Test-Path -Path $StartPath -ErrorAction "SilentlyContinue")) {
             $params = @{
@@ -264,22 +289,44 @@ Function Import-StartMenu ($StartMenuLayout) {
             }
             New-Item @params > $Null
         }
-        try {
-            $params = @{
-                LayoutPath  = $StartMenuLayout
-                MountPath   = "$($env:SystemDrive)\"
-                ErrorAction = "SilentlyContinue"
+
+        If ($Result = 0) {
+            try {
+                $params = @{
+                    LayoutPath  = $StartMenuLayout
+                    MountPath   = "$($env:SystemDrive)\"
+                    ErrorAction = "SilentlyContinue"
+                }
+                Write-Verbose -Message "Import-StartLayout: $StartMenuLayout."
+                Import-StartLayout @params > $Null
+                $Msg = "Success"
+                $Result = 0
             }
-            Write-Verbose -Message "Import-StartLayout: $StartMenuLayout."
-            Import-StartLayout @params > $Null
-            $Msg = "Success"
-            $Result = 0
+            catch {
+                $Msg = $_.Exception.Message
+                $Result = 1
+            }
+            Write-Output -InputObject ([PSCustomObject]@{Name = $StartMenuLayout; Value = $Msg; Status = $Result })
         }
-        catch {
-            $Msg = $_.Exception.Message
-            $Result = 1
+        Else {
+            try {
+                $params = @{
+                    Path        = $StartMenuLayout
+                    Destination = $(Join-Path -Path $StartPath -ChildPath "LayoutModification.xml")
+                    Confirm      = $False
+                    Force       = $True
+                    ErrorAction = "SilentlyContinue"
+                }
+                Copy-Item @params
+                $Msg = "Success"
+                $Result = 0
+            }
+            catch {
+                $Msg = $_.Exception.Message
+                $Result = 1
+            }
+            Write-Output -InputObject ([PSCustomObject]@{Name = "$($Item.Source) / $($Item.Destination)"; Value = $Msg; Status = $Result })
         }
-        Write-Output -InputObject ([PSCustomObject]@{Name = $StartMenuLayout; Value = $Msg; Status = $Result })
     }
 }
 
@@ -406,30 +453,6 @@ Function Set-Registry ($Setting) {
             $Result = 1
         }
         Write-Output -InputObject @{Name = "$RegPath / $($Item.name) / $($Item.value)"; Value = $Msg; Status = $Result }
-    }
-}
-
-Function Copy-Path ($Parent, $Path) {
-    ForEach ($Item in $Path) {
-        If (Test-Path -Path $Item -ErrorAction "SilentlyContinue") {
-            try {
-                $params = @{
-                    Path        = $(Join -Path $Parent -ChildPath $Item.Source)
-                    Destination = $Item.Destination
-                    Confirm     = $False
-                    Force       = $True
-                    ErrorAction = "SilentlyContinue"
-                }
-                Copy-Item @params
-                $Msg = "Success"
-                $Result = 0
-            }
-            catch {
-                $Msg = $_.Exception.Message
-                $Result = 1
-            }
-            Write-Output -InputObject ([PSCustomObject]@{Name = "$($Item.Source) / $($Item.Destination)"; Value = $Msg; Status = $Result })
-        }
     }
 }
 #endregion
