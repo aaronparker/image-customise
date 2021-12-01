@@ -50,7 +50,7 @@ If (!([System.Environment]::Is64BitProcess)) {
             WindowStyle  = "Hidden"
         }
         Start-Process @params
-        Exit
+        Exit 0
     }
 }
 #endregion
