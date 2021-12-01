@@ -207,13 +207,15 @@ Function Set-DefaultUserProfile ($Setting) {
         ForEach ($Item in $Setting) {
             try {
                 $RegPath = $Item.path -replace "HKCU:", $DefaultUserPath
-                $params = @{
-                    Path        = $RegPath
-                    Type        = "RegistryKey"
-                    Force       = $True
-                    ErrorAction = "SilentlyContinue"
+                If (!(Test-Path -Path $RegPath)) {
+                    $params = @{
+                        Path        = $RegPath
+                        Type        = "RegistryKey"
+                        Force       = $True
+                        ErrorAction = "SilentlyContinue"
+                    }
+                    New-Item @params > $Null
                 }
-                New-Item @params > $Null
                 $params = @{
                     Path        = $RegPath
                     Name        = $Item.name
@@ -331,7 +333,7 @@ Function Import-StartMenu ($StartMenuLayout) {
                 $params = @{
                     Path        = $StartMenuLayout
                     Destination = $(Join-Path -Path $StartPath -ChildPath "LayoutModification.xml")
-                    Confirm      = $False
+                    Confirm     = $False
                     Force       = $True
                     ErrorAction = "SilentlyContinue"
                 }
@@ -453,7 +455,15 @@ Function Remove-Path ($Path) {
 Function Set-Registry ($Setting) {
     ForEach ($Item in $Setting) {
         try {
-            New-Item -Path $Item.path -Type "RegistryKey" -Force -ErrorAction "SilentlyContinue" > $Null
+            If (!(Test-Path -Path $RegPath)) {
+                $params = @{
+                    Path        = $Item.path
+                    Type        = "RegistryKey"
+                    Force       = $True
+                    ErrorAction = "SilentlyContinue"
+                }
+                New-Item @params > $Null
+            }
             $params = @{
                 Path        = $Item.path
                 Name        = $Item.name
