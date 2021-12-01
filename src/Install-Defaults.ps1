@@ -32,19 +32,21 @@ param (
     [System.String] $Helplink = "https://stealthpuppy.com/image-customise/",
 
     [Parameter(Mandatory = $False)]
-    [System.String[]] $Properties = @("General", "Registry", "Paths", "StartMenu", "Features", "Capabilities", "Packages", "Apps")
+    [System.String[]] $Properties = @("General", "Registry", "Paths", "StartMenu", "Features", "Capabilities", "Packages", "AppX")
 )
 
 #region Restart if running in a 32-bit session
 If (!([System.Environment]::Is64BitProcess)) {
     If ([System.Environment]::Is64BitOperatingSystem) {
-        $Arguments = "-NoProfile -ExecutionPolicy ByPass -WindowStyle Hidden -File `"" + $MyInvocation.MyCommand.Definition + "`""
+        $Arguments = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$($MyInvocation.MyCommand.Definition)`""
         $ProcessPath = $(Join-Path -Path $Env:SystemRoot -ChildPath "\Sysnative\WindowsPowerShell\v1.0\powershell.exe")
+        Write-Verbose -Message "Restarting in 64-bit PowerShell."
+        Write-Verbose -Message "FilePath: $ProcessPath."
+        Write-Verbose -Message "Arguments: $Arguments."
         $params = @{
             FilePath     = $ProcessPath
             ArgumentList = $Arguments
             Wait         = $True
-            NoNewWindow  = $True
             WindowStyle  = "Hidden"
         }
         Start-Process @params
@@ -64,24 +66,26 @@ Function New-ScriptEventLog ($EventLog, $Property) {
 }
 
 Function Write-ToEventLog ($EventLog, $Property, $Object) {
-    ForEach ($Item in $Object) {
-        Write-Verbose -Message "Write-ToEventLog: $($Property): $($Item.Name)."
-        Switch ($Item.Status) {
-            0 { $EntryType = "Information" }
-            1 { $EntryType = "Warning" }
-            Default { $EntryType = "Information" }
+    If ($Null -ne $Object) {
+        ForEach ($Item in $Object) {
+            Write-Verbose -Message "Write-ToEventLog: $($Property): $($Item.Name)."
+            Switch ($Item.Status) {
+                0 { $EntryType = "Information" }
+                1 { $EntryType = "Warning" }
+                Default { $EntryType = "Information" }
+            }
+            $params = @{
+                LogName     = $EventLog
+                Source      = $Property
+                EventID     = (100 + [System.Int16]$Item.Status)
+                EntryType   = $EntryType
+                Message     = "$($Item.Name), $($Item.Value), $($Item.Status)"
+                #Category    = 1
+                #RawData   = 10, 20
+                ErrorAction = "SilentlyContinue"
+            }
+            Write-EventLog @params
         }
-        $params = @{
-            LogName     = $EventLog
-            Source      = $Property
-            EventID     = (100 + [System.Int16]$Item.Status)
-            EntryType   = $EntryType
-            Message     = "$($Item.Name), $($Item.Value), $($Item.Status)"
-            #Category    = 1
-            #RawData   = 10, 20
-            ErrorAction = "SilentlyContinue"
-        }
-        Write-EventLog @params
     }
 }
 
@@ -192,14 +196,13 @@ Function Set-DefaultUserProfile ($Setting) {
                 FilePath     = "reg"
                 ArgumentList = "load $RegPath $RegDefaultUser"
                 Wait         = $True
-                NoNewWindow  = $True
                 WindowStyle  = "Hidden"
                 ErrorAction  = "SilentlyContinue"
             }
             Start-Process @params > $Null
         }
         catch {
-            Write-Output -InputObject @{Name = "Load"; Value = $_.Exception.Message; Status = 1 }
+            Write-Output -InputObject ([PSCustomObject]@{Name = "Load"; Value = $_.Exception.Message; Status = 1 })
             Return 1
         }
 
@@ -233,7 +236,7 @@ Function Set-DefaultUserProfile ($Setting) {
                 $Msg = $_.Exception.Message
                 $Result = 1
             }
-            Write-Output -InputObject @{Name = "$RegPath / $($Item.name) / $($Item.value)"; Value = $Msg; Status = $Result }
+            Write-Output -InputObject ([PSCustomObject]@{Name = "$RegPath; $($Item.name); $($Item.value)"; Value = $Msg; Status = $Result })
         }
     }
     catch {}
@@ -245,14 +248,13 @@ Function Set-DefaultUserProfile ($Setting) {
                 FilePath     = "reg"
                 ArgumentList = "unload $($DefaultUserPath -replace ':', '')"
                 Wait         = $True
-                NoNewWindow  = $True
                 WindowStyle  = "Hidden"
                 ErrorAction  = "SilentlyContinue"
             }
             Start-Process @params > $Null
         }
         catch {
-            Write-Output -InputObject @{Name = "Unload"; Value = $_.Exception.Message; Status = 1 }
+            Write-Output -InputObject ([PSCustomObject]@{Name = "Unload"; Value = $_.Exception.Message; Status = 1 })
         }
     }
 }
@@ -276,7 +278,7 @@ Function Copy-Path ($Parent, $Path) {
                 $Msg = $_.Exception.Message
                 $Result = 1
             }
-            Write-Output -InputObject ([PSCustomObject]@{Name = "$($Item.Source) / $($Item.Destination)"; Value = $Msg; Status = $Result })
+            Write-Output -InputObject ([PSCustomObject]@{Name = "$($Item.Source); $($Item.Destination)"; Value = $Msg; Status = $Result })
         }
     }
 }
@@ -345,13 +347,13 @@ Function Import-StartMenu ($StartMenuLayout) {
                 $Msg = $_.Exception.Message
                 $Result = 1
             }
-            Write-Output -InputObject ([PSCustomObject]@{Name = "$($Item.Source) / $($Item.Destination)"; Value = $Msg; Status = $Result })
+            Write-Output -InputObject ([PSCustomObject]@{Name = "$StartMenuLayout; $(Join-Path -Path $StartPath -ChildPath "LayoutModification.xml")"; Value = $Msg; Status = $Result })
         }
     }
 }
 
 Function Remove-Feature ($Feature) {
-    If ($Null -ne $Feature) {
+    If ($Feature.Count -ge 1) {
         Write-Verbose -Message "Remove features."
         $Feature | ForEach-Object { Get-WindowsOptionalFeature -Online -FeatureName $_ -ErrorAction "SilentlyContinue" } | `
             ForEach-Object {
@@ -371,13 +373,13 @@ Function Remove-Feature ($Feature) {
                 $Msg = $_.Exception.Message
                 $Result = 1
             }
-            Write-Output -InputObject ([PSCustomObject]@{Name = "Disable-WindowsOptionalFeature / $($_.FeatureName)"; Value = $Msg; Status = $Result })
+            Write-Output -InputObject ([PSCustomObject]@{Name = "Disable-WindowsOptionalFeature; $($_.FeatureName)"; Value = $Msg; Status = $Result })
         }
     }
 }
 
 Function Remove-Capability ($Capability) {
-    If ($Null -ne $Capability) {
+    If ($Capability.Count -ge 1) {
         Write-Verbose -Message "Remove capabilities."
         ForEach ($Item in $Capability) {
             try {
@@ -395,13 +397,13 @@ Function Remove-Capability ($Capability) {
                 $Msg = $_.Exception.Message
                 $Result = 1
             }
-            Write-Output -InputObject ([PSCustomObject]@{Name = "Remove-WindowsCapability / $Item"; Value = $Msg; Status = $Result })
+            Write-Output -InputObject ([PSCustomObject]@{Name = "Remove-WindowsCapability; $Item"; Value = $Msg; Status = $Result })
         }
     }
 }
 
 Function Remove-Package ($Package) {
-    If ($Null -ne $Package) {
+    If ($Package.Count -ge 1) {
         Write-Verbose -Message "Remove packages."
         ForEach ($Item in $Package) {
             Get-WindowsPackage -Online -ErrorAction "SilentlyContinue" | Where-Object { $_.PackageName -match $Item } | `
@@ -421,7 +423,7 @@ Function Remove-Package ($Package) {
                     $Msg = $_.Exception.Message
                     $Result = 1
                 }
-                Write-Output -InputObject ([PSCustomObject]@{Name = "Remove-WindowsPackage / $Item;"; Value = $Msg; Status = $Result })
+                Write-Output -InputObject ([PSCustomObject]@{Name = "Remove-WindowsPackage; $Item;"; Value = $Msg; Status = $Result })
             }
         }
     }
@@ -455,7 +457,7 @@ Function Remove-Path ($Path) {
 Function Set-Registry ($Setting) {
     ForEach ($Item in $Setting) {
         try {
-            If (!(Test-Path -Path $RegPath)) {
+            If (!(Test-Path -Path $Item.path)) {
                 $params = @{
                     Path        = $Item.path
                     Type        = "RegistryKey"
@@ -480,7 +482,7 @@ Function Set-Registry ($Setting) {
             $Msg = $_.Exception.Message
             $Result = 1
         }
-        Write-Output -InputObject @{Name = "$RegPath / $($Item.name) / $($Item.value)"; Value = $Msg; Status = $Result }
+        Write-Output -InputObject ([PSCustomObject]@{Name = "$($Item.path); $($Item.name); $($Item.value)"; Value = $Msg; Status = $Result })
     }
 }
 #endregion
@@ -548,7 +550,7 @@ try {
                     Break
                 }
                 Default {
-                    Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Registry"; Value = "Skipped"; Status = 0 })
+                    $Results = ([PSCustomObject]@{Name = "Registry"; Value = "Skipped"; Status = 0 })
                     Write-Verbose -Message "Skip registry."
                 }
             }
@@ -595,7 +597,7 @@ try {
     }
     #endregion
 
-    # If on a client OS, run the script to remove AppX / UWP apps
+    # If on a client OS, run the script to remove AppX; UWP apps
     If ($Platform -eq "Client") {
         Switch ($Model) {
             "Physical" { $Apps = & (Join-Path -Path $WorkingPath -ChildPath "Remove-AppxApps.ps1") -Operation "BlockList" }
