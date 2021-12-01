@@ -35,6 +35,24 @@ param (
     [System.String[]] $Properties = @("General", "Registry", "Paths", "StartMenu", "Features", "Capabilities", "Packages", "Apps")
 )
 
+#region Restart if running in a 32-bit session
+If (!([System.Environment]::Is64BitProcess)) {
+    If ([System.Environment]::Is64BitOperatingSystem) {
+        $Arguments = "-NoProfile -ExecutionPolicy ByPass -WindowStyle Hidden -File `"" + $MyInvocation.MyCommand.Definition + "`""
+        $ProcessPath = $(Join-Path -Path $Env:SystemRoot -ChildPath "\Sysnative\WindowsPowerShell\v1.0\powershell.exe")
+        $params = @{
+            FilePath     = $ProcessPath
+            ArgumentList = $Arguments
+            Wait         = $True
+            NoNewWindow  = $True
+            WindowStyle  = "Hidden"
+        }
+        Start-Process @params
+        Exit
+    }
+}
+#endregion
+
 #region Functions
 Function New-ScriptEventLog ($EventLog, $Property) {
     $params = @{
