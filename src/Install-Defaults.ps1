@@ -599,11 +599,21 @@ try {
 
     # If on a client OS, run the script to remove AppX; UWP apps
     If ($Platform -eq "Client") {
-        Switch ($Model) {
-            "Physical" { $Apps = & (Join-Path -Path $WorkingPath -ChildPath "Remove-AppxApps.ps1") -Operation "BlockList" }
-            "Virtual" { $Apps = & (Join-Path -Path $WorkingPath -ChildPath "Remove-AppxApps.ps1") -Operation "AllowList" }
+
+        # Get the script location
+        $Script = Get-ChildItem -Path $WorkingPath -Filter "Remove-AppxApps.ps1" -Recurse -ErrorAction "SilentlyContinue"
+        If ($Null -ne $Script) {
+            Write-ToEventLog -EventLog $Project -Property "AppX" -Object ([PSCustomObject]@{Name = "Script"; Value = $Script.FullName; Status = 1 })
+
+            Switch ($Model) {
+                "Physical" { $Apps = & $Script.FullName -Operation "BlockList" }
+                "Virtual" { $Apps = & $Script.FullName -Operation "AllowList" }
+            }
+            Write-ToEventLog -EventLog $Project -Property "AppX" -Object $Apps
         }
-        Write-ToEventLog -EventLog $Project -Property "AppX" -Object $Apps
+        Else {
+            Write-ToEventLog -EventLog $Project -Property "AppX" -Object ([PSCustomObject]@{Name = "Script"; Value = "Remove-AppxApps.ps1"; Status = 0 })
+        }
     }
 }
 catch {

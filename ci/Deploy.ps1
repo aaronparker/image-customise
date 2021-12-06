@@ -42,8 +42,6 @@ try {
     # Configure the git environment
     git config --global credential.helper store
     git remote set-url --push origin "https://$($env:GITHUB_ACTOR):$($env:GITHUB_TOKEN)@github.com/$($env:GITHUB_REPOSITORY).git"
-    #git config --global user.email aaron@stealthpuppy.com
-    #git config --global user.name "Aaron Parker"
     git config receive.advertisePushOptions true
     git config --global core.autocrlf true
     git config --global core.safecrlf false
@@ -60,7 +58,6 @@ catch {
     Write-Warning -Message "Push to GitHub failed."
     Throw $_
 }
-Write-Host "$module $newVersion pushed to GitHub."
 
 # Line break for readability in console
 Write-Host ""
