@@ -34,6 +34,7 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+Thumbs.db:encryptable
 
 # Exclude the releases folder
 releases/**
