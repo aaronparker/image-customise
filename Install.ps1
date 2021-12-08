@@ -11,10 +11,23 @@ $params = @{
     Uri                = $Uri
 }
 $release = Invoke-RestMethod @params
-ForEach ($item in $release) {
-    ForEach ($asset in $item.assets) {
-        If ($asset.browser_download_url -match $Filter) {
-            $asset.browser_download_url
+If ($Null -ne $release) {
+    ForEach ($item in $release) {
+        ForEach ($asset in $item.assets) {
+            If ($asset.browser_download_url -match $Filter) {
+                $Uri = $asset.browser_download_url
+            }
         }
+    }
+    $TmpDir = [System.IO.Path]::Combine($Env:Temp, $(New-Guid))
+    New-Item -Path $TmpDir -ItemType "Directory" > $Null
+    $OutFile = [System.IO.Path]::Combine($TmpDir, $(Split-Path -Path $Uri -Leaf))
+    Invoke-WebRequest -Uri $Uri -OutFile $OutFile -UseBasicParsing
+    If (Test-Path -Path $OutFile -ErrorAction "SilentlyContinue") {
+        Push-Location -Path $TmpDir
+        Expand-Archive -Path $OutFile -DestinationPath $TmpDir -Force
+        & [System.IO.Path]::Combine($TmpDir, "Install-Defaults.ps1")
+        Pop-Location
+        Remove-Item -Path $TmpDir -Recurse -Force
     }
 }
