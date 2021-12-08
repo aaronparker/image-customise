@@ -52,12 +52,6 @@
                 "type": "DWord"
             },
             {
-                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\VisualEffects",
-                "name": "VisualFXSetting",
-                "value": 3,
-                "type": "DWord"
-            },
-            {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\DWM",
                 "name": "EnableAeroPeek",
                 "value": 0,
@@ -74,12 +68,6 @@
                 "name": "DragFullWindows",
                 "value": "0",
                 "type": "String"
-            },
-            {
-                "path": "HKCU:\\Control Panel\\Desktop",
-                "name": "UserPreferencesMask",
-                "value": "9032078010000000",
-                "type": "Binary"
             },
             {
                 "path": "HKCU:\\Control Panel\\Desktop\\WindowMetrics",
@@ -169,6 +157,22 @@
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.YourPhone_8wekyb3d8bbwe",
                 "name": "DisabledByUser",
                 "value": 1,
+                "type": "DWord"
+            }
+        ]
+    },
+    "Disabled": {
+        "Set": [
+            {
+                "path": "HKCU:\\Control Panel\\Desktop",
+                "name": "UserPreferencesMask",
+                "value": "9032078010000000",
+                "type": "Binary"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\VisualEffects",
+                "name": "VisualFXSetting",
+                "value": 3,
                 "type": "DWord"
             }
         ]
