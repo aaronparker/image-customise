@@ -159,10 +159,8 @@
                 "value": 1,
                 "type": "DWord"
             }
-        ]
-    },
-    "Disabled": {
-        "Set": [
+        ],
+        "Others": [
             {
                 "path": "HKCU:\\Control Panel\\Desktop",
                 "name": "UserPreferencesMask",

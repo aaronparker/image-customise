@@ -44,9 +44,11 @@
     "Capabilities": {
         "Remove": [
             "App.Support.QuickAssist~~~~0.0.1.0",
-            "MathRecognizer~~~~0.0.1.0",
             "Media.WindowsMediaPlayer~~~~0.0.12.0",
             "XPS.Viewer~~~~0.0.1.0"
+        ],
+        "Others": [
+            "MathRecognizer~~~~0.0.1.0"
         ]
     },
     "Packages": {
