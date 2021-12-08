@@ -19,7 +19,7 @@ $output = Join-Path $projectRoot "TestsResults.xml"
 
 # Echo variables
 Write-Host ""
-Write-Host "OS version:      $((Get-WmiObject Win32_OperatingSystem).Caption)"
+Write-Host "OS version:      $((Get-CimInstance -ClassName "CIM_OperatingSystem").Caption)"
 Write-Host ""
 Write-Host "ProjectRoot:     $projectRoot."
 Write-Host "Tests path:      $tests."

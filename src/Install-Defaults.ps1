@@ -90,7 +90,7 @@ Function Write-ToEventLog ($EventLog, $Property, $Object) {
 }
 
 Function Get-Platform {
-    Switch -Regex ((Get-WmiObject -Class "Win32_OperatingSystem").Caption) {
+    Switch -Regex ((Get-CimInstance -ClassName "CIM_OperatingSystem").Caption) {
         "Microsoft Windows Server*" {
             $Platform = "Server"
         }
@@ -116,7 +116,7 @@ Function Get-Platform {
 }
 
 Function Get-OSName {
-    Switch -Regex ((Get-WmiObject -Class "Win32_OperatingSystem").Caption) {
+    Switch -Regex ((Get-CimInstance -ClassName "CIM_OperatingSystem").Caption) {
         "Microsoft Windows Server 2022*" {
             $Caption = "Windows2022"; Break
         }
@@ -147,7 +147,7 @@ Function Get-OSName {
 
 Function Get-Model {
     $Hypervisor = "Parallels*|VMware*|Virtual*"
-    If ((Get-WmiObject -Computer . -Class "Win32_ComputerSystem").Model -match $Hypervisor) {
+    If ((Get-CimInstance -ClassName "Win32_ComputerSystem").Model -match $Hypervisor) {
         $Model = "Virtual"
     }
     Else {
