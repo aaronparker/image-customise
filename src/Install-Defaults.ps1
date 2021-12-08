@@ -200,6 +200,7 @@ Function Set-DefaultUserProfile ($Setting) {
                 ErrorAction  = "SilentlyContinue"
             }
             Start-Process @params > $Null
+            Write-Output -InputObject ([PSCustomObject]@{Name = "Load"; Value = "Start"; Status = 0 })
         }
         catch {
             Write-Output -InputObject ([PSCustomObject]@{Name = "Load"; Value = $_.Exception.Message; Status = 1 })
@@ -217,7 +218,7 @@ Function Set-DefaultUserProfile ($Setting) {
                         Force       = $True
                         ErrorAction = "SilentlyContinue"
                     }
-                    New-Item @params > $Null
+                    $result = New-Item @params > $Null
                 }
                 $params = @{
                     Path        = $RegPath
@@ -242,6 +243,11 @@ Function Set-DefaultUserProfile ($Setting) {
     catch {}
     finally {
         try {
+            # Close handles to the registry
+            $result.Handle.Close()
+            [gc]::Collect()
+            Write-Output -InputObject ([PSCustomObject]@{Name = "Unload"; Value = "Close handles"; Status = 0 })
+
             # Unload Registry Hive
             Write-Verbose -Message "Unload: $RegDefaultUser."
             $params = @{
@@ -252,6 +258,7 @@ Function Set-DefaultUserProfile ($Setting) {
                 ErrorAction  = "SilentlyContinue"
             }
             Start-Process @params > $Null
+            Write-Output -InputObject ([PSCustomObject]@{Name = "Unload"; Value = "End"; Status = 0 })
         }
         catch {
             Write-Output -InputObject ([PSCustomObject]@{Name = "Unload"; Value = $_.Exception.Message; Status = 1 })
