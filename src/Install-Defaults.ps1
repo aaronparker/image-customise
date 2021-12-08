@@ -240,7 +240,9 @@ Function Set-DefaultUserProfile ($Setting) {
             Write-Output -InputObject ([PSCustomObject]@{Name = "$RegPath; $($Item.name); $($Item.value)"; Value = $Msg; Status = $Result })
         }
     }
-    catch {}
+    catch {
+        Write-Output -InputObject ([PSCustomObject]@{Name = "General"; Value = $_.Exception.Message; Status = $Result })
+    }
     finally {
         try {
             # Close handles to the registry
@@ -319,7 +321,7 @@ Function Import-StartMenu ($StartMenuLayout) {
             New-Item @params > $Null
         }
 
-        If ($Result = 0) {
+        If ($Result -eq 0) {
             try {
                 $params = @{
                     LayoutPath  = $StartMenuLayout
