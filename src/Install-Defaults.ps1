@@ -211,15 +211,14 @@ Function Set-DefaultUserProfile ($Setting) {
         ForEach ($Item in $Setting) {
             try {
                 $RegPath = $Item.path -replace "HKCU:", $DefaultUserPath
-                If (!(Test-Path -Path $RegPath)) {
-                    $params = @{
-                        Path        = $RegPath
-                        Type        = "RegistryKey"
-                        Force       = $True
-                        ErrorAction = "SilentlyContinue"
-                    }
-                    $result = New-Item @params > $Null
+                $params = @{
+                    Path        = $RegPath
+                    Type        = "RegistryKey"
+                    Force       = $True
+                    ErrorAction = "SilentlyContinue"
                 }
+                $ItemResult = New-Item @params
+                If ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
                 $params = @{
                     Path        = $RegPath
                     Name        = $Item.name
@@ -245,13 +244,9 @@ Function Set-DefaultUserProfile ($Setting) {
     }
     finally {
         try {
-            # Close handles to the registry
-            $result.Handle.Close()
-            [gc]::Collect()
-            Write-Output -InputObject ([PSCustomObject]@{Name = "Unload"; Value = "Close handles"; Status = 0 })
-
             # Unload Registry Hive
             Write-Verbose -Message "Unload: $RegDefaultUser."
+            [gc]::Collect()
             $params = @{
                 FilePath     = "reg"
                 ArgumentList = "unload $($DefaultUserPath -replace ':', '')"
@@ -265,6 +260,39 @@ Function Set-DefaultUserProfile ($Setting) {
         catch {
             Write-Output -InputObject ([PSCustomObject]@{Name = "Unload"; Value = $_.Exception.Message; Status = 1 })
         }
+    }
+}
+
+Function Set-Registry ($Setting) {
+    ForEach ($Item in $Setting) {
+        try {
+            If (!(Test-Path -Path $Item.path)) {
+                $params = @{
+                    Path        = $Item.path
+                    Type        = "RegistryKey"
+                    Force       = $True
+                    ErrorAction = "SilentlyContinue"
+                }
+                $ItemResult = New-Item @params
+                If ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
+            }
+            $params = @{
+                Path        = $Item.path
+                Name        = $Item.name
+                Value       = $Item.value
+                Type        = $Item.type
+                Force       = $True
+                ErrorAction = "SilentlyContinue"
+            }
+            Set-ItemProperty @params > $Null
+            $Msg = "Success"
+            $Result = 0
+        }
+        catch {
+            $Msg = $_.Exception.Message
+            $Result = 1
+        }
+        Write-Output -InputObject ([PSCustomObject]@{Name = "$($Item.path); $($Item.name); $($Item.value)"; Value = $Msg; Status = $Result })
     }
 }
 
@@ -460,38 +488,6 @@ Function Remove-Path ($Path) {
             }
             Write-Output -InputObject ([PSCustomObject]@{Name = "Remove: $Item"; Value = $Msg; Status = $Result })
         }
-    }
-}
-
-Function Set-Registry ($Setting) {
-    ForEach ($Item in $Setting) {
-        try {
-            If (!(Test-Path -Path $Item.path)) {
-                $params = @{
-                    Path        = $Item.path
-                    Type        = "RegistryKey"
-                    Force       = $True
-                    ErrorAction = "SilentlyContinue"
-                }
-                New-Item @params > $Null
-            }
-            $params = @{
-                Path        = $Item.path
-                Name        = $Item.name
-                Value       = $Item.value
-                Type        = $Item.type
-                Force       = $True
-                ErrorAction = "SilentlyContinue"
-            }
-            Set-ItemProperty @params > $Null
-            $Msg = "Success"
-            $Result = 0
-        }
-        catch {
-            $Msg = $_.Exception.Message
-            $Result = 1
-        }
-        Write-Output -InputObject ([PSCustomObject]@{Name = "$($Item.path); $($Item.name); $($Item.value)"; Value = $Msg; Status = $Result })
     }
 }
 #endregion
