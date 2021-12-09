@@ -115,8 +115,9 @@ extra:
 
 nav:
   - Introduction: index.md
-  - Install Defaults: install.md
-  - Scripts:
+  - Install defaults: install.md
+  - Under the hood:
+    - Configurations: configs.md
     - Remove UWP apps: appxapps.md
     - Machine settings: machine.md
-    - Default Profile customisations: profile.md
+    - User settings: profile.md
