@@ -45,7 +45,7 @@ try {
     Invoke-WebRequest @params
 }
 catch [System.Exception] {
-    Throw "Failed to Microsoft Win32 Content Prep Tool with: $($_.Exception.Message)"
+    Throw "Failed to download IntuneWinAppUtil.exe with: $($_.Exception.Message)"
 }
 
 try {

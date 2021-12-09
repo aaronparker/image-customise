@@ -114,7 +114,7 @@ extra:
   generator: false
 
 nav:
-  - Home: index.md
+  - Introduction: index.md
   - Install Defaults: install.md
   - Scripts:
     - Remove UWP apps: appxapps.md

@@ -4,9 +4,25 @@ summary:
 authors:
     - Aaron Parker
 ---
-Configurations are implemented with `Install-Defaults.ps1`. This script reads configurations in JSON format and configures the local Windows instance with Windows feature states, registry settings, copies files into specified paths, imports a default Start menu, and modifies the default user profile.
+## Download and Deploy
+
+To use the scripts in an operating system deployment pipeline, download the zip file attached to the [latest release](https://github.com/aaronparker/image-customise/releases) and import the extracted files into your OS deployment solution (e.g. MDT, ConfigMgr, Packer etc.).
+
+The solution is also provided in `.intunewin` format for use with Microsoft Intune. Settings for a Win32 package in Intune is maintained here: [https://github.com/aaronparker/image-customise/blob/main/App.json](https://github.com/aaronparker/image-customise/blob/main/App.json).
+
+## Download and Install
+
+To simplify download and install during an automated image build pipeline, an install script is provided that can be executed with the following PowerShell:
+
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force;
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
+Invoke-Expression ((New-Object System.Net.WebClient).DownloadString("https://raw.githubusercontent.com/aaronparker/image-customise/main/install.ps1"))
+```
 
 ## Configuration Files
+
+Configurations are implemented with `Install-Defaults.ps1`. This script reads configurations in JSON format and configures the local Windows instance with Windows feature states, registry settings, copies files into specified paths, imports a default Start menu, and modifies the default user profile.
 
 Configurations are stored in the following JSON files with the logic to make changes to Windows includes in `Install-Defaults.ps1`:
 
