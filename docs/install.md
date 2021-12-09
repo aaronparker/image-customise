@@ -8,7 +8,7 @@ authors:
 
 To use the scripts in an operating system deployment pipeline, download the zip file attached to the [latest release](https://github.com/aaronparker/image-customise/releases) and import the extracted files into your OS deployment solution (e.g. MDT, ConfigMgr, Packer etc.).
 
-The solution is also provided in `.intunewin` format for use with Microsoft Intune. Settings for a Win32 package in Intune is maintained here: [https://github.com/aaronparker/image-customise/blob/main/App.json](https://github.com/aaronparker/image-customise/blob/main/App.json).
+The solution is also provided in `.intunewin` format for use with Microsoft Intune. Settings for a Win32 package in Intune is maintained here: [App.json](https://github.com/aaronparker/image-customise/blob/main/App.json).
 
 ## Download and Install
 
@@ -26,16 +26,14 @@ Configurations are implemented with `Install-Defaults.ps1`. This script reads co
 
 Configurations are stored in the following JSON files with the logic to make changes to Windows includes in `Install-Defaults.ps1`:
 
-```powershell
-Build.All.json
-Machine.All.json
-Machine.Client.json
-Machine.Server.json
-User.All.json
-User.Client.json
-User.Server.json
-User.Virtual.json
-```
+* [Build.All.json](https://github.com/aaronparker/image-customise/blob/main/src/Build.All.json)
+* [Machine.All.json](https://github.com/aaronparker/image-customise/blob/main/src/Machine.All.json)
+* [Machine.Client.json](https://github.com/aaronparker/image-customise/blob/main/src/Machine.Client.json)
+* [Machine.Server.json](https://github.com/aaronparker/image-customise/blob/main/src/Machine.Server.json)
+* [User.All.json](https://github.com/aaronparker/image-customise/blob/main/src/User.All.json)
+* [User.Client.json](https://github.com/aaronparker/image-customise/blob/main/src/User.Client.json)
+* [User.Server.json](https://github.com/aaronparker/image-customise/blob/main/src/User.Machine.json)
+* [User.Virtual.json](https://github.com/aaronparker/image-customise/blob/main/src/User.Virtual.json)
 
 JSON files are gathered based on properties of the local Windows instance. The following keywords, used in the file names, ensure that the right JSON files are selected:
 
