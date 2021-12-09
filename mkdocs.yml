@@ -1,9 +1,9 @@
 # Project information
-site_name: Image customisations
+site_name: Windows Custom Defaults
 site_url: https://stealthpuppy.com/image-customise
 site_author: Aaron Parker
 site_description: >-
-  Customise a Windows 10 / Windows Server image at deployment time
+  Making Windows images enterprise ready
 
 # Repository
 repo_name: aaronparker/image-customise
