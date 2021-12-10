@@ -29,6 +29,6 @@ If ($Null -ne $release) {
         Get-ChildItem -Path $TmpDir -Recurse | Unblock-File
         & .\Install-Defaults.ps1
         Pop-Location
-        Remove-Item -Path $TmpDir -Recurse -Force
+        Remove-Item -Path $TmpDir -Recurse -Force -ErrorAction "SilentlyContinue"
     }
 }
