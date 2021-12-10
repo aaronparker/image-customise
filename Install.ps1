@@ -19,13 +19,14 @@ If ($Null -ne $release) {
             }
         }
     }
-    $TmpDir = [System.IO.Path]::Combine($Env:Temp, $(New-Guid))
+    $TmpDir = $([System.IO.Path]::Combine($Env:Temp, $(New-Guid)))
     New-Item -Path $TmpDir -ItemType "Directory" > $Null
-    $OutFile = [System.IO.Path]::Combine($TmpDir, $(Split-Path -Path $Uri -Leaf))
+    $OutFile = $([System.IO.Path]::Combine($TmpDir, $(Split-Path -Path $Uri -Leaf)))
     Invoke-WebRequest -Uri $Uri -OutFile $OutFile -UseBasicParsing
     If (Test-Path -Path $OutFile -ErrorAction "SilentlyContinue") {
         Push-Location -Path $TmpDir
         Expand-Archive -Path $OutFile -DestinationPath $TmpDir -Force
+        Get-ChildItem -Path $TmpDir -Recurse | Unblock-File
         & [System.IO.Path]::Combine($TmpDir, "Install-Defaults.ps1")
         Pop-Location
         Remove-Item -Path $TmpDir -Recurse -Force
