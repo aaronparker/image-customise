@@ -70,16 +70,22 @@
                 "type": "String"
             },
             {
+                "path": "HKCU:\\Control Panel\\Desktop",
+                "name": "FontSmoothing",
+                "value": "2",
+                "type": "String"
+            },
+            {
+                "path": "HKCU:\\Control Panel\\Desktop",
+                "name": "FontSmoothingType",
+                "value": "2",
+                "type": "String"
+            },
+            {
                 "path": "HKCU:\\Control Panel\\Desktop\\WindowMetrics",
                 "name": "MinAnimate",
                 "value": "0",
                 "type": "String"
-            },
-            {
-                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\StorageSense\\Parameters\\StoragePolicy",
-                "name": "01",
-                "value": 0,
-                "type": "DWord"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
