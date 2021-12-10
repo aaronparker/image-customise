@@ -51,7 +51,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          prerelease: false
+          prerelease: true
           files: |
             releases\Install-Defaults.intunewin
             releases\image-customise.zip
