@@ -27,7 +27,7 @@ If ($Null -ne $release) {
         Push-Location -Path $TmpDir
         Expand-Archive -Path $OutFile -DestinationPath $TmpDir -Force
         Get-ChildItem -Path $TmpDir -Recurse | Unblock-File
-        & [System.IO.Path]::Combine($TmpDir, "Install-Defaults.ps1")
+        & $([System.IO.Path]::Combine($TmpDir, "Install-Defaults.ps1"))
         Pop-Location
         Remove-Item -Path $TmpDir -Recurse -Force
     }
