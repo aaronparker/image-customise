@@ -127,3 +127,37 @@ Windows feature states can be configured using the following JSON:
 * `Features / Disable` - disables Windows features. Accepts feature names retrieved with `Get-WindowsOptionalFeature -Online`
 * `Capabilities / Remove` - removes Windows capabilities. Accepts capability names retrieved with `Get-WindowsCapability -Online`
 * `Packages / Remove` - removes Windows packages. Accepts package names retrieved with `Get-WindowsPackage -Online`
+
+## Start menu
+
+Importing a default Start menu is implemented with the following JSON; however, note that there are differences between client and server versions of Windows.
+
+For Windows 10 or Windows 11, the Start menu layout to import, is specified with the `Windows10` or `Windows11` property; while for Windows Server, the Start menu layout is specified by the presence or not of a specified Windows feature - in the example below a specific layout is imported is the Remote Desktop Session Host role is installed.
+
+=== Client
+
+    ```json
+    {
+        "MininumBuild": "10.0.14393",
+        "StartMenu": {
+            "Type": "Client",
+            "Feature": "",
+            "Windows10": "Windows10StartMenuLayout.xml",
+            "Windows11": "Windows11StartMenuLayout.xml"
+        }
+    }
+    ```
+
+=== Server
+
+    ```json
+    {
+        "MininumBuild": "10.0.14393",
+        "StartMenu": {
+            "Type": "Server",
+            "Feature": "RDS-RD-Server",
+            "Exists": "WindowsRDSStartMenuLayout.xml",
+            "NotExists": "WindowsServerStartMenuLayout.xml"
+        }
+    }
+    ```
