@@ -134,7 +134,7 @@ Importing a default Start menu is implemented with the following JSON; however, 
 
 For Windows 10 or Windows 11, the Start menu layout to import, is specified with the `Windows10` or `Windows11` property; while for Windows Server, the Start menu layout is specified by the presence or not of a specified Windows feature - in the example below a specific layout is imported is the Remote Desktop Session Host role is installed.
 
-=== Client
+=== "Client"
 
     ```json
     {
@@ -148,7 +148,7 @@ For Windows 10 or Windows 11, the Start menu layout to import, is specified with
     }
     ```
 
-=== Server
+=== "Server"
 
     ```json
     {
