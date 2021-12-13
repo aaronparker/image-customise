@@ -27,7 +27,7 @@
         "Copy": [
             {
                 "Source": "desktop-config.json",
-                "Destination": "$env:SystemDrive\\Users\\Default\\AppData\\Roaming\\Microsoft\\Teams"
+                "Destination": "C:\\Users\\Default\\AppData\\Roaming\\Microsoft\\Teams"
             }
         ]
     }

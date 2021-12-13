@@ -68,7 +68,8 @@ Function New-ScriptEventLog ($EventLog, $Property) {
 Function Write-ToEventLog ($EventLog, $Property, $Object) {
     If ($Null -ne $Object) {
         ForEach ($Item in $Object) {
-            Write-Verbose -Message "Write-ToEventLog: $($Property): $($Item.Name)."
+            Write-Verbose -Message "Write-ToEventLog: $($Property); $($Item.Name)."
+            Write-Verbose -Message "Write-ToEventLog: $($Item.Value); $($Item.Status)"
             Switch ($Item.Status) {
                 0 { $EntryType = "Information" }
                 1 { $EntryType = "Warning" }
@@ -296,26 +297,62 @@ Function Set-Registry ($Setting) {
     }
 }
 
-Function Copy-Path ($Parent, $Path) {
-    ForEach ($Item in $Path) {
-        If (Test-Path -Path $Item -ErrorAction "SilentlyContinue") {
-            try {
-                $params = @{
-                    Path        = $(Join -Path $Parent -ChildPath $Item.Source)
-                    Destination = $Item.Destination
-                    Confirm     = $False
-                    Force       = $True
-                    ErrorAction = "SilentlyContinue"
+Function Copy-Path ($Path, $Parent) {
+    If ($Null -ne $Path) {
+        ForEach ($Item in $Path) {
+            $Source = $(Join-Path -Path $Parent -ChildPath $Item.Source)
+            Write-Verbose -Message "Source: $Source."
+            Write-Verbose -Message "Destination: $($Item.Destination)."
+            If (Test-Path -Path $Source -ErrorAction "SilentlyContinue") {
+                New-Item -Path $Item.Destination -ItemType "Directory" -ErrorAction "SilentlyContinue" > $Null
+                try {
+                    $params = @{
+                        Path        = $Source
+                        Destination = $Item.Destination
+                        Confirm      = $False
+                        Force       = $True
+                        ErrorAction = "SilentlyContinue"
+                    }
+                    Copy-Item @params
+                    $Msg = "Success"
+                    $Result = 0
                 }
-                Copy-Item @params
-                $Msg = "Success"
-                $Result = 0
+                catch {
+                    $Msg = $_.Exception.Message
+                    $Result = 1
+                }
+                Write-Output -InputObject ([PSCustomObject]@{Name = "$Source; $($Item.Destination)"; Value = $Msg; Status = $Result })
             }
-            catch {
-                $Msg = $_.Exception.Message
-                $Result = 1
+            Else {
+                Write-Output -InputObject ([PSCustomObject]@{Name = $Source; Value = "Does not exist"; Status = 1 })
             }
-            Write-Output -InputObject ([PSCustomObject]@{Name = "$($Item.Source); $($Item.Destination)"; Value = $Msg; Status = $Result })
+        }
+    }
+}
+
+Function Remove-Path ($Path) {
+    If ($Null -ne $Path) {
+        ForEach ($Item in $Path) {
+            If (Test-Path -Path $Item -ErrorAction "SilentlyContinue") {
+                Write-Verbose -Message "Remove-Item: $Item."
+                try {
+                    $params = @{
+                        Path        = $Item
+                        Recurse     = $True
+                        Confirm      = $False
+                        Force       = $True
+                        ErrorAction = "SilentlyContinue"
+                    }
+                    Remove-Item @params
+                    $Msg = "Success"
+                    $Result = 0
+                }
+                catch {
+                    $Msg = $_.Exception.Message
+                    $Result = 1
+                }
+                Write-Output -InputObject ([PSCustomObject]@{Name = "Remove: $Item"; Value = $Msg; Status = $Result })
+            }
         }
     }
 }
@@ -465,31 +502,6 @@ Function Remove-Package ($Package) {
         }
     }
 }
-
-Function Remove-Path ($Path) {
-    ForEach ($Item in $Path) {
-        If (Test-Path -Path $Item -ErrorAction "SilentlyContinue") {
-            Write-Verbose -Message "Remove-Item: $Item."
-            try {
-                $params = @{
-                    Path        = $Item
-                    Recurse     = $True
-                    Confirm     = $False
-                    Force       = $True
-                    ErrorAction = "SilentlyContinue"
-                }
-                Remove-Item @params
-                $Msg = "Success"
-                $Result = 0
-            }
-            catch {
-                $Msg = $_.Exception.Message
-                $Result = 1
-            }
-            Write-Output -InputObject ([PSCustomObject]@{Name = "Remove: $Item"; Value = $Msg; Status = $Result })
-        }
-    }
-}
 #endregion
 
 # Configure working path
@@ -581,7 +593,7 @@ try {
             Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
 
             $Results = Copy-Path -Path $Settings.Paths.Copy -Parent $WorkingPath
-            Write-ToEventLog -EventLog $Project -Property "Paths" -Object $Result
+            Write-ToEventLog -EventLog $Project -Property "Paths" -Object $Results
 
             $Results = Remove-Path -Path $Settings.Paths.Remove
             Write-ToEventLog -EventLog $Project -Property "Paths" -Object $Results

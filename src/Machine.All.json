@@ -25,11 +25,11 @@
     },
     "Paths": {
         "Remove": [
-            "$env:PUBLIC\\Music\\Sample Music",
-            "$env:PUBLIC\\Pictures\\Sample Pictures",
-            "$env:PUBLIC\\Videos\\Sample Videos",
-            "$env:PUBLIC\\Recorded TV\\Sample Media",
-            "$env:SystemDrive\\Logs"
+            "C:\\Users\\Public\\Music\\Sample Music",
+            "C:\\Users\\Public\\Pictures\\Sample Pictures",
+            "C:\\Users\\Public\\Videos\\Sample Videos",
+            "C:\\Users\\Public\\Recorded TV\\Sample Media",
+            "C:\\Logs"
         ]
     },
     "Features": {
