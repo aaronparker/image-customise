@@ -212,14 +212,16 @@ Function Set-DefaultUserProfile ($Setting) {
         ForEach ($Item in $Setting) {
             try {
                 $RegPath = $Item.path -replace "HKCU:", $DefaultUserPath
-                $params = @{
-                    Path        = $RegPath
-                    Type        = "RegistryKey"
-                    Force       = $True
-                    ErrorAction = "SilentlyContinue"
+                If (!(Test-Path -Path $Item.path -ErrorAction "SilentlyContinue")) {
+                    $params = @{
+                        Path        = $Item.path
+                        Type        = "RegistryKey"
+                        Force       = $True
+                        ErrorAction = "SilentlyContinue"
+                    }
+                    $ItemResult = New-Item @params
+                    If ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
                 }
-                $ItemResult = New-Item @params
-                If ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
                 $params = @{
                     Path        = $RegPath
                     Name        = $Item.name
@@ -267,7 +269,7 @@ Function Set-DefaultUserProfile ($Setting) {
 Function Set-Registry ($Setting) {
     ForEach ($Item in $Setting) {
         try {
-            If (!(Test-Path -Path $Item.path)) {
+            If (!(Test-Path -Path $Item.path -ErrorAction "SilentlyContinue")) {
                 $params = @{
                     Path        = $Item.path
                     Type        = "RegistryKey"
