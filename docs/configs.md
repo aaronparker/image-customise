@@ -24,4 +24,4 @@ JSON files are gathered based on properties of the local Windows instance. The f
 * `Virtual` - Virtual machines, e.g. Hyper-V, Azure, vSphere, Parallels etc.
 * `All` - applies to all Windows instances
 
-Each JSON file includes a `MininumBuild` property that can be used to ensure specific configurations only apply to a specific version of Windows or above. For example, the property might ensure that configurations only apply to Windows 10 version `10.0.19041` and above.
+Each JSON file includes a `MinimumBuild` property that can be used to ensure specific configurations only apply to a specific version of Windows or above. For example, the property might ensure that configurations only apply to Windows 10 version `10.0.19041` and above.

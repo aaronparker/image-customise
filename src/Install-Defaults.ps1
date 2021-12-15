@@ -556,7 +556,7 @@ try {
         $Settings = Get-SettingsContent -Path $Config.FullName
 
         # Implement the settings only if the local build is greater or equal that what's specified in the JSON
-        If ([System.Version]$Version -ge [System.Version]$Settings.MininumBuild) {
+        If ([System.Version]$Version -ge [System.Version]$Settings.MinimumBuild) {
 
             # Implement each setting in the JSON
             Switch ($Settings.Registry.Type) {

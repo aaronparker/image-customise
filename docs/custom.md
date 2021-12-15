@@ -16,7 +16,7 @@ Registry settings should be laid out in the following format:
 
 ```json
 {
-    "MininumBuild": "10.0.14393",
+    "MinimumBuild": "10.0.14393",
     "Registry": {
         "Type": "DefaultProfile",
         "Set": [
@@ -33,7 +33,7 @@ Registry settings should be laid out in the following format:
 
 Settings and values that can be used here are:
 
-* `MininumBuild` - used to ensure that the specified registry settings are only implemented if the Windows instance is equal to or greater than the specified version number
+* `MinimumBuild` - used to ensure that the specified registry settings are only implemented if the Windows instance is equal to or greater than the specified version number
 * `Registry` - a required property
 * `Type` - this property supports `DefaultProfile` or `Direct`, tell the solution to implement the array of registry entries listed in `Set` to be applied directly against the path specified or the the default profile
 * `Set` - tells the solution to set the array of registry entries
@@ -50,7 +50,7 @@ The solution supports the removal of target directories and coping of files into
 
 ```json
 {
-    "MininumBuild": "10.0.14393",
+    "MinimumBuild": "10.0.14393",
     "Paths": {
         "Remove": [
             "C:\\Users\\Public\\Music\\Sample Music",
@@ -71,7 +71,7 @@ The solution supports the removal of target directories and coping of files into
 
 Settings and values that can be used here are:
 
-* `MininumBuild` - used to ensure that the specified file or folder actions are only implemented if the Windows instance is equal to or greater than the specified version number
+* `MinimumBuild` - used to ensure that the specified file or folder actions are only implemented if the Windows instance is equal to or greater than the specified version number
 * `Remove` - specified an array of paths to remove from the image if the path exists
 * `Copy` - specifies an array of source and destination paths. The source must be located within the solution's source directory.
 
@@ -81,7 +81,7 @@ The solution can enable services if a dependent feature exists. For example, the
 
 ```json
 {
-    "MininumBuild": "10.0.14393",
+    "MinimumBuild": "10.0.14393",
     "Services": {
         "Feature": "RDS-RD-Server",
         "Enable": [
@@ -98,7 +98,7 @@ Windows feature states can be configured using the following JSON:
 
 ```json
 {
-    "MininumBuild": "10.0.14393",
+    "MinimumBuild": "10.0.14393",
     "Features": {
         "Disable": [
             "Printing-XPSServices-Features",
@@ -123,7 +123,7 @@ Windows feature states can be configured using the following JSON:
 }
 ```
 
-* `MininumBuild` - used to ensure that the specified file or folder actions are only implemented if the Windows instance is equal to or greater than the specified version number
+* `MinimumBuild` - used to ensure that the specified file or folder actions are only implemented if the Windows instance is equal to or greater than the specified version number
 * `Features / Disable` - disables Windows features. Accepts feature names retrieved with `Get-WindowsOptionalFeature -Online`
 * `Capabilities / Remove` - removes Windows capabilities. Accepts capability names retrieved with `Get-WindowsCapability -Online`
 * `Packages / Remove` - removes Windows packages. Accepts package names retrieved with `Get-WindowsPackage -Online`
@@ -138,7 +138,7 @@ For Windows 10 or Windows 11, the Start menu layout to import, is specified with
 
     ```json
     {
-        "MininumBuild": "10.0.14393",
+        "MinimumBuild": "10.0.14393",
         "StartMenu": {
             "Type": "Client",
             "Feature": "",
@@ -152,7 +152,7 @@ For Windows 10 or Windows 11, the Start menu layout to import, is specified with
 
     ```json
     {
-        "MininumBuild": "10.0.14393",
+        "MinimumBuild": "10.0.14393",
         "StartMenu": {
             "Type": "Server",
             "Feature": "RDS-RD-Server",
