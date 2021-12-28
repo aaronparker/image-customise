@@ -51,7 +51,7 @@ theme:
   favicon: assets/favicon.png
   #icon:
     #logo: logo
-  logo: assets/img/windows.png
+  logo: assets/img/image-customise.png
 
 # Plugins
 plugins:
