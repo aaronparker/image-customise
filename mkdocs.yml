@@ -37,7 +37,7 @@ theme:
       primary: blue
       accent: blue
       toggle:
-        icon: material/weather-sunny
+        icon: material/toggle-switch-off-outline
         name: Switch to dark mode
     - scheme: slate
       primary: blue
@@ -51,7 +51,7 @@ theme:
   favicon: assets/favicon.png
   #icon:
     #logo: logo
-  logo: assets/img/image-customise.png
+  logo: assets/img/windows.png
 
 # Plugins
 plugins:
