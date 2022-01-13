@@ -118,26 +118,26 @@ Function Get-Platform {
 
 Function Get-OSName {
     Switch -Regex ((Get-CimInstance -ClassName "CIM_OperatingSystem").Caption) {
-        "Microsoft Windows Server 2022*" {
+        "^Microsoft Windows Server 2022.*$" {
             $Caption = "Windows2022"; Break
         }
-        "Microsoft Windows Server 2019*" {
+        "^Microsoft Windows Server 2019.*$" {
             $Caption = "Windows2019"; Break
         }
-        "Microsoft Windows Server 2016*" {
+        "^Microsoft Windows Server 2016.*$" {
             $Caption = "Windows2016"; Break
         }
-        "Microsoft Windows 10 Enterprise for Virtual Desktops" {
+        "^Microsoft Windows 11 Enterprise for Virtual Desktops$" {
             $Caption = "Windows10"; Break
         }
-        "Microsoft Windows 11 Enterprise for Virtual Desktops" {
+        "^Microsoft Windows 10 Enterprise for Virtual Desktops$" {
             $Caption = "Windows10"; Break
         }
-        "Microsoft Windows 10*" {
-            $Caption = "Windows10"; Break
-        }
-        "Microsoft Windows 11*" {
+        "^Microsoft Windows 11.*$" {
             $Caption = "Windows11"; Break
+        }
+        "^Microsoft Windows 10.*$" {
+            $Caption = "Windows10"; Break
         }
         Default {
             $Caption = "Unknown"
