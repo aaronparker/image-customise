@@ -1,1 +1,29 @@
-{"pinnedList":[{"packagedAppId":"Microsoft.CompanyPortal_8wekyb3d8bbwe!App"},{"desktopAppId":"MSEdge"},{"desktopAppId":"Microsoft.Office.WINWORD.EXE.15"},{"desktopAppId":"Microsoft.Office.EXCEL.EXE.15"},{"desktopAppId":"Microsoft.Office.POWERPNT.EXE.15"},{"desktopAppId":"Microsoft.Office.OUTLOOK.EXE.15"},{"desktopAppId":"Microsoft.Office.ONENOTE.EXE.15"},{"desktopAppId":"com.squirrel.Teams.Teams"},{"packagedAppId":"Microsoft.Todos_8wekyb3d8bbwe!App"},{"packagedAppId":"Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe!Microsoft.MicrosoftOfficeHub"},{"packagedAppId":"windows.immersivecontrolpanel_cw5n1h2txyewy!microsoft.windows.immersivecontrolpanel"},{"desktopAppId":"Microsoft.Windows.Explorer"},{"packagedAppId":"Microsoft.WindowsCalculator_8wekyb3d8bbwe!App"},{"packagedAppId":"Microsoft.Windows.Photos_8wekyb3d8bbwe!App"},{"packagedAppId":"Microsoft.WindowsAlarms_8wekyb3d8bbwe!App"},{"packagedAppId":"Microsoft.WindowsNotepad_8wekyb3d8bbwe!App"},{"packagedAppId":"Microsoft.Getstarted_8wekyb3d8bbwe!App"}]}
+{
+    "primaryOEMPins": [
+        {
+            "desktopAppId": "Microsoft.Office.OUTLOOK.EXE.15"
+        },
+        {
+            "packagedAppId": "Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe!Microsoft.MicrosoftOfficeHub"
+        },
+        {
+            "packagedAppId": "Microsoft.Todos_8wekyb3d8bbwe!App"
+        },
+        {
+            "packagedAppId": "Microsoft.Whiteboard_8wekyb3d8bbwe!Whiteboard"
+        }
+    ],
+    "secondaryOEMPins": [
+        {
+            "packagedAppId": "MicrosoftWindows.Client.CBS_cw5n1h2txyewy!WebExperienceHost"
+        },
+        {
+            "packagedAppId": "Microsoft.Getstarted_8wekyb3d8bbwe!App"
+        }
+    ],
+    "firstRunOEMPins": [
+        {
+            "packagedAppId": "Microsoft.CompanyPortal_8wekyb3d8bbwe!App"
+        }
+    ]
+}
