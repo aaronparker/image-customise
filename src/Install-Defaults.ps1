@@ -311,7 +311,7 @@ Function Copy-Path ($Path, $Parent) {
                     $params = @{
                         Path        = $Source
                         Destination = $Item.Destination
-                        Confirm      = $False
+                        Confirm     = $False
                         Force       = $True
                         ErrorAction = "SilentlyContinue"
                     }
@@ -341,7 +341,7 @@ Function Remove-Path ($Path) {
                     $params = @{
                         Path        = $Item
                         Recurse     = $True
-                        Confirm      = $False
+                        Confirm     = $False
                         Force       = $True
                         ErrorAction = "SilentlyContinue"
                     }
@@ -360,7 +360,7 @@ Function Remove-Path ($Path) {
 }
 
 # Import default Start layout
-Function Import-StartMenu ($StartMenuLayout) {
+Function Import-Windows10StartMenu ($StartMenuLayout) {
     If ($Null -ne $StartMenuLayout) {
         try {
             $params = @{
@@ -424,6 +424,76 @@ Function Import-StartMenu ($StartMenuLayout) {
                 $Result = 1
             }
             Write-Output -InputObject ([PSCustomObject]@{Name = "$StartMenuLayout; $(Join-Path -Path $StartPath -ChildPath "LayoutModification.xml")"; Value = $Msg; Status = $Result })
+        }
+    }
+}
+
+Function Import-Windows11StartMenu ($StartMenuLayout) {
+    If ($Null -ne $StartMenuLayout) {
+        try {
+            $params = @{
+                Name        = "StartLayout"
+                Force       = $True
+                ErrorAction = "SilentlyContinue"
+            }
+            Import-Module @params
+            $Msg = "Success"
+            $Result = 0
+        }
+        catch {
+            $Msg = $_.Exception.Message
+            $Result = 1
+        }
+        Write-Output -InputObject ([PSCustomObject]@{Name = "Import-Module StartLayout"; Value = $Msg; Status = $Result })
+
+        $StartPath = "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows\Shell"
+        If (!(Test-Path -Path $StartPath -ErrorAction "SilentlyContinue")) {
+            $params = @{
+                Value       = $StartPath
+                ItemType    = "Directory"
+                ErrorAction = "SilentlyContinue"
+            }
+            New-Item @params > $Null
+        }
+
+        Switch -RegEx ($StartMenuLayout) {
+            "\.xml$" {
+                try {
+                    $params = @{
+                        LayoutPath  = $StartMenuLayout
+                        MountPath   = "$($env:SystemDrive)\"
+                        ErrorAction = "SilentlyContinue"
+                    }
+                    Write-Verbose -Message "Import-StartLayout: $StartMenuLayout."
+                    Import-StartLayout @params > $Null
+                    $Msg = "Success"
+                    $Result = 0
+                }
+                catch {
+                    $Msg = $_.Exception.Message
+                    $Result = 1
+                }
+                Write-Output -InputObject ([PSCustomObject]@{Name = $StartMenuLayout; Value = $Msg; Status = $Result })
+            }
+            "\.json$" {
+                try {
+                    $params = @{
+                        Path        = $StartMenuLayout
+                        Destination = $(Join-Path -Path $StartPath -ChildPath "LayoutModification.json")
+                        Confirm     = $False
+                        Force       = $True
+                        ErrorAction = "SilentlyContinue"
+                    }
+                    Copy-Item @params
+                    $Msg = "Success"
+                    $Result = 0
+                }
+                catch {
+                    $Msg = $_.Exception.Message
+                    $Result = 1
+                }
+                Write-Output -InputObject ([PSCustomObject]@{Name = "$StartMenuLayout; $(Join-Path -Path $StartPath -ChildPath "LayoutModification.json")"; Value = $Msg; Status = $Result })
+            }
         }
     }
 }
@@ -583,16 +653,28 @@ try {
                     Else {
                         $File = $(Join-Path -Path $WorkingPath -ChildPath $Settings.StartMenu.NotExists)
                     }
-                    $Results = Import-StartMenu -StartMenuLayout $File
+                    $Results = Import-Windows10StartMenu -StartMenuLayout $File
                 }
                 "Client" {
-                    $Results = Import-StartMenu -StartMenuLayout $(Join-Path -Path $WorkingPath -ChildPath $Settings.StartMenu.$OSName)
+                    Switch ($OSName) {
+                        "Windows10" {
+                            ForEach ($File in $Settings.StartMenu.$OSName) {
+                                $Results = Import-Windows10StartMenu -StartMenuLayout $(Join-Path -Path $WorkingPath -ChildPath $File)
+                                Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
+                            }
+                        }
+                        "Windows11" {
+                            ForEach ($File in $Settings.StartMenu.$OSName) {
+                                $Results = Import-Windows11StartMenu -StartMenuLayout $(Join-Path -Path $WorkingPath -ChildPath $File)
+                                Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
+                            }
+                        }
+                    }
                 }
                 Default {
                     $Results = ([PSCustomObject]@{Name = "Start menu layout"; Value = "Skipped"; Status = 0 })
                 }
             }
-            Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
 
             $Results = Copy-Path -Path $Settings.Paths.Copy -Parent $WorkingPath
             Write-ToEventLog -EventLog $Project -Property "Paths" -Object $Results

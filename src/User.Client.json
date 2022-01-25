@@ -3,8 +3,13 @@
     "StartMenu": {
         "Type": "Client",
         "Feature": "",
-        "Windows10": "Windows10StartMenuLayout.xml",
-        "Windows11": "Windows11StartMenuLayout.xml"
+        "Windows10": [
+            "Windows10StartMenuLayout.xml"
+        ],
+        "Windows11": [
+            "Windows11StartMenuLayout.json",
+            "Windows11TaskbarLayout.xml"
+        ]
     },
     "Paths": {
         "Copy": [
