@@ -411,7 +411,7 @@ Function Import-Windows10StartMenu ($StartMenuLayout) {
                 $params = @{
                     Path        = $StartMenuLayout
                     Destination = $(Join-Path -Path $StartPath -ChildPath "LayoutModification.xml")
-                    Confirm     = $False
+                    Confirm      = $False
                     Force       = $True
                     ErrorAction = "SilentlyContinue"
                 }
@@ -480,7 +480,7 @@ Function Import-Windows11StartMenu ($StartMenuLayout) {
                     $params = @{
                         Path        = $StartMenuLayout
                         Destination = $(Join-Path -Path $StartPath -ChildPath "LayoutModification.json")
-                        Confirm     = $False
+                        Confirm      = $False
                         Force       = $True
                         ErrorAction = "SilentlyContinue"
                     }
@@ -493,6 +493,34 @@ Function Import-Windows11StartMenu ($StartMenuLayout) {
                     $Result = 1
                 }
                 Write-Output -InputObject ([PSCustomObject]@{Name = "$StartMenuLayout; $(Join-Path -Path $StartPath -ChildPath "LayoutModification.json")"; Value = $Msg; Status = $Result })
+            }
+            "\.bin$" {
+                try {
+                    $StartPath = "$env:SystemDrive\AppData\Local\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState"
+                    If (!(Test-Path -Path $StartPath -ErrorAction "SilentlyContinue")) {
+                        $params = @{
+                            Value       = $StartPath
+                            ItemType    = "Directory"
+                            ErrorAction = "SilentlyContinue"
+                        }
+                        New-Item @params > $Null
+                    }
+                    $params = @{
+                        Path        = $StartMenuLayout
+                        Destination = $(Join-Path -Path $StartPath -ChildPath "start.bin")
+                        Confirm      = $False
+                        Force       = $True
+                        ErrorAction = "SilentlyContinue"
+                    }
+                    Copy-Item @params
+                    $Msg = "Success"
+                    $Result = 0
+                }
+                catch {
+                    $Msg = $_.Exception.Message
+                    $Result = 1
+                }
+                Write-Output -InputObject ([PSCustomObject]@{Name = "$StartMenuLayout; $(Join-Path -Path $StartPath -ChildPath "start.bin")"; Value = $Msg; Status = $Result })
             }
         }
     }

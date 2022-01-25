@@ -8,7 +8,8 @@
         ],
         "Windows11": [
             "Windows11StartMenuLayout.json",
-            "Windows11TaskbarLayout.xml"
+            "Windows11TaskbarLayout.xml",
+            "Windows11Start.bin"
         ]
     },
     "Paths": {
