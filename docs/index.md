@@ -31,4 +31,4 @@ The scripts are tested on Windows 10 (1809 and above), Windows 11, Windows Serve
     Windows PowerShell only is supported - typically during operating system deployments, there should be no strict requirement for PowerShell 6 or above. While the scripts will likely work OK on PowerShell 6+, they are not actively tested on those versions.
 
 ---
-<a target="_blank" href="https://icons8.comundefined">Windows 10 Personalization</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+[Laptop Settings](https://icons8.com/icon/iSNxtIhB8C9B/laptop-settings) by [Icons8](https://icons8.com).

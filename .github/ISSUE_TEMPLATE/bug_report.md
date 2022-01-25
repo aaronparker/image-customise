@@ -11,9 +11,9 @@ A clear and concise description of what the bug is. Include as much detail about
 
 **Environment (please complete the following information):**
 
-- OS: [e.g. Windows 10, Windows Server 2019]
-- Version [e.g. 10.0.19041]
-- Hypervisor or physical hardware type
+* OS (e.g. Windows 10, Windows Server 2019)
+* Version (e.g. 10.0.19041)
+* Hypervisor or physical hardware type
 
 **Additional context**
 Add any other context about the problem here.
