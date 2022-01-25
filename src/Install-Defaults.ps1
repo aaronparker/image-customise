@@ -496,7 +496,7 @@ Function Import-Windows11StartMenu ($StartMenuLayout) {
             }
             "\.bin$" {
                 try {
-                    $StartPath = "$env:SystemDrive\AppData\Local\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState"
+                    $StartPath = "$env:SystemDrive\Users\Default\AppData\Local\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState"
                     If (!(Test-Path -Path $StartPath -ErrorAction "SilentlyContinue")) {
                         $params = @{
                             Value       = $StartPath
