@@ -68,6 +68,7 @@ param (
         "Microsoft.BingSports_8wekyb3d8bbwe", # Bing Sports
         "Microsoft.BingWeather_8wekyb3d8bbwe", # Weather
         "Microsoft.GetHelp_8wekyb3d8bbwe", # Get Help
+        "Microsoft.GamingApp_8wekyb3d8bbwe" # Microsoft Xbox app?
         "Microsoft.Messaging_8wekyb3d8bbwe", # Messaging
         "Microsoft.MicrosoftSolitaireCollection_8wekyb3d8bbwe", # Solitaire
         "Microsoft.Office.Desktop_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
@@ -237,7 +238,7 @@ process {
 
         # Remove the provisioned package as well, completely from the system
         If ($Elevated) {
-            $package = Get-AppxProvisionedPackage -Online | Where-Object DisplayName -EQ (($app -split "_")[0])
+            $package = Get-AppxProvisionedPackage -Online | Where-Object DisplayName -eq (($app -split "_")[0])
             If ($package) {
                 If ($PSCmdlet.ShouldProcess($package.PackageName, "Remove Provisioned app")) {
                     try {
