@@ -306,7 +306,7 @@ Function Copy-Path ($Path, $Parent) {
             Write-Verbose -Message "Source: $Source."
             Write-Verbose -Message "Destination: $($Item.Destination)."
             If (Test-Path -Path $Source -ErrorAction "SilentlyContinue") {
-                New-Item -Path $Item.Destination -ItemType "Directory" -ErrorAction "SilentlyContinue" > $Null
+                New-Directory -Path $Item.Destination
                 try {
                     $params = @{
                         Path        = $Source
@@ -329,6 +329,26 @@ Function Copy-Path ($Path, $Parent) {
                 Write-Output -InputObject ([PSCustomObject]@{Name = $Source; Value = "Does not exist"; Status = 1 })
             }
         }
+    }
+}
+
+Function New-Directory ($Path) {
+    If (!(Test-Path -Path $Path -ErrorAction "SilentlyContinue")) {
+        try {
+            $params = @{
+                Value       = $Path
+                ItemType    = "Directory"
+                ErrorAction = "SilentlyContinue"
+            }
+            New-Item @params > $Null
+            $Msg = "Success"
+            $Result = 0
+        }
+        catch {
+            $Msg = $_.Exception.Message
+            $Result = 1
+        }
+        Write-Output -InputObject ([PSCustomObject]@{Name = $Path; Value = $Msg; Status = $Result })
     }
 }
 
@@ -379,14 +399,7 @@ Function Import-Windows10StartMenu ($StartMenuLayout) {
         Write-Output -InputObject ([PSCustomObject]@{Name = "Import-Module StartLayout"; Value = $Msg; Status = $Result })
 
         $StartPath = "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows\Shell"
-        If (!(Test-Path -Path $StartPath -ErrorAction "SilentlyContinue")) {
-            $params = @{
-                Value       = $StartPath
-                ItemType    = "Directory"
-                ErrorAction = "SilentlyContinue"
-            }
-            New-Item @params > $Null
-        }
+        New-Directory -Path $StartPath
 
         If ($Result -eq 0) {
             try {
@@ -411,7 +424,7 @@ Function Import-Windows10StartMenu ($StartMenuLayout) {
                 $params = @{
                     Path        = $StartMenuLayout
                     Destination = $(Join-Path -Path $StartPath -ChildPath "LayoutModification.xml")
-                    Confirm      = $False
+                    Confirm     = $False
                     Force       = $True
                     ErrorAction = "SilentlyContinue"
                 }
@@ -430,42 +443,19 @@ Function Import-Windows10StartMenu ($StartMenuLayout) {
 
 Function Import-Windows11StartMenu ($StartMenuLayout) {
     If ($Null -ne $StartMenuLayout) {
-        try {
-            $params = @{
-                Name        = "StartLayout"
-                Force       = $True
-                ErrorAction = "SilentlyContinue"
-            }
-            Import-Module @params
-            $Msg = "Success"
-            $Result = 0
-        }
-        catch {
-            $Msg = $_.Exception.Message
-            $Result = 1
-        }
-        Write-Output -InputObject ([PSCustomObject]@{Name = "Import-Module StartLayout"; Value = $Msg; Status = $Result })
-
-        $StartPath = "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows\Shell"
-        If (!(Test-Path -Path $StartPath -ErrorAction "SilentlyContinue")) {
-            $params = @{
-                Value       = $StartPath
-                ItemType    = "Directory"
-                ErrorAction = "SilentlyContinue"
-            }
-            New-Item @params > $Null
-        }
-
         Switch -RegEx ($StartMenuLayout) {
             "\.xml$" {
+                $StartPath = "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows\Shell"
+                New-Directory -Path $StartPath
                 try {
                     $params = @{
-                        LayoutPath  = $StartMenuLayout
-                        MountPath   = "$($env:SystemDrive)\"
+                        Path        = $StartMenuLayout
+                        Destination = $(Join-Path -Path $StartPath -ChildPath "LayoutModification.xml")
+                        Confirm     = $False
+                        Force       = $True
                         ErrorAction = "SilentlyContinue"
                     }
-                    Write-Verbose -Message "Import-StartLayout: $StartMenuLayout."
-                    Import-StartLayout @params > $Null
+                    Copy-Item @params
                     $Msg = "Success"
                     $Result = 0
                 }
@@ -473,14 +463,16 @@ Function Import-Windows11StartMenu ($StartMenuLayout) {
                     $Msg = $_.Exception.Message
                     $Result = 1
                 }
-                Write-Output -InputObject ([PSCustomObject]@{Name = $StartMenuLayout; Value = $Msg; Status = $Result })
+                Write-Output -InputObject ([PSCustomObject]@{Name = "$StartMenuLayout; $(Join-Path -Path $StartPath -ChildPath "LayoutModification.xml")"; Value = $Msg; Status = $Result })
             }
             "\.json$" {
+                $StartPath = "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows\Shell"
+                New-Directory -Path $StartPath
                 try {
                     $params = @{
                         Path        = $StartMenuLayout
                         Destination = $(Join-Path -Path $StartPath -ChildPath "LayoutModification.json")
-                        Confirm      = $False
+                        Confirm     = $False
                         Force       = $True
                         ErrorAction = "SilentlyContinue"
                     }
@@ -495,20 +487,13 @@ Function Import-Windows11StartMenu ($StartMenuLayout) {
                 Write-Output -InputObject ([PSCustomObject]@{Name = "$StartMenuLayout; $(Join-Path -Path $StartPath -ChildPath "LayoutModification.json")"; Value = $Msg; Status = $Result })
             }
             "\.bin$" {
+                $StartPath = "$env:SystemDrive\Users\Default\AppData\Local\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState"
+                New-Directory -Path $StartPath
                 try {
-                    $StartPath = "$env:SystemDrive\Users\Default\AppData\Local\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState"
-                    If (!(Test-Path -Path $StartPath -ErrorAction "SilentlyContinue")) {
-                        $params = @{
-                            Value       = $StartPath
-                            ItemType    = "Directory"
-                            ErrorAction = "SilentlyContinue"
-                        }
-                        New-Item @params > $Null
-                    }
                     $params = @{
                         Path        = $StartMenuLayout
                         Destination = $(Join-Path -Path $StartPath -ChildPath "start.bin")
-                        Confirm      = $False
+                        Confirm     = $False
                         Force       = $True
                         ErrorAction = "SilentlyContinue"
                     }
