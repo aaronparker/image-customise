@@ -128,7 +128,7 @@ Windows feature states can be configured using the following JSON:
 * `Capabilities / Remove` - removes Windows capabilities. Accepts capability names retrieved with `Get-WindowsCapability -Online`
 * `Packages / Remove` - removes Windows packages. Accepts package names retrieved with `Get-WindowsPackage -Online`
 
-## Start menu
+## Start menu and Taskbar
 
 Importing a default Start menu is implemented with the following JSON; however, note that there are differences between client and server versions of Windows.
 
@@ -142,8 +142,26 @@ For Windows 10 or Windows 11, the Start menu layout to import, is specified with
         "StartMenu": {
             "Type": "Client",
             "Feature": "",
-            "Windows10": "Windows10StartMenuLayout.xml",
-            "Windows11": "Windows11StartMenuLayout.xml"
+            "Windows10": [
+                {
+                    "Source": "Windows10StartMenuLayout.xml",
+                    "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.xml"
+                }
+            ],
+            "Windows11": [
+                {
+                    "Source": "Windows11StartMenuLayout.json",
+                    "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.json"
+                },
+                {
+                    "Source": "Windows11TaskbarLayout.xml",
+                    "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.xml"
+                },
+                {
+                    "Source": "Windows11Start.bin",
+                    "Destination": "C:\\Users\\Default\\AppData\\Local\\Packages\\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\\LocalState\\start.bin"
+                }
+            ]
         }
     }
     ```
@@ -152,12 +170,48 @@ For Windows 10 or Windows 11, the Start menu layout to import, is specified with
 
     ```json
     {
-        "MinimumBuild": "10.0.14393",
         "StartMenu": {
             "Type": "Server",
             "Feature": "RDS-RD-Server",
-            "Exists": "WindowsRDSStartMenuLayout.xml",
-            "NotExists": "WindowsServerStartMenuLayout.xml"
+            "Exists": [
+                {
+                    "Source": "WindowsRDSStartMenuLayout.xml",
+                    "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.xml"
+                }
+            ],
+            "NotExists": [
+                {
+                    "Source": "WindowsServerStartMenuLayout.xml",
+                    "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.xml"
+                }
+            ]
         }
     }
     ```
+
+### Windows 11 Start menu
+
+Importing a customised default Start menu for Windows 10 and current versions of Windows Server works by importing [LayoutModification.xml](https://docs.microsoft.com/en-us/windows/configuration/customize-and-export-start-layout); however this process is [changed considerably for Windows 11](https://docs.microsoft.com/en-us/windows/configuration/customize-start-menu-layout-windows-11) and it does not provide you full control over the default layout, particularly the pinned shortcuts.
+
+For example, you won't be able to remove the Microsoft Store shortcut from the Windows 11 Start menu. Therefore, if you want a full customised default Start menu, another approach is required.
+
+The use of `LayoutModification.json` and `LayoutModification.xml` to customise the Start menu and the Taskbar respectively can be used; however, to fully customise all shortcuts pinned to the Windows 11 Start menu, the StartMenuExperienceHost persistent state (`start.bin`) must be copied from a source machine. The file is found in `%LocalAppData%\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState`.
+
+The solution includes a persistent state file - `Windows11Start.bin`, in addition to `LayoutModification.json` and `LayoutModification.xml`. These will all be copied into the appropriate destination as specified in the JSON:
+
+```json
+"Windows11": [
+    {
+        "Source": "Windows11StartMenuLayout.json",
+        "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.json"
+    },
+    {
+        "Source": "Windows11TaskbarLayout.xml",
+        "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.xml"
+    },
+    {
+        "Source": "Windows11Start.bin",
+        "Destination": "C:\\Users\\Default\\AppData\\Local\\Packages\\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\\LocalState\\start.bin"
+    }
+]
+```

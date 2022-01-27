@@ -16,11 +16,38 @@ Imports registry settings into the default profile by mounting the registry file
 
 ## Windows Server
 
-Imports registry settings into the default profile including preventing Server Manager from opening at sign-in, and turning off transparency effects. This script will also import a Start menu and taskbar layout for both Remote Desktop Session Hosts (`WindowsRDSStartMenuLayout.xml`) and standard infrastructure servers (`WindowsServerStartMenuLayout.xml`).
+Imports registry settings into the default profile including preventing Server Manager from opening at sign-in, and turning off transparency effects.
+
+The script will also import a Start menu and taskbar layout for both Remote Desktop Session Hosts (`WindowsRDSStartMenuLayout.xml`) and standard infrastructure servers (`WindowsServerStartMenuLayout.xml`).
 
 ## Windows 10 or Windows 11
 
 Imports a Start menu and taskbar layout (`Windows10StartMenuLayout.xml` or `Windows11StartMenuLayout.xml`) and add a default configuration file for Microsoft Teams (`desktop-config.json`).
+
+These settings are imported into the default profile via direct file copies. The source file and destination are defined in the JSON sources as in the examples below. Here Windows 10 and Windows 11 default Start menu and taskbar layouts are defined in the included files and are copied to the specified destination.
+
+```json
+"Windows10": [
+    {
+        "Source": "Windows10StartMenuLayout.xml",
+        "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.xml"
+    }
+],
+"Windows11": [
+    {
+        "Source": "Windows11StartMenuLayout.json",
+        "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.json"
+    },
+    {
+        "Source": "Windows11TaskbarLayout.xml",
+        "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.xml"
+    },
+    {
+        "Source": "Windows11Start.bin",
+        "Destination": "C:\\Users\\Default\\AppData\\Local\\Packages\\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\\LocalState\\start.bin"
+    }
+]
+```
 
 ## Virtual Machines
 
