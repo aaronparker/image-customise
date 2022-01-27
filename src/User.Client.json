@@ -4,19 +4,31 @@
         "Type": "Client",
         "Feature": "",
         "Windows10": [
-            "Windows10StartMenuLayout.xml"
+            {
+                "Source": "Windows10StartMenuLayout.xml",
+                "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.xml"
+            }
         ],
         "Windows11": [
-            "Windows11StartMenuLayout.json",
-            "Windows11TaskbarLayout.xml",
-            "Windows11Start.bin"
+            {
+                "Source": "Windows11StartMenuLayout.json",
+                "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.json"
+            },
+            {
+                "Source": "Windows11TaskbarLayout.xml",
+                "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.xml"
+            },
+            {
+                "Source": "Windows11Start.bin",
+                "Destination": "C:\\Users\\Default\\AppData\\Local\\Packages\\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\\LocalState\\start.bin"
+            }
         ]
     },
-    "Paths": {
+    "Files": {
         "Copy": [
             {
                 "Source": "desktop-config.json",
-                "Destination": "C:\\Users\\Default\\AppData\\Roaming\\Microsoft\\Teams"
+                "Destination": "C:\\Users\\Default\\AppData\\Roaming\\Microsoft\\Teams\\desktop-config.json"
             }
         ]
     }

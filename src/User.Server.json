@@ -20,14 +20,24 @@
     "StartMenu": {
         "Type": "Server",
         "Feature": "RDS-RD-Server",
-        "Exists": "WindowsRDSStartMenuLayout.xml",
-        "NotExists": "WindowsServerStartMenuLayout.xml"
+        "Exists": [
+            {
+                "Source": "WindowsRDSStartMenuLayout.xml",
+                "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.xml"
+            }
+        ],
+        "NotExists": [
+            {
+                "Source": "WindowsServerStartMenuLayout.xml",
+                "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.xml"
+            }
+        ]
     },
-    "Paths": {
+    "Files": {
         "Copy": [
             {
                 "Source": "desktop-config.json",
-                "Destination": "C:\\Users\\Default\\AppData\\Roaming\\Microsoft\\Teams"
+                "Destination": "C:\\Users\\Default\\AppData\\Roaming\\Microsoft\\Teams\\desktop-config.json"
             }
         ]
     }

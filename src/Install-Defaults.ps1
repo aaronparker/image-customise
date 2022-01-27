@@ -66,8 +66,8 @@ Function New-ScriptEventLog ($EventLog, $Property) {
 }
 
 Function Write-ToEventLog ($EventLog, $Property, $Object) {
-    If ($Null -ne $Object) {
-        ForEach ($Item in $Object) {
+    ForEach ($Item in $Object) {
+        If ($Item.Value.Length -gt 0) {
             Write-Verbose -Message "Write-ToEventLog: $($Property); $($Item.Name)."
             Write-Verbose -Message "Write-ToEventLog: $($Item.Value); $($Item.Status)"
             Switch ($Item.Status) {
@@ -299,35 +299,33 @@ Function Set-Registry ($Setting) {
     }
 }
 
-Function Copy-Path ($Path, $Parent) {
-    If ($Null -ne $Path) {
-        ForEach ($Item in $Path) {
-            $Source = $(Join-Path -Path $Parent -ChildPath $Item.Source)
-            Write-Verbose -Message "Source: $Source."
-            Write-Verbose -Message "Destination: $($Item.Destination)."
-            If (Test-Path -Path $Source -ErrorAction "SilentlyContinue") {
-                New-Directory -Path $Item.Destination
-                try {
-                    $params = @{
-                        Path        = $Source
-                        Destination = $Item.Destination
-                        Confirm     = $False
-                        Force       = $True
-                        ErrorAction = "SilentlyContinue"
-                    }
-                    Copy-Item @params
-                    $Msg = "Success"
-                    $Result = 0
+Function Copy-File ($Path, $Parent) {
+    ForEach ($Item in $Path) {
+        $Source = $(Join-Path -Path $Parent -ChildPath $Item.Source)
+        Write-Verbose -Message "Source: $Source."
+        Write-Verbose -Message "Destination: $($Item.Destination)."
+        If (Test-Path -Path $Source -ErrorAction "SilentlyContinue") {
+            New-Directory -Path $(Split-Path -Path $Item.Destination -Parent)
+            try {
+                $params = @{
+                    Path        = $Source
+                    Destination = $Item.Destination
+                    Confirm     = $False
+                    Force       = $True
+                    ErrorAction = "SilentlyContinue"
                 }
-                catch {
-                    $Msg = $_.Exception.Message
-                    $Result = 1
-                }
-                Write-Output -InputObject ([PSCustomObject]@{Name = "$Source; $($Item.Destination)"; Value = $Msg; Status = $Result })
+                Copy-Item @params
+                $Msg = "Success"
+                $Result = 0
             }
-            Else {
-                Write-Output -InputObject ([PSCustomObject]@{Name = $Source; Value = "Does not exist"; Status = 1 })
+            catch {
+                $Msg = $_.Exception.Message
+                $Result = 1
             }
+            Write-Output -InputObject ([PSCustomObject]@{Name = "$Source; $($Item.Destination)"; Value = $Msg; Status = $Result })
+        }
+        Else {
+            Write-Output -InputObject ([PSCustomObject]@{Name = $Source; Value = "Does not exist"; Status = 1 })
         }
     }
 }
@@ -336,7 +334,7 @@ Function New-Directory ($Path) {
     If (!(Test-Path -Path $Path -ErrorAction "SilentlyContinue")) {
         try {
             $params = @{
-                Value       = $Path
+                Path        = $Path
                 ItemType    = "Directory"
                 ErrorAction = "SilentlyContinue"
             }
@@ -353,82 +351,18 @@ Function New-Directory ($Path) {
 }
 
 Function Remove-Path ($Path) {
-    If ($Null -ne $Path) {
-        ForEach ($Item in $Path) {
-            If (Test-Path -Path $Item -ErrorAction "SilentlyContinue") {
-                Write-Verbose -Message "Remove-Item: $Item."
-                try {
-                    $params = @{
-                        Path        = $Item
-                        Recurse     = $True
-                        Confirm     = $False
-                        Force       = $True
-                        ErrorAction = "SilentlyContinue"
-                    }
-                    Remove-Item @params
-                    $Msg = "Success"
-                    $Result = 0
-                }
-                catch {
-                    $Msg = $_.Exception.Message
-                    $Result = 1
-                }
-                Write-Output -InputObject ([PSCustomObject]@{Name = "Remove: $Item"; Value = $Msg; Status = $Result })
-            }
-        }
-    }
-}
-
-# Import default Start layout
-Function Import-Windows10StartMenu ($StartMenuLayout) {
-    If ($Null -ne $StartMenuLayout) {
-        try {
-            $params = @{
-                Name        = "StartLayout"
-                Force       = $True
-                ErrorAction = "SilentlyContinue"
-            }
-            Import-Module @params
-            $Msg = "Success"
-            $Result = 0
-        }
-        catch {
-            $Msg = $_.Exception.Message
-            $Result = 1
-        }
-        Write-Output -InputObject ([PSCustomObject]@{Name = "Import-Module StartLayout"; Value = $Msg; Status = $Result })
-
-        $StartPath = "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows\Shell"
-        New-Directory -Path $StartPath
-
-        If ($Result -eq 0) {
+    ForEach ($Item in $Path) {
+        If (Test-Path -Path $Item -ErrorAction "SilentlyContinue") {
+            Write-Verbose -Message "Remove-Item: $Item."
             try {
                 $params = @{
-                    LayoutPath  = $StartMenuLayout
-                    MountPath   = "$($env:SystemDrive)\"
-                    ErrorAction = "SilentlyContinue"
-                }
-                Write-Verbose -Message "Import-StartLayout: $StartMenuLayout."
-                Import-StartLayout @params > $Null
-                $Msg = "Success"
-                $Result = 0
-            }
-            catch {
-                $Msg = $_.Exception.Message
-                $Result = 1
-            }
-            Write-Output -InputObject ([PSCustomObject]@{Name = $StartMenuLayout; Value = $Msg; Status = $Result })
-        }
-        Else {
-            try {
-                $params = @{
-                    Path        = $StartMenuLayout
-                    Destination = $(Join-Path -Path $StartPath -ChildPath "LayoutModification.xml")
+                    Path        = $Item
+                    Recurse     = $True
                     Confirm     = $False
                     Force       = $True
                     ErrorAction = "SilentlyContinue"
                 }
-                Copy-Item @params
+                Remove-Item @params
                 $Msg = "Success"
                 $Result = 0
             }
@@ -436,77 +370,7 @@ Function Import-Windows10StartMenu ($StartMenuLayout) {
                 $Msg = $_.Exception.Message
                 $Result = 1
             }
-            Write-Output -InputObject ([PSCustomObject]@{Name = "$StartMenuLayout; $(Join-Path -Path $StartPath -ChildPath "LayoutModification.xml")"; Value = $Msg; Status = $Result })
-        }
-    }
-}
-
-Function Import-Windows11StartMenu ($StartMenuLayout) {
-    If ($Null -ne $StartMenuLayout) {
-        Switch -RegEx ($StartMenuLayout) {
-            "\.xml$" {
-                $StartPath = "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows\Shell"
-                New-Directory -Path $StartPath
-                try {
-                    $params = @{
-                        Path        = $StartMenuLayout
-                        Destination = $(Join-Path -Path $StartPath -ChildPath "LayoutModification.xml")
-                        Confirm     = $False
-                        Force       = $True
-                        ErrorAction = "SilentlyContinue"
-                    }
-                    Copy-Item @params
-                    $Msg = "Success"
-                    $Result = 0
-                }
-                catch {
-                    $Msg = $_.Exception.Message
-                    $Result = 1
-                }
-                Write-Output -InputObject ([PSCustomObject]@{Name = "$StartMenuLayout; $(Join-Path -Path $StartPath -ChildPath "LayoutModification.xml")"; Value = $Msg; Status = $Result })
-            }
-            "\.json$" {
-                $StartPath = "$env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows\Shell"
-                New-Directory -Path $StartPath
-                try {
-                    $params = @{
-                        Path        = $StartMenuLayout
-                        Destination = $(Join-Path -Path $StartPath -ChildPath "LayoutModification.json")
-                        Confirm     = $False
-                        Force       = $True
-                        ErrorAction = "SilentlyContinue"
-                    }
-                    Copy-Item @params
-                    $Msg = "Success"
-                    $Result = 0
-                }
-                catch {
-                    $Msg = $_.Exception.Message
-                    $Result = 1
-                }
-                Write-Output -InputObject ([PSCustomObject]@{Name = "$StartMenuLayout; $(Join-Path -Path $StartPath -ChildPath "LayoutModification.json")"; Value = $Msg; Status = $Result })
-            }
-            "\.bin$" {
-                $StartPath = "$env:SystemDrive\Users\Default\AppData\Local\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState"
-                New-Directory -Path $StartPath
-                try {
-                    $params = @{
-                        Path        = $StartMenuLayout
-                        Destination = $(Join-Path -Path $StartPath -ChildPath "start.bin")
-                        Confirm     = $False
-                        Force       = $True
-                        ErrorAction = "SilentlyContinue"
-                    }
-                    Copy-Item @params
-                    $Msg = "Success"
-                    $Result = 0
-                }
-                catch {
-                    $Msg = $_.Exception.Message
-                    $Result = 1
-                }
-                Write-Output -InputObject ([PSCustomObject]@{Name = "$StartMenuLayout; $(Join-Path -Path $StartPath -ChildPath "start.bin")"; Value = $Msg; Status = $Result })
-            }
+            Write-Output -InputObject ([PSCustomObject]@{Name = "Remove: $Item"; Value = $Msg; Status = $Result })
         }
     }
 }
@@ -661,35 +525,21 @@ try {
             Switch ($Settings.StartMenu.Type) {
                 "Server" {
                     If ((Get-WindowsFeature -Name $Settings.StartMenu.Feature).InstallState -eq "Installed") {
-                        $File = $(Join-Path -Path $WorkingPath -ChildPath $Settings.StartMenu.Exists)
+                        $Results = Copy-File -Path $Settings.StartMenu.Exists -Parent $WorkingPath
+                        Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
                     }
                     Else {
-                        $File = $(Join-Path -Path $WorkingPath -ChildPath $Settings.StartMenu.NotExists)
+                        $Results = Copy-File -Path $Settings.StartMenu.NotExists -Parent $WorkingPath
+                        Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
                     }
-                    $Results = Import-Windows10StartMenu -StartMenuLayout $File
                 }
                 "Client" {
-                    Switch ($OSName) {
-                        "Windows10" {
-                            ForEach ($File in $Settings.StartMenu.$OSName) {
-                                $Results = Import-Windows10StartMenu -StartMenuLayout $(Join-Path -Path $WorkingPath -ChildPath $File)
-                                Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
-                            }
-                        }
-                        "Windows11" {
-                            ForEach ($File in $Settings.StartMenu.$OSName) {
-                                $Results = Import-Windows11StartMenu -StartMenuLayout $(Join-Path -Path $WorkingPath -ChildPath $File)
-                                Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
-                            }
-                        }
-                    }
-                }
-                Default {
-                    $Results = ([PSCustomObject]@{Name = "Start menu layout"; Value = "Skipped"; Status = 0 })
+                    $Results = Copy-File -Path $Settings.StartMenu.$OSName -Parent $WorkingPath
+                    Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
                 }
             }
 
-            $Results = Copy-Path -Path $Settings.Paths.Copy -Parent $WorkingPath
+            $Results = Copy-File -Path $Settings.Files.Copy -Parent $WorkingPath
             Write-ToEventLog -EventLog $Project -Property "Paths" -Object $Results
 
             $Results = Remove-Path -Path $Settings.Paths.Remove
