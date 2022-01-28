@@ -4,7 +4,9 @@ summary:
 authors:
     - Aaron Parker
 ---
-Windows Customised Defaults is a solution for customising a Windows image to change the settings from the Microsoft defaults to something more enterprise ready. The solution will update the Windows default profile, including configuring the default Start menu, and configure Windows feature states.
+Windows Customised Defaults is a solution for customising a Windows PC or image to change settings from the Microsoft defaults to make them enterprise ready. Microsoft's defaults suit the lowest common denominator for home, small business and enterprises, but an enterprise-ready Windows desktop requires some adjustments to the default user environment.
+
+Windows Customised Defaults simplifies making those changes to Windows, including - updating the Windows default profile, including the default Start menu and taskbar, the Windows user environment and Explorer settings, configures Windows feature states and removes in-box application packages.
 
 Windows Customised Defaults supports Windows 10, Windows 11, Windows Server 2016, Windows Server 2019 and Windows Server 2022, and supports both physical PCs and virtual machine images. Aimed at deployment provisioning physical PCs or virtual desktops gold images, the customisations will also work for Windows Server infrastructure roles.
 
@@ -20,17 +22,17 @@ The customisations are intended for operating system deployment via various meth
 
 ## Results
 
-This package will configure the Windows image ready for enterprise and and for the end-user. For Windows 10 (and Windows Server as a virtual desktop), the user should see that their default Start menu, taskbar, and desktop should be similar to the screenshot below:
+This package will configure the Windows image ready for the enterprise and the end-user. For Windows 10 (and Windows Server as a virtual desktop), the user should see that their default Start menu, taskbar, and desktop should be similar to the screenshot below:
 
 ![Default Windows 10 desktop](assets/img/defaultstartmenu.png)
 
-For Windows 11, the Start menu, taskbar, and desktop right after first sign-in, should look like to this:
+For Windows 11, the Start menu, taskbar, and desktop right after first sign-in, should look like this:
 
 ![Default Windows 11 desktop](assets/img/windows11-defaultstartmenu.png)
 
 ## Supported Platforms
 
-The scripts are tested on Windows 10 (1809 and above), Windows 11, Windows Server 2016, Windows Server 2019, and Windows Server 2022. All scripts should work on any future versions of Windows as well; however, testing before rolling out in production is recommended.
+The scripts are tested on Windows 10 (1809 and above), Windows 11, Windows Server 2016, Windows Server 2019, and Windows Server 2022. All scripts should work on any future versions of Windows; however, testing before rolling out in production is recommended.
 
 !!! note ""
 
