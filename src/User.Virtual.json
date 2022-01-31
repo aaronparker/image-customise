@@ -124,12 +124,6 @@
                 "type": "DWord"
             },
             {
-                "path": "HKCU:\\Control Panel\\International\\User Profile",
-                "name": "HttpAcceptLanguageOptOut",
-                "value": 1,
-                "type": "DWord"
-            },
-            {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.Windows.Photos_8wekyb3d8bbwe",
                 "name": "Disabled",
                 "value": 1,
@@ -177,6 +171,12 @@
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\VisualEffects",
                 "name": "VisualFXSetting",
                 "value": 3,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Control Panel\\International\\User Profile",
+                "name": "HttpAcceptLanguageOptOut",
+                "value": 1,
                 "type": "DWord"
             }
         ]

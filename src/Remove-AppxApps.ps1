@@ -226,7 +226,7 @@ process {
             If ($PSCmdlet.ShouldProcess($package.PackageFullName, "Remove User app")) {
                 try {
                     $Value = "Removed"; $Status = 0
-                    $package | Remove-AppxPackage -ErrorAction "SilentlyContinue"
+                    $package | Remove-AppxPackage -AllUsers -ErrorAction "SilentlyContinue"
                 }
                 catch [System.Exception] {
                     Write-Warning -Message "$($MyInvocation.MyCommand): Failed to remove: [$($package.PackageFullName)]."
