@@ -38,8 +38,8 @@ jobs:
           git_config_global: true
           git_tag_gpgsign: true
           git_push_gpgsign: false
-          git_committer_name: Aaron Parker
-          git_committer_email: aaron@stealthpuppy.com
+          git_committer_name: ${{ secrets.COMMIT_NAME }}
+          git_committer_email: ${{ secrets.COMMIT_EMAIL }}
 
       # Package the scripts into an Intunewin file and zip
       - name: New release package

@@ -22,7 +22,6 @@ on:
 jobs:
   validate:
     runs-on: windows-2022
-    #runs-on: windows-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -41,8 +40,8 @@ jobs:
           git_config_global: true
           git_tag_gpgsign: true
           git_push_gpgsign: false
-          git_committer_name: Aaron Parker
-          git_committer_email: aaron@stealthpuppy.com
+          git_committer_name: ${{ secrets.COMMIT_NAME }}
+          git_committer_email: ${{ secrets.COMMIT_EMAIL }}
 
       # Run Pester tests
       - name: Run Pester tests

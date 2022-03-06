@@ -1,17 +1,9 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-#
-# https://github.com/microsoft/action-psscriptanalyzer
-# For more information on PSScriptAnalyzer in general, see
-# https://github.com/PowerShell/PSScriptAnalyzer
-
 name: powershell-analysis
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
     paths:
       - '**.ps1'
     

@@ -15,7 +15,8 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: 3.x
-      - run: pip install mkdocs-material
-      - run: git pull origin main
-      - run: pip install -r requirements.txt
-      - run: mkdocs gh-deploy --force
+      - run: |
+          pip install mkdocs-material
+          git pull origin main
+          pip install -r requirements.txt
+          mkdocs gh-deploy --force
