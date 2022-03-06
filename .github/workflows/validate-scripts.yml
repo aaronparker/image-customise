@@ -1,4 +1,4 @@
-name: Validate customisation scripts
+name: validate-Install-Defaults.ps1
 
 # Environment variables
 env:

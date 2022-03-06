@@ -1,4 +1,4 @@
-name: New release package
+name: new-release
 
 # Environment variables
 env:
