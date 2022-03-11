@@ -59,6 +59,7 @@ param (
     [Parameter(Mandatory = $False, ParameterSetName = "BlockList", HelpMessage = "Specify an AppX package or packages to remove.")]
     [System.String[]] $BlockList = (
         "7EE7776C.LinkedInforWindows_w1wdnht996qgy", # LinkedIn
+        "Clipchamp.Clipchamp_yxz26nhyzhsrt", # Clipchamp
         "king.com.CandyCrushSodaSaga_kgqvnymyfvs32", # Candy Crush
         "king.com.CandyCrushFriends_kgqvnymyfvs32", # Candy Crush Friends
         "king.com.FarmHeroesSaga_kgqvnymyfvs32", # Farm Heroes Saga
@@ -67,10 +68,12 @@ param (
         "Microsoft.BingNews_8wekyb3d8bbwe", # Microsoft News
         "Microsoft.BingSports_8wekyb3d8bbwe", # Bing Sports
         "Microsoft.BingWeather_8wekyb3d8bbwe", # Weather
+        "MicrosoftCorporationII.QuickAssist_8wekyb3d8bbwe", # Quick Assist
         "Microsoft.GetHelp_8wekyb3d8bbwe", # Get Help
         "Microsoft.GamingApp_8wekyb3d8bbwe", # Microsoft Xbox app?
         "Microsoft.Messaging_8wekyb3d8bbwe", # Messaging
         "Microsoft.MicrosoftSolitaireCollection_8wekyb3d8bbwe", # Solitaire
+        "Microsoft.PowerAutomateDesktop_8wekyb3d8bbwe", # Power Automate Desktop
         "Microsoft.Office.Desktop_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
         "Microsoft.Office.Desktop.Access_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
         "Microsoft.Office.Desktop.Excel_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
