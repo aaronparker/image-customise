@@ -12,6 +12,7 @@ on:
     paths:
       - '.github/workflows/validate-scripts.yml'
       - 'src/**'
+      - 'tests/**'
       - '!src/VERSION.txt'
 
   # Allows you to run this workflow manually from the Actions tab

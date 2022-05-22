@@ -19,7 +19,7 @@ BeforeDiscovery {
     }
 
     # Get the scripts to test
-    $Scripts = @($([System.IO.Path]::Combine($ProjectRoot, "Install-Defaults.ps1")))
+    $Scripts = @(Get-ChildItem -Path $([System.IO.Path]::Combine($ProjectRoot, "Install-Defaults.ps1")))
     $testCase = $Scripts | ForEach-Object { @{file = $_ } }
 }
 
