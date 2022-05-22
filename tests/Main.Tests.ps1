@@ -7,34 +7,32 @@
 [CmdletBinding()]
 param()
 
-# Set variables
-If (Test-Path -Path env:GITHUB_WORKSPACE -ErrorAction "SilentlyContinue") {
-    $projectRoot = Resolve-Path -Path $env:GITHUB_WORKSPACE
-}
-Else {
-    # Local Testing
-    $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
-}
-
-# Set $VerbosePreference so full details are sent to the log; Make Invoke-WebRequest faster
-#$VerbosePreference = "Continue"
-$ProgressPreference = "SilentlyContinue"
-
 BeforeDiscovery {
+    # Set variables
+    if (Test-Path -Path env:GITHUB_WORKSPACE -ErrorAction "SilentlyContinue") {
+        $ProjectRoot = $([System.IO.Path]::Combine($env:GITHUB_WORKSPACE, "src"))
+    }
+    else {
+        # Local Testing
+        $Parent = ((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName
+        $ProjectRoot = $([System.IO.Path]::Combine($Parent, "src"))
+    }
+
     # Get the scripts to test
-    $Scripts = @(Get-ChildItem -Path $([System.IO.Path]::Combine($projectRoot, "src", "*.ps1")) -Include "Install-Defaults.ps1" -ErrorAction "SilentlyContinue")
+    $Scripts = @($([System.IO.Path]::Combine($ProjectRoot, "Install-Defaults.ps1")))
     $testCase = $Scripts | ForEach-Object { @{file = $_ } }
 }
 
-
 # All scripts validation
 Describe "General project validation" {
+    It "Script <file.Name> should exist" -TestCases $testCase {
+        param ($file)
+        $file.FullName | Should -Exist
+    }
+
     It "Script <file.Name> should be valid PowerShell" -TestCases $testCase {
         param ($file)
-
-        $file.FullName | Should -Exist
-
-        $contents = Get-Content -Path $file.FullName -ErrorAction Stop
+        $contents = Get-Content -Path $file.FullName -ErrorAction "Stop"
         $errors = $null
         $null = [System.Management.Automation.PSParser]::Tokenize($contents, [ref]$errors)
         $errors.Count | Should -Be 0
@@ -50,9 +48,9 @@ Describe "Script execution validation" -Tag "Windows" -ForEach $Scripts {
 
     Context "Validate <script.Name>." {
         It "<script.Name> should execute OK" {
-            Push-Location -Path $([System.IO.Path]::Combine($projectRoot, "src"))
+            Push-Location -Path $ProjectRoot
             Write-Host "Running script: $($script.FullName)."
-            $Result = . $script.FullName -Path $([System.IO.Path]::Combine($projectRoot, "src")) -Verbose
+            $Result = . $script.FullName -Path $ProjectRoot -Verbose
             $Result | Should -Be 0
             Pop-Location
         }
