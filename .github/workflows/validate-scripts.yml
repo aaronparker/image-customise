@@ -72,7 +72,7 @@ jobs:
         shell: pwsh
         run: |
           "${{ steps.get-version.outputs.version }}" | `
-            Out-File -FilePath "${{ github.workspace }}\src\VERSION.XT" -Encoding "ascii" -Force -NoNewline
+            Out-File -FilePath "${{ github.workspace }}\src\VERSION.txt" -Encoding "ascii" -Force -NoNewline
 
       - name: Commit changes
         id: commit

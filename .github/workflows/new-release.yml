@@ -52,3 +52,12 @@ jobs:
           files: |
             releases\Install-Defaults.intunewin
             releases\image-customise.zip
+
+      - name: Update App.json
+        shell: powershell
+        run: |
+          $params = @{
+            Path    = "${{ github.workspace }}\win32\App.json"
+            Version = $(Get-Content -Path "${{ github.workspace }}\src\VERSION.txt")
+          }
+          . .\ci\Update-PackageJson.ps1 @params
