@@ -15,18 +15,16 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-    branches:
-        - main
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   validate:
-    runs-on: windows-2022
+    runs-on: windows-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       # Import GPG key
       - name: Import GPG key
@@ -47,11 +45,40 @@ jobs:
       - name: Run Pester tests
         shell: powershell
         run: |
-          . .\ci\Install.ps1
-          . .\ci\Tests.ps1
+          Install-Module -Name "Pester" -SkipPublisherCheck -Force
+          $Config = [PesterConfiguration]::Default
+          $Config.Run.Path = "${{ github.workspace }}\tests"
+          $Config.Run.PassThru = $True
+          $Config.TestResult.Enabled = $True
+          $Config.TestResult.OutputFormat = "NUnitXml"
+          $Config.TestResult.OutputPath = "${{ github.workspace }}\TestOutput.xml"
+          Invoke-Pester -Configuration $Config
+
+      - name: Get version
+        id: get-version
+        shell: pwsh
+        run: |
+          echo "::set-output name=version::$(Get-Date -Format "yyMM.dd.$($env:GITHUB_RUN_NUMBER)")"
 
       # Update version number in VERSION.txt
       - name: Update version number and push to repo
-        shell: powershell
+        shell: pwsh
         run: |
-          . .\ci\Deploy.ps1
+              "${{ steps.get-version.outputs.version }}" | `
+                Out-File -FilePath "${{ github.workspace }}\src\VERSION.XT" -Encoding "ascii" -Force -NoNewline
+
+      - name: Commit changes
+        id: commit
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "${{ steps.get-version.outputs.version }}"
+          commit_user_name: ${{ secrets.COMMIT_NAME }}
+          commit_user_email: ${{ secrets.COMMIT_EMAIL }}
+
+      - name: "Run if changes have been detected"
+        if: steps.commit.outputs.changes_detected == 'true'
+        run: echo "Changes committed."
+
+      - name: "Run if no changes have been detected"
+        if: steps.commit.outputs.changes_detected == 'false'
+        run: echo "No changes detected."

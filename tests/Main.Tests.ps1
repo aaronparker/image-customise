@@ -24,9 +24,6 @@ BeforeDiscovery {
     # Get the scripts to test
     $Scripts = @(Get-ChildItem -Path $([System.IO.Path]::Combine($projectRoot, "src", "*.ps1")) -Include "Install-Defaults.ps1" -ErrorAction "SilentlyContinue")
     $testCase = $Scripts | ForEach-Object { @{file = $_ } }
-
-    # Get the ScriptAnalyzer rules
-    $scriptAnalyzerRules = Get-ScriptAnalyzerRule
 }
 
 
@@ -41,18 +38,6 @@ Describe "General project validation" {
         $errors = $null
         $null = [System.Management.Automation.PSParser]::Tokenize($contents, [ref]$errors)
         $errors.Count | Should -Be 0
-    }
-
-    It "Script <file.Name> should pass ScriptAnalyzer" -TestCases $testCase {
-        param ($file)
-        $analysis = Invoke-ScriptAnalyzer -Path $file.FullName -ExcludeRule @("PSAvoidGlobalVars", "PSAvoidUsingWMICmdlet") -Severity @("Warning", "Error")
-
-        ForEach ($rule in $scriptAnalyzerRules) {
-            If ($analysis.RuleName -contains $rule) {
-                $analysis | Where-Object RuleName -EQ $rule -OutVariable failures | Out-Default
-                $failures.Count | Should -Be 0
-            }
-        }
     }
 }
 
