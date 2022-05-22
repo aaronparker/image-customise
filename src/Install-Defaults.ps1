@@ -32,12 +32,15 @@ param (
     [System.String] $Helplink = "https://stealthpuppy.com/image-customise/",
 
     [Parameter(Mandatory = $False)]
-    [System.String[]] $Properties = @("General", "Registry", "Paths", "StartMenu", "Features", "Capabilities", "Packages", "AppX")
+    [System.String[]] $Properties = @("General", "Registry", "Paths", "StartMenu", "Features", "Capabilities", "Packages", "AppX"),
+
+    [Parameter(Mandatory = $False)]
+    [System.String] $AppxMode = "Allow"
 )
 
 #region Restart if running in a 32-bit session
-If (!([System.Environment]::Is64BitProcess)) {
-    If ([System.Environment]::Is64BitOperatingSystem) {
+if (!([System.Environment]::Is64BitProcess)) {
+    if ([System.Environment]::Is64BitOperatingSystem) {
         $Arguments = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$($MyInvocation.MyCommand.Definition)`""
         $ProcessPath = $(Join-Path -Path $Env:SystemRoot -ChildPath "\Sysnative\WindowsPowerShell\v1.0\powershell.exe")
         Write-Verbose -Message "Restarting in 64-bit PowerShell."
@@ -56,7 +59,7 @@ If (!([System.Environment]::Is64BitProcess)) {
 #endregion
 
 #region Functions
-Function New-ScriptEventLog ($EventLog, $Property) {
+function New-ScriptEventLog ($EventLog, $Property) {
     $params = @{
         LogName     = $EventLog
         Source      = $Property
@@ -65,15 +68,15 @@ Function New-ScriptEventLog ($EventLog, $Property) {
     New-EventLog @params
 }
 
-Function Write-ToEventLog ($EventLog, $Property, $Object) {
-    ForEach ($Item in $Object) {
-        If ($Item.Value.Length -gt 0) {
+function Write-ToEventLog ($EventLog, $Property, $Object) {
+    foreach ($Item in $Object) {
+        if ($Item.Value.Length -gt 0) {
             Write-Verbose -Message "Write-ToEventLog: $($Property); $($Item.Name)."
             Write-Verbose -Message "Write-ToEventLog: $($Item.Value); $($Item.Status)"
-            Switch ($Item.Status) {
+            switch ($Item.Status) {
                 0 { $EntryType = "Information" }
                 1 { $EntryType = "Warning" }
-                Default { $EntryType = "Information" }
+                default { $EntryType = "Information" }
             }
             $params = @{
                 LogName     = $EventLog
@@ -90,8 +93,8 @@ Function Write-ToEventLog ($EventLog, $Property, $Object) {
     }
 }
 
-Function Get-Platform {
-    Switch -Regex ((Get-CimInstance -ClassName "CIM_OperatingSystem").Caption) {
+function Get-Platform {
+    switch -Regex ((Get-CimInstance -ClassName "CIM_OperatingSystem").Caption) {
         "Microsoft Windows Server*" {
             $Platform = "Server"
         }
@@ -109,55 +112,55 @@ Function Get-Platform {
         "Microsoft Windows 11*" {
             $Platform = "Client"
         }
-        Default {
+        default {
             $Platform = "Client"
         }
     }
     Write-Output -InputObject $Platform
 }
 
-Function Get-OSName {
-    Switch -Regex ((Get-CimInstance -ClassName "CIM_OperatingSystem").Caption) {
+function Get-OSName {
+    switch -Regex ((Get-CimInstance -ClassName "CIM_OperatingSystem").Caption) {
         "^Microsoft Windows Server 2022.*$" {
-            $Caption = "Windows2022"; Break
+            $Caption = "Windows2022"; break
         }
         "^Microsoft Windows Server 2019.*$" {
-            $Caption = "Windows2019"; Break
+            $Caption = "Windows2019"; break
         }
         "^Microsoft Windows Server 2016.*$" {
-            $Caption = "Windows2016"; Break
+            $Caption = "Windows2016"; break
         }
         "^Microsoft Windows 11 Enterprise for Virtual Desktops$" {
-            $Caption = "Windows10"; Break
+            $Caption = "Windows10"; break
         }
         "^Microsoft Windows 10 Enterprise for Virtual Desktops$" {
-            $Caption = "Windows10"; Break
+            $Caption = "Windows10"; break
         }
         "^Microsoft Windows 11.*$" {
-            $Caption = "Windows11"; Break
+            $Caption = "Windows11"; break
         }
         "^Microsoft Windows 10.*$" {
-            $Caption = "Windows10"; Break
+            $Caption = "Windows10"; break
         }
-        Default {
+        default {
             $Caption = "Unknown"
         }
     }
     Write-Output -InputObject $Caption
 }
 
-Function Get-Model {
+function Get-Model {
     $Hypervisor = "Parallels*|VMware*|Virtual*"
-    If ((Get-CimInstance -ClassName "Win32_ComputerSystem").Model -match $Hypervisor) {
+    if ((Get-CimInstance -ClassName "Win32_ComputerSystem").Model -match $Hypervisor) {
         $Model = "Virtual"
     }
-    Else {
+    else {
         $Model = "Physical"
     }
     Write-Output -InputObject $Model
 }
 
-Function Get-SettingsContent ($Path) {
+function Get-SettingsContent ($Path) {
     Write-Verbose -Message "Importing: $Path."
     try {
         $params = @{
@@ -168,7 +171,7 @@ Function Get-SettingsContent ($Path) {
     }
     catch {
         $_.Exception.Message
-        Return 1
+        return 1
     }
     try {
         $params = @{
@@ -178,12 +181,12 @@ Function Get-SettingsContent ($Path) {
     }
     catch {
         $_.Exception.Message
-        Return 1
+        return 1
     }
     Write-Output -InputObject $Settings
 }
 
-Function Set-DefaultUserProfile ($Setting) {
+function Set-DefaultUserProfile ($Setting) {
     try {
         # Variables
         $RegDefaultUser = "$env:SystemDrive\Users\Default\NTUSER.DAT"
@@ -205,14 +208,14 @@ Function Set-DefaultUserProfile ($Setting) {
         }
         catch {
             Write-Output -InputObject ([PSCustomObject]@{Name = "Load"; Value = $_.Exception.Message; Status = 1 })
-            Return 1
+            return 1
         }
 
         # Process Registry Commands
-        ForEach ($Item in $Setting) {
+        foreach ($Item in $Setting) {
             try {
                 $RegPath = $Item.path -replace "HKCU:", $DefaultUserPath
-                If (!(Test-Path -Path $Item.path -ErrorAction "SilentlyContinue")) {
+                if (!(Test-Path -Path $Item.path -ErrorAction "SilentlyContinue")) {
                     $params = @{
                         Path        = $Item.path
                         Type        = "RegistryKey"
@@ -220,7 +223,7 @@ Function Set-DefaultUserProfile ($Setting) {
                         ErrorAction = "SilentlyContinue"
                     }
                     $ItemResult = New-Item @params
-                    If ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
+                    if ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
                 }
                 $params = @{
                     Path        = $RegPath
@@ -266,10 +269,10 @@ Function Set-DefaultUserProfile ($Setting) {
     }
 }
 
-Function Set-Registry ($Setting) {
-    ForEach ($Item in $Setting) {
+function Set-Registry ($Setting) {
+    foreach ($Item in $Setting) {
         try {
-            If (!(Test-Path -Path $Item.path -ErrorAction "SilentlyContinue")) {
+            if (!(Test-Path -Path $Item.path -ErrorAction "SilentlyContinue")) {
                 $params = @{
                     Path        = $Item.path
                     Type        = "RegistryKey"
@@ -277,7 +280,7 @@ Function Set-Registry ($Setting) {
                     ErrorAction = "SilentlyContinue"
                 }
                 $ItemResult = New-Item @params
-                If ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
+                if ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
             }
             $params = @{
                 Path        = $Item.path
@@ -299,12 +302,12 @@ Function Set-Registry ($Setting) {
     }
 }
 
-Function Copy-File ($Path, $Parent) {
-    ForEach ($Item in $Path) {
+function Copy-File ($Path, $Parent) {
+    foreach ($Item in $Path) {
         $Source = $(Join-Path -Path $Parent -ChildPath $Item.Source)
         Write-Verbose -Message "Source: $Source."
         Write-Verbose -Message "Destination: $($Item.Destination)."
-        If (Test-Path -Path $Source -ErrorAction "SilentlyContinue") {
+        if (Test-Path -Path $Source -ErrorAction "SilentlyContinue") {
             New-Directory -Path $(Split-Path -Path $Item.Destination -Parent)
             try {
                 $params = @{
@@ -324,14 +327,14 @@ Function Copy-File ($Path, $Parent) {
             }
             Write-Output -InputObject ([PSCustomObject]@{Name = "$Source; $($Item.Destination)"; Value = $Msg; Status = $Result })
         }
-        Else {
+        else {
             Write-Output -InputObject ([PSCustomObject]@{Name = $Source; Value = "Does not exist"; Status = 1 })
         }
     }
 }
 
-Function New-Directory ($Path) {
-    If (!(Test-Path -Path $Path -ErrorAction "SilentlyContinue")) {
+function New-Directory ($Path) {
+    if (!(Test-Path -Path $Path -ErrorAction "SilentlyContinue")) {
         try {
             $params = @{
                 Path        = $Path
@@ -350,9 +353,9 @@ Function New-Directory ($Path) {
     }
 }
 
-Function Remove-Path ($Path) {
-    ForEach ($Item in $Path) {
-        If (Test-Path -Path $Item -ErrorAction "SilentlyContinue") {
+function Remove-Path ($Path) {
+    foreach ($Item in $Path) {
+        if (Test-Path -Path $Item -ErrorAction "SilentlyContinue") {
             Write-Verbose -Message "Remove-Item: $Item."
             try {
                 $params = @{
@@ -375,8 +378,8 @@ Function Remove-Path ($Path) {
     }
 }
 
-Function Remove-Feature ($Feature) {
-    If ($Feature.Count -ge 1) {
+function Remove-Feature ($Feature) {
+    if ($Feature.Count -ge 1) {
         Write-Verbose -Message "Remove features."
         $Feature | ForEach-Object { Get-WindowsOptionalFeature -Online -FeatureName $_ -ErrorAction "SilentlyContinue" } | `
             ForEach-Object {
@@ -401,10 +404,10 @@ Function Remove-Feature ($Feature) {
     }
 }
 
-Function Remove-Capability ($Capability) {
-    If ($Capability.Count -ge 1) {
+function Remove-Capability ($Capability) {
+    if ($Capability.Count -ge 1) {
         Write-Verbose -Message "Remove capabilities."
-        ForEach ($Item in $Capability) {
+        foreach ($Item in $Capability) {
             try {
                 Write-Verbose -Message "Remove-WindowsCapability: $Item."
                 $params = @{
@@ -425,10 +428,10 @@ Function Remove-Capability ($Capability) {
     }
 }
 
-Function Remove-Package ($Package) {
-    If ($Package.Count -ge 1) {
+function Remove-Package ($Package) {
+    if ($Package.Count -ge 1) {
         Write-Verbose -Message "Remove packages."
-        ForEach ($Item in $Package) {
+        foreach ($Item in $Package) {
             Get-WindowsPackage -Online -ErrorAction "SilentlyContinue" | Where-Object { $_.PackageName -match $Item } | `
                 ForEach-Object {
                 try {
@@ -454,7 +457,7 @@ Function Remove-Package ($Package) {
 #endregion
 
 # Configure working path
-If ($Path.Length -eq 0) { $WorkingPath = $PWD.Path } Else { $WorkingPath = $Path }
+if ($Path.Length -eq 0) { $WorkingPath = $PWD.Path } else { $WorkingPath = $Path }
 Push-Location -Path $WorkingPath
 Write-Verbose -Message "Execution path: $WorkingPath."
 
@@ -464,7 +467,7 @@ try {
 
     # Start logging
     $PSProcesses = Get-CimInstance -ClassName "Win32_Process" -Filter "Name = 'powershell.exe'" | Select-Object -Property "CommandLine"
-    ForEach ($Process in $PSProcesses) {
+    foreach ($Process in $PSProcesses) {
         $Object = ([PSCustomObject]@{Name = "CommandLine"; Value = $Process.CommandLine; Status = 0 })
         Write-ToEventLog -EventLog $Project -Property "General" -Object $Object
     }
@@ -497,38 +500,36 @@ try {
     $BuildConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.$Build.json" -Recurse -ErrorAction "SilentlyContinue")
     $ModelConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.$Model.json" -Recurse -ErrorAction "SilentlyContinue")
     Write-Verbose -Message "   Found: $(($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs).Count) configs."
-    ForEach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs)) {
+    foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs)) {
 
         # Read the settings JSON
         $Settings = Get-SettingsContent -Path $Config.FullName
 
         # Implement the settings only if the local build is greater or equal that what's specified in the JSON
-        If ([System.Version]$Version -ge [System.Version]$Settings.MinimumBuild) {
+        if ([System.Version]$Version -ge [System.Version]$Settings.MinimumBuild) {
 
             # Implement each setting in the JSON
-            Switch ($Settings.Registry.Type) {
+            switch ($Settings.Registry.Type) {
                 "DefaultProfile" {
-                    $Results = Set-DefaultUserProfile -Setting $Settings.Registry.Set
-                    Break
+                    $Results = Set-DefaultUserProfile -Setting $Settings.Registry.Set; break
                 }
                 "Direct" {
-                    $Results = Set-Registry -Setting $Settings.Registry.Set
-                    Break
+                    $Results = Set-Registry -Setting $Settings.Registry.Set; break
                 }
-                Default {
+                default {
                     $Results = ([PSCustomObject]@{Name = "Registry"; Value = "Skipped"; Status = 0 })
                     Write-Verbose -Message "Skip registry."
                 }
             }
             Write-ToEventLog -EventLog $Project -Property "Registry" -Object $Results
 
-            Switch ($Settings.StartMenu.Type) {
+            switch ($Settings.StartMenu.Type) {
                 "Server" {
-                    If ((Get-WindowsFeature -Name $Settings.StartMenu.Feature).InstallState -eq "Installed") {
+                    if ((Get-WindowsFeature -Name $Settings.StartMenu.Feature).InstallState -eq "Installed") {
                         $Results = Copy-File -Path $Settings.StartMenu.Exists -Parent $WorkingPath
                         Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
                     }
-                    Else {
+                    else {
                         $Results = Copy-File -Path $Settings.StartMenu.NotExists -Parent $WorkingPath
                         Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
                     }
@@ -554,7 +555,7 @@ try {
             $Results = Remove-Package -Package $Settings.Packages.Remove
             Write-ToEventLog -EventLog $Project -Property "Packages" -Object $Results
         }
-        Else {
+        else {
             Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = $Config.FullName; Value = "Skipped"; Status = 0 })
             Write-Verbose -Message "Skip config: $($Config.FullName)."
         }
@@ -562,20 +563,20 @@ try {
     #endregion
 
     # If on a client OS, run the script to remove AppX; UWP apps
-    If ($Platform -eq "Client") {
+    if ($Platform -eq "Client") {
 
         # Get the script location
         $Script = Get-ChildItem -Path $WorkingPath -Filter "Remove-AppxApps.ps1" -Recurse -ErrorAction "SilentlyContinue"
-        If ($Null -ne $Script) {
+        if ($Null -ne $Script) {
             Write-ToEventLog -EventLog $Project -Property "AppX" -Object ([PSCustomObject]@{Name = "Script"; Value = $Script.FullName; Status = 1 })
 
-            Switch ($Model) {
-                "Physical" { $Apps = & $Script.FullName -Operation "BlockList" }
-                "Virtual" { $Apps = & $Script.FullName -Operation "AllowList" }
+            switch ($AppxMode) {
+                "Block" { $Apps = & $Script.FullName -Operation "BlockList" }
+                "Allow" { $Apps = & $Script.FullName -Operation "AllowList" }
             }
             Write-ToEventLog -EventLog $Project -Property "AppX" -Object $Apps
         }
-        Else {
+        else {
             Write-ToEventLog -EventLog $Project -Property "AppX" -Object ([PSCustomObject]@{Name = "Script"; Value = "Remove-AppxApps.ps1"; Status = 0 })
         }
     }
@@ -585,7 +586,7 @@ catch {
     $Object = ([PSCustomObject]@{Name = "Result"; Value = $_.Exception.Message; Status = 1 })
     Write-ToEventLog -EventLog $Project -Property "General" -Object $Object
     $_.Exception.Message
-    Return 1
+    return 1
 }
 
 try {
@@ -618,4 +619,4 @@ Set-ItemProperty -Path "$Key\{$Guid}" -Name "HelpLink" -Value $HelpLink -Type "S
 # Write last entry to the event log and output success
 $Object = ([PSCustomObject]@{Name = "Result"; Value = "Success"; Status = 0 })
 Write-ToEventLog -EventLog $Project -Property "General" -Object $Object
-Return 0
+return 0
