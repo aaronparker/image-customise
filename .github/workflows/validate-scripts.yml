@@ -10,6 +10,7 @@ on:
     branches:
       - main
     paths:
+      - '.github/workflows/validate-scripts.yml'
       - 'src/**'
       - '!src/VERSION.txt'
 
@@ -41,11 +42,16 @@ jobs:
           git_committer_name: ${{ secrets.COMMIT_NAME }}
           git_committer_email: ${{ secrets.COMMIT_EMAIL }}
 
+      - name: Install Pester
+        shell: powershell
+        run: |
+          Install-Module -Name "Pester" -SkipPublisherCheck -Force
+
       # Run Pester tests
       - name: Run Pester tests
         shell: powershell
         run: |
-          Install-Module -Name "Pester" -SkipPublisherCheck -Force
+          Import-Module -Name "Pester" -Force
           $Config = [PesterConfiguration]::Default
           $Config.Run.Path = "${{ github.workspace }}\tests"
           $Config.Run.PassThru = $True
@@ -61,11 +67,11 @@ jobs:
           echo "::set-output name=version::$(Get-Date -Format "yyMM.dd.$($env:GITHUB_RUN_NUMBER)")"
 
       # Update version number in VERSION.txt
-      - name: Update version number and push to repo
+      - name: Update version number
         shell: pwsh
         run: |
-              "${{ steps.get-version.outputs.version }}" | `
-                Out-File -FilePath "${{ github.workspace }}\src\VERSION.XT" -Encoding "ascii" -Force -NoNewline
+          "${{ steps.get-version.outputs.version }}" | `
+            Out-File -FilePath "${{ github.workspace }}\src\VERSION.XT" -Encoding "ascii" -Force -NoNewline
 
       - name: Commit changes
         id: commit
