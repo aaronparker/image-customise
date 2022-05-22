@@ -5,7 +5,7 @@
         .DESCRIPTION
             Removes a specified list of AppX packages from the current user account and the local system to prevent new installs of in-built apps when new users log onto the system.
 
-            If the script is run elevated, it will remove provisioned packages from the system and packages from all user accounts. Otherwise only packages for the current user account will be removed.
+            if the script is run elevated, it will remove provisioned packages from the system and packages from all user accounts. Otherwise only packages for the current user account will be removed.
 
         .PARAMETER Operation
             Specify the AppX removal operation - either BlockList or AllowList.
@@ -51,94 +51,113 @@
 #>
 [CmdletBinding(SupportsShouldProcess = $True, DefaultParameterSetName = "BlockList")]
 param (
-    [Parameter(Mandatory = $False, ParameterSetName = "BlockList", HelpMessage = "Specify whether the operation is a BlockList or AllowList.")]
-    [Parameter(Mandatory = $False, ParameterSetName = "AllowList", HelpMessage = "Specify whether the operation is a BlockList or AllowList.")]
+    [parameter(Mandatory = $False, ParameterSetName = "BlockList", HelpMessage = "Specify whether the operation is a BlockList or AllowList.")]
+    [parameter(Mandatory = $False, ParameterSetName = "AllowList", HelpMessage = "Specify whether the operation is a BlockList or AllowList.")]
     [ValidateSet('BlockList', 'AllowList')]
     [System.String] $Operation = "BlockList",
 
-    [Parameter(Mandatory = $False, ParameterSetName = "BlockList", HelpMessage = "Specify an AppX package or packages to remove.")]
+    [parameter(Mandatory = $False, ParameterSetName = "BlockList", HelpMessage = "Specify an AppX package or packages to remove.")]
     [System.String[]] $BlockList = (
-        "7EE7776C.LinkedInforWindows_w1wdnht996qgy", # LinkedIn
-        "Clipchamp.Clipchamp_yxz26nhyzhsrt", # Clipchamp
-        "king.com.CandyCrushSodaSaga_kgqvnymyfvs32", # Candy Crush
-        "king.com.CandyCrushFriends_kgqvnymyfvs32", # Candy Crush Friends
-        "king.com.FarmHeroesSaga_kgqvnymyfvs32", # Farm Heroes Saga
-        "Microsoft.3DBuilder_8wekyb3d8bbwe", # 3D Builder
-        "Microsoft.BingFinance_8wekyb3d8bbwe", # Bing Finance
-        "Microsoft.BingNews_8wekyb3d8bbwe", # Microsoft News
-        "Microsoft.BingSports_8wekyb3d8bbwe", # Bing Sports
-        "Microsoft.BingWeather_8wekyb3d8bbwe", # Weather
-        "MicrosoftCorporationII.QuickAssist_8wekyb3d8bbwe", # Quick Assist
-        "Microsoft.GetHelp_8wekyb3d8bbwe", # Get Help
-        "Microsoft.GamingApp_8wekyb3d8bbwe", # Microsoft Xbox app?
-        "Microsoft.Messaging_8wekyb3d8bbwe", # Messaging
-        "Microsoft.MicrosoftSolitaireCollection_8wekyb3d8bbwe", # Solitaire
-        "Microsoft.PowerAutomateDesktop_8wekyb3d8bbwe", # Power Automate Desktop
-        "Microsoft.Office.Desktop_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
-        "Microsoft.Office.Desktop.Access_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
-        "Microsoft.Office.Desktop.Excel_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
-        "Microsoft.Office.Desktop.Outlook_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
-        "Microsoft.Office.Desktop.PowerPoint_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
-        "Microsoft.Office.Desktop.Publisher_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
-        "Microsoft.Office.Desktop.Word_8wekyb3d8bbwe", # Office 365 desktop application. Will prevent Office 365 ProPlus install
-        "MicrosoftTeams_8wekyb3d8bbwe", # Microsoft Teams package on Windows 11
-        "Microsoft.OneConnect_8wekyb3d8bbwe", # Mobile Plans
-        "Microsoft.People_8wekyb3d8bbwe", # People
-        "Microsoft.SkypeApp_kzf8qxf38zg5c", # Skype
-        "Microsoft.windowscommunicationsapps_8wekyb3d8bbwe", # Mail, Calendar
-        "Microsoft.WindowsPhone_8wekyb3d8bbwe", # Phone
-        "Microsoft.XboxApp_8wekyb3d8bbwe", # Xbox Console Companion
-        "Microsoft.XboxGameCallableUI_cw5n1h2txyewy", # Xbox UI
-        "Microsoft.XboxGameOverlay_8wekyb3d8bbwe", # Xbox UI
-        "Microsoft.XboxGamingOverlay_8wekyb3d8bbwe", # Xbox Game Bar
-        "Microsoft.ZuneMusic_8wekyb3d8bbwe", # Zune Music
-        "Microsoft.ZuneVideo_8wekyb3d8bbwe", # Zune Video
-        # "Microsoft.Getstarted_8wekyb3d8bbwe",                 # Windows Tips
-        "Microsoft.Microsoft3DViewer_8wekyb3d8bbwe", # 3D Viewer
-        # "Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe",         # Office 365 hub
-        # "Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe",       # Stick Notes
-        "Microsoft.MixedReality.Portal_8wekyb3d8bbwe", # Mixed Reality Portal
-        # "Microsoft.MSPaint_8wekyb3d8bbwe",                    # Paint 3D
-        # "Microsoft.Office.OneNote_8wekyb3d8bbwe",             # Microsoft OneNote
-        # "Microsoft.PPIProjection_cw5n1h2txyewy",              # Connect (Miracast)
-        "Microsoft.Print3D_8wekyb3d8bbwe", # Print 3D
-        # "Microsoft.ScreenSketch_8wekyb3d8bbwe",               # Snip & Sketch
-        # "Microsoft.Windows.Photos_8wekyb3d8bbwe",             # Photos
-        # "Microsoft.WindowsAlarms_8wekyb3d8bbwe",              # Alarms
-        # "Microsoft.WindowsCalculator_8wekyb3d8bbwe",          # Calculator
-        # "Microsoft.WindowsCamera_8wekyb3d8bbwe",              # Camera
-        # "Microsoft.WindowsMaps_8wekyb3d8bbwe",                # Maps
-        # "Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe",       # Voice Recorder
-        # "Microsoft.YourPhone_8wekyb3d8bbwe"                   # Your Phone
-        "Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe" # Feedback Hub
+        "7EE7776C.LinkedInforWindows_w1wdnht996qgy", 
+        "Clipchamp.Clipchamp_yxz26nhyzhsrt", 
+        "king.com.CandyCrushFriends_kgqvnymyfvs32", 
+        "king.com.CandyCrushSodaSaga_kgqvnymyfvs32", 
+        "king.com.FarmHeroesSaga_kgqvnymyfvs32", 
+        "Microsoft.3DBuilder_8wekyb3d8bbwe", 
+        "Microsoft.BingFinance_8wekyb3d8bbwe", 
+        "Microsoft.BingNews_8wekyb3d8bbwe", 
+        "Microsoft.BingSports_8wekyb3d8bbwe", 
+        "Microsoft.BingWeather_8wekyb3d8bbwe", 
+        "Microsoft.GamingApp_8wekyb3d8bbwe", 
+        "Microsoft.GetHelp_8wekyb3d8bbwe", 
+        # "Microsoft.Getstarted_8wekyb3d8bbwe", 
+        # "Microsoft.HEIFImageExtension_8wekyb3d8bbwe", 
+        "Microsoft.Messaging_8wekyb3d8bbwe", 
+        "Microsoft.Microsoft3DViewer_8wekyb3d8bbwe", 
+        # "Microsoft.MicrosoftAccessoryCenter_8wekyb3d8bbwe", 
+        # "Microsoft.MicrosoftEdge.Stable_8wekyb3d8bbwe", 
+        # "Microsoft.MicrosoftJournal_8wekyb3d8bbwe", 
+        "Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe", 
+        "Microsoft.MicrosoftSolitaireCollection_8wekyb3d8bbwe", 
+        # "Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe", 
+        "Microsoft.MixedReality.Portal_8wekyb3d8bbwe", 
+        "Microsoft.Office.Desktop_8wekyb3d8bbwe", 
+        "Microsoft.Office.Desktop.Access_8wekyb3d8bbwe", 
+        "Microsoft.Office.Desktop.Excel_8wekyb3d8bbwe", 
+        "Microsoft.Office.Desktop.Outlook_8wekyb3d8bbwe", 
+        "Microsoft.Office.Desktop.PowerPoint_8wekyb3d8bbwe", 
+        "Microsoft.Office.Desktop.Publisher_8wekyb3d8bbwe", 
+        "Microsoft.Office.Desktop.Word_8wekyb3d8bbwe", 
+        "Microsoft.OneConnect_8wekyb3d8bbwe", 
+        # "Microsoft.OneDriveSync_8wekyb3d8bbwe", 
+        # "Microsoft.Paint_8wekyb3d8bbwe", 
+        "Microsoft.People_8wekyb3d8bbwe",
+        # "Microsoft.PPIProjection_cw5n1h2txyewy",
+        # "Microsoft.PowerAutomateDesktop_8wekyb3d8bbwe", 
+        "Microsoft.Print3D_8wekyb3d8bbwe", 
+        # "Microsoft.ScreenSketch_8wekyb3d8bbwe", 
+        "Microsoft.SkypeApp_kzf8qxf38zg5c", 
+        # "Microsoft.Todos_8wekyb3d8bbwe", 
+        # "Microsoft.VP9VideoExtensions_8wekyb3d8bbwe", 
+        # "Microsoft.WebMediaExtensions_8wekyb3d8bbwe", 
+        # "Microsoft.WebpImageExtension_8wekyb3d8bbwe", 
+        # "Microsoft.Windows.Photos_8wekyb3d8bbwe", 
+        # "Microsoft.WindowsAlarms_8wekyb3d8bbwe", 
+        # "Microsoft.WindowsCalculator_8wekyb3d8bbwe", 
+        "Microsoft.WindowsCamera_8wekyb3d8bbwe", 
+        "Microsoft.windowscommunicationsapps_8wekyb3d8bbwe",
+        "Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe", 
+        # "Microsoft.WindowsMaps_8wekyb3d8bbwe", 
+        # "Microsoft.WindowsNotepad_8wekyb3d8bbwe", 
+        "Microsoft.WindowsPhone_8wekyb3d8bbwe", 
+        # "Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe", 
+        # "Microsoft.WindowsTerminal_8wekyb3d8bbwe", 
+        "Microsoft.XboxApp_8wekyb3d8bbwe", 
+        "Microsoft.XboxGameCallableUI_cw5n1h2txyewy", 
+        "Microsoft.XboxGameOverlay_8wekyb3d8bbwe", 
+        "Microsoft.XboxGamingOverlay_8wekyb3d8bbwe", 
+        "Microsoft.YourPhone_8wekyb3d8bbwe", 
+        "Microsoft.ZuneMusic_8wekyb3d8bbwe", 
+        # "Microsoft.ZuneVideo_8wekyb3d8bbwe", 
+        # "MicrosoftCorporationII.QuickAssist_8wekyb3d8bbwe", 
+        "MicrosoftTeams_8wekyb3d8bbwe"
     ),
 
-    [Parameter(Mandatory = $False, ParameterSetName = "AllowList", HelpMessage = "Specify an AppX package or packages to keep, removing all others.")]
+    [parameter(Mandatory = $False, parameterSetName = "AllowList", HelpMessage = "Specify an AppX package or packages to keep, removing all others.")]
     [System.String[]] $AllowList = (
+        "Microsoft.549981C3F5F10_8wekyb3d8bbwe",    
         "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe",
-        "Microsoft.StorePurchaseApp_8wekyb3d8bbwe",
         "Microsoft.Wallet_8wekyb3d8bbwe",
         "Microsoft.VP9VideoExtensions_8wekyb3d8bbwe",
         "Microsoft.WebMediaExtensions_8wekyb3d8bbwe",
         "Microsoft.MPEG2VideoExtension_8wekyb3d8bbwe",
         "Microsoft.HEVCVideoExtension_8wekyb3d8bbwe",
-        "Microsoft.HEIFImageExtension_8wekyb3d8bbwe",
+        "Microsoft.HEifImageExtension_8wekyb3d8bbwe",
+        "Microsoft.ScreenSketch_8wekyb3d8bbwe",
+        "Microsoft.StorePurchaseApp_8wekyb3d8bbwe",
         "Microsoft.WebpImageExtension_8wekyb3d8bbwe",
-        "Microsoft.WindowsStore_8wekyb3d8bbwe"
+        "Microsoft.WindowsStore_8wekyb3d8bbwe",
+        "Microsoft.WindowsNotepad_8wekyb3d8bbwe",
+        "MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy",
+        "Microsoft.Winget.Source_8wekyb3d8bbwe",
+        "MicrosoftCorporationII.WindowsAppRuntime.Main.1.0_8wekyb3d8bbwe",
+        "Microsoft.WindowsAppRuntime.Singleton_8wekyb3d8bbwe",
+        "Microsoft.WinAppRuntime.DDLM.3.469.1654.0-x6_8wekyb3d8bbwe",
+        "Microsoft.WinAppRuntime.DDLM.3.469.1654.0-x8_8wekyb3d8bbwe"
     ),
 
-    [Parameter(Mandatory = $False)]
+    [parameter(Mandatory = $False)]
     [System.String] $Path = $PSScriptRoot
 )
 
 begin {
     Write-Verbose -Message "Execution path: $Path."
 
-    #region Functions
-    Function Edit-ProtectedApp {
+    #region functions
+    function Edit-ProtectedApp {
         <# Filter out a set of apps that we'll never try to remove #>
-        Param (
-            [Parameter(Mandatory = $False)]
+        param (
+            [parameter(Mandatory = $False)]
             [System.String[]] $ProtectList = (
                 "Microsoft.WindowsStore_8wekyb3d8bbwe",
                 "Microsoft.MicrosoftEdge_8wekyb3d8bbwe",
@@ -152,51 +171,51 @@ begin {
                 "Microsoft.UI*",
                 "Microsoft.VCLibs*"
             ),
-            [Parameter(Mandatory = $False)]
+            [parameter(Mandatory = $False)]
             [System.String[]] $PackageList
         )
         [System.Array] $FilteredList = @()
-        ForEach ($package in $PackageList) {
+        foreach ($package in $PackageList) {
             $appMatch = $False
-            ForEach ($app in $ProtectList) {
-                If ($package -match $app) {
+            foreach ($app in $ProtectList) {
+                if ($package -match $app) {
                     Write-Verbose -Message "$($MyInvocation.MyCommand): Excluding package from removal: [$package]"
                     $appMatch = $True
                 }
             }
-            If ($appMatch -eq $False) { $FilteredList += $package }
+            if ($appMatch -eq $False) { $FilteredList += $package }
         }
         Write-Output -InputObject $FilteredList
     }
     #endregion
 
-    # Get elevated status. If elevated we'll remove packages from all users and provisioned packages
+    # Get elevated status. if elevated we'll remove packages from all users and provisioned packages
     [System.Boolean] $Elevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
-    If ($Elevated) { Write-Verbose -Message "$($MyInvocation.MyCommand): Running with elevated privileges. Removing provisioned packages as well." }
+    if ($Elevated) { Write-Verbose -Message "$($MyInvocation.MyCommand): Running with elevated privileges. Removing provisioned packages as well." }
 
-    Switch ($Operation) {
+    switch ($Operation) {
         "BlockList" {
             # Filter list if it contains apps from the $protectList
             $packagesToRemove = Edit-ProtectedApp -PackageList $BlockList
         }
         "AllowList" {
             Write-Warning -Message "$($MyInvocation.MyCommand): AllowList action may break stuff."
-            If ($Elevated) {
+            if ($Elevated) {
                 # Get packages from the current system for all users
                 Write-Verbose -Message "$($MyInvocation.MyCommand): Enumerating all users apps."
-                $packagesAllUsers = Get-AppxPackage -AllUsers -PackageTypeFilter Main, Resource | `
-                    Where-Object { $_.NonRemovable -eq $False } | Select-Object -Property PackageFamilyName
+                $packagesAllUsers = Get-AppxPackage -AllUsers -PackageTypeFilter "Main", "Resource" | `
+                    Where-Object { $_.NonRemovable -eq $False } | Select-Object -Property "PackageFamilyName"
             }
-            Else {
+            else {
                 # Get packages for the current user
                 Write-Verbose -Message "$($MyInvocation.MyCommand): Enumerating current user apps only."
-                $packagesAllUsers = Get-AppxPackage -PackageTypeFilter Main, Resource | `
-                    Where-Object { $_.NonRemovable -eq $False } | Select-Object -Property PackageFamilyName
+                $packagesAllUsers = Get-AppxPackage -PackageTypeFilter "Main", "Resource" | `
+                    Where-Object { $_.NonRemovable -eq $False } | Select-Object -Property "PackageFamilyName"
             }
             # Select unique packages
             $uniquePackagesAllUsers = $packagesAllUsers.PackageFamilyName | Sort-Object -Unique
 
-            If ($Null -ne $uniquePackagesAllUsers) {
+            if ($Null -ne $uniquePackagesAllUsers) {
                 # Filter out the AllowListed apps
                 Write-Verbose -Message "$($MyInvocation.MyCommand): Filtering AllowListed apps."
                 $packagesWithoutAllowList = Compare-Object -ReferenceObject $uniquePackagesAllUsers -DifferenceObject $AllowList -PassThru
@@ -204,7 +223,7 @@ begin {
                 # Filter list if it contains apps from the $protectList
                 $packagesToRemove = Edit-ProtectedApp -PackageList $packagesWithoutAllowList
             }
-            Else {
+            else {
                 $packagesToRemove = $Null
             }
         }
@@ -213,20 +232,20 @@ begin {
 
 process {
     # Remove the apps; Walk through each package in the array
-    ForEach ($app in $packagesToRemove) {
+    foreach ($app in $packagesToRemove) {
 
         # Get the AppX package object by passing the string to the left of the underscore
         # to Get-AppxPackage and passing the resulting package object to Remove-AppxPackage
         $Name = ($app -split "_")[0]
         Write-Verbose -Message "$($MyInvocation.MyCommand): Evaluating: [$Name]."
-        If ($Elevated) {
+        if ($Elevated) {
             $package = Get-AppxPackage -Name $Name -AllUsers
         }
-        Else {
+        else {
             $package = Get-AppxPackage -Name $Name
         }
-        If ($package) {
-            If ($PSCmdlet.ShouldProcess($package.PackageFullName, "Remove User app")) {
+        if ($package) {
+            if ($PSCmdlet.ShouldProcess($package.PackageFullName, "Remove User app")) {
                 try {
                     $Value = "Removed"; $Status = 0
                     $package | Remove-AppxPackage -AllUsers -ErrorAction "SilentlyContinue"
@@ -240,10 +259,10 @@ process {
         }
 
         # Remove the provisioned package as well, completely from the system
-        If ($Elevated) {
-            $package = Get-AppxProvisionedPackage -Online | Where-Object DisplayName -eq (($app -split "_")[0])
-            If ($package) {
-                If ($PSCmdlet.ShouldProcess($package.PackageName, "Remove Provisioned app")) {
+        if ($Elevated) {
+            $package = Get-AppxProvisionedPackage -Online | Where-Object DisplayName -EQ (($app -split "_")[0])
+            if ($package) {
+                if ($PSCmdlet.ShouldProcess($package.PackageName, "Remove Provisioned app")) {
                     try {
                         $Value = "Removed"; $Status = 0
                         $action = Remove-AppxProvisionedPackage -Online -PackageName $package.PackageName -ErrorAction "SilentlyContinue"
@@ -253,7 +272,7 @@ process {
                         $Value = "Failed"; $Status = 1
                     }
                     Write-Output -InputObject ([PSCustomObject]@{Name = $package.PackageFullName; Value = $Value; Status = $Status })
-                    If ($action.RestartNeeded -eq $True) { Write-Warning -Message "$($MyInvocation.MyCommand): Reboot required: [$($package.PackageName)]" }
+                    if ($action.RestartNeeded -eq $True) { Write-Warning -Message "$($MyInvocation.MyCommand): Reboot required: [$($package.PackageName)]" }
                 }
             }
         }

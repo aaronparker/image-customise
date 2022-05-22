@@ -13,6 +13,7 @@
         "Clipchamp",
         "codeql",
         "Compat",
+        "DDLM",
         "defaultlayout",
         "defaultstartmenu",
         "DWORD",
@@ -37,6 +38,7 @@
         "Miracast",
         "mkdocs",
         "mutli",
+        "nhyzhsrt",
         "NTUSER",
         "ONENOTE",
         "onenoteim",
@@ -63,6 +65,7 @@
         "Webp",
         "wekyb",
         "windowscommunicationsapps",
+        "Winget",
         "Winlogon",
         "WINWORD",
         "Zune"

@@ -584,8 +584,25 @@ catch {
     # Write last entry to the event log and output failure
     $Object = ([PSCustomObject]@{Name = "Result"; Value = $_.Exception.Message; Status = 1 })
     Write-ToEventLog -EventLog $Project -Property "General" -Object $Object
-    $_
+    $_.Exception.Message
     Return 1
+}
+
+try {
+    $Path = "$env:ProgramData\FeatureUpdates"
+    if ($Path -eq $WorkingPath) {
+        $Object = ([PSCustomObject]@{Name = "Result"; Value = "Skipping file copy"; Status = 1 })
+        Write-ToEventLog -EventLog $Project -Property "General" -Object $Object
+    }
+    else {
+        New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
+        Copy-Item -Path $WorkingPath -Destination $Path -Recurse
+    }
+}
+catch {
+    $Object = ([PSCustomObject]@{Name = "Result"; Value = $_.Exception.Message; Status = 1 })
+    Write-ToEventLog -EventLog $Project -Property "General" -Object $Object
+    $_.Exception.Message
 }
 
 # Set uninstall registry value for detecting as an installed application

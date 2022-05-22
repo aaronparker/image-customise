@@ -34,7 +34,7 @@
         ]
     },
     "Files": {
-        "Copy": [
+        "Copy1": [
             {
                 "Source": "desktop-config.json",
                 "Destination": "C:\\Users\\Default\\AppData\\Roaming\\Microsoft\\Teams\\desktop-config.json"
