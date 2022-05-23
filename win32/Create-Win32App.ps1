@@ -1,5 +1,4 @@
 ﻿#Requires -RunAsAdministrator
-#Requires -Modules Evergreen, VcRedist
 <#
     .SYNOPSIS
         Create a Win32 app in Microsoft Intune based on input from app manifest file.

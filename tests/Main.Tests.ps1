@@ -59,7 +59,7 @@ Describe "Script execution validation" -Tag "Windows" -ForEach $Scripts {
 
 Describe "Feature update script copy works" {
     BeforeAll {
-        $Scripts = @("$env:ProgramData\FeatureUpdates\Install-Defaults.ps1",
+        $Files = @("$env:ProgramData\FeatureUpdates\Install-Defaults.ps1",
             "$env:ProgramData\FeatureUpdates\Remove-AppxApps.ps1",
             "$env:ProgramData\FeatureUpdates\SetupComplete.cmd",
             "$env:ProgramData\FeatureUpdates\SetupConfig.ini")
@@ -71,7 +71,7 @@ Describe "Feature update script copy works" {
         }
     }
 
-    Context "Each script should exist" -ForEach $Scripts {
+    Context "Each script should exist" -ForEach $Files {
         It "$_ should exist" {
             Test-Path -Path $_ | Should -BeTrue
         }
