@@ -3,7 +3,6 @@
 #>
 [CmdletBinding()]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "")]
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingInvokeExpression", "")]
 param (
     [Parameter()]
     [System.String] $Path,
@@ -16,7 +15,7 @@ param (
 $AppData = Get-Content -Path $Path | ConvertFrom-Json
 
 # If the version that Evergreen returns is higher than the version in the manifest
-if ([System.Version]$Version -ge [System.Version]$AppData.PackageInformation.Version -or [System.String]::IsNullOrEmpty($AppData.PackageInformation.Version)) {
+if ([System.Version]$Version -ge [System.Version]$AppData.PackageInformation.Version) {
 
     # Update the manifest with the application setup file
     Write-Host -ForegroundColor "Cyan" "Update package."

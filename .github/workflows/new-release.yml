@@ -56,9 +56,10 @@ jobs:
       - name: Update App.json
         shell: powershell
         run: |
+          $Version = Get-Content -Path "${{ github.workspace }}\src\VERSION.txt"
           $params = @{
             Path    = "${{ github.workspace }}\win32\App.json"
-            Version = $(Get-Content -Path "${{ github.workspace }}\src\VERSION.txt")
+            Version = $Version
           }
           . .\ci\Update-PackageJson.ps1 @params
 

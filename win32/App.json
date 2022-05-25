@@ -2,7 +2,7 @@
     "PackageInformation": {
         "SetupType": "EXE",
         "SetupFile": "Install-Defaults.ps1",
-        "Version": "",
+        "Version": "2201.23.90",
         "SourceFolder": "Source",
         "OutputFolder": "Package",
         "IconFile": "https://raw.githubusercontent.com/Insentra/intune-icons/main/icons/Package.png"
