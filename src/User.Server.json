@@ -1,5 +1,6 @@
 {
     "MinimumBuild": "10.0.14393",
+    "MaximumBuild": "10.0.99999",
     "Registry": {
         "Type": "DefaultProfile",
         "Set": [

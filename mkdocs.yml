@@ -124,3 +124,5 @@ nav:
     - User settings: profile.md
     - Customise: custom.md
     - Known issues: issues.md
+  - Settings:
+    - Registry: registry.md

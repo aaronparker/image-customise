@@ -1,0 +1,45 @@
+{
+    "MinimumBuild": "10.0.14393",
+    "MaximumBuild": "10.0.19044",
+    "Registry": {
+        "Type": "DefaultProfile",
+        "Set": [
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Accent",
+                "name": "AccentColor",
+                "value": 4289992518,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Accent",
+                "name": "AccentPalette",
+                "value": "86CAFF005FB2F2001E91EA000063B10000427500002D4F000020380000CC6A00",
+                "Type": "String"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\DWM",
+                "name": "AccentColor",
+                "value": 4289815296,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\DWM",
+                "name": "ColorizationAfterglow",
+                "value": 3288359857,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\DWM",
+                "name": "ColorizationColor",
+                "value": 3288359857,
+                "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\DWM",
+                "name": "ColorPrevalence",
+                "value": 1,
+                "type": "DWord"
+            }
+        ]
+    }
+}

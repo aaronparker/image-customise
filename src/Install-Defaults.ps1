@@ -507,53 +507,54 @@ try {
 
         # Implement the settings only if the local build is greater or equal that what's specified in the JSON
         if ([System.Version]$Version -ge [System.Version]$Settings.MinimumBuild) {
-
-            # Implement each setting in the JSON
-            switch ($Settings.Registry.Type) {
-                "DefaultProfile" {
-                    $Results = Set-DefaultUserProfile -Setting $Settings.Registry.Set; break
-                }
-                "Direct" {
-                    $Results = Set-Registry -Setting $Settings.Registry.Set; break
-                }
-                default {
-                    $Results = ([PSCustomObject]@{Name = "Registry"; Value = "Skipped"; Status = 0 })
-                    Write-Verbose -Message "Skip registry."
-                }
-            }
-            Write-ToEventLog -EventLog $Project -Property "Registry" -Object $Results
-
-            switch ($Settings.StartMenu.Type) {
-                "Server" {
-                    if ((Get-WindowsFeature -Name $Settings.StartMenu.Feature).InstallState -eq "Installed") {
-                        $Results = Copy-File -Path $Settings.StartMenu.Exists -Parent $WorkingPath
-                        Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
+            if ([System.Version]$Version -le [System.Version]$Settings.MaximumBuild) {
+                # Implement each setting in the JSON
+                switch ($Settings.Registry.Type) {
+                    "DefaultProfile" {
+                        $Results = Set-DefaultUserProfile -Setting $Settings.Registry.Set; break
                     }
-                    else {
-                        $Results = Copy-File -Path $Settings.StartMenu.NotExists -Parent $WorkingPath
-                        Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
+                    "Direct" {
+                        $Results = Set-Registry -Setting $Settings.Registry.Set; break
+                    }
+                    default {
+                        $Results = ([PSCustomObject]@{Name = "Registry"; Value = "Skipped"; Status = 0 })
+                        Write-Verbose -Message "Skip registry."
                     }
                 }
-                "Client" {
-                    $Results = Copy-File -Path $Settings.StartMenu.$OSName -Parent $WorkingPath
-                    Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
+                Write-ToEventLog -EventLog $Project -Property "Registry" -Object $Results
+
+                switch ($Settings.StartMenu.Type) {
+                    "Server" {
+                        if ((Get-WindowsFeature -Name $Settings.StartMenu.Feature).InstallState -eq "Installed") {
+                            $Results = Copy-File -Path $Settings.StartMenu.Exists -Parent $WorkingPath
+                            Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
+                        }
+                        else {
+                            $Results = Copy-File -Path $Settings.StartMenu.NotExists -Parent $WorkingPath
+                            Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
+                        }
+                    }
+                    "Client" {
+                        $Results = Copy-File -Path $Settings.StartMenu.$OSName -Parent $WorkingPath
+                        Write-ToEventLog -EventLog $Project -Property "StartMenu" -Object $Results
+                    }
                 }
+
+                $Results = Copy-File -Path $Settings.Files.Copy -Parent $WorkingPath
+                Write-ToEventLog -EventLog $Project -Property "Paths" -Object $Results
+
+                $Results = Remove-Path -Path $Settings.Paths.Remove
+                Write-ToEventLog -EventLog $Project -Property "Paths" -Object $Results
+
+                $Results = Remove-Feature -Feature $Settings.Features.Disable
+                Write-ToEventLog -EventLog $Project -Property "Features" -Object $Results
+
+                $Results = Remove-Capability -Capability $Settings.Capabilities.Remove
+                Write-ToEventLog -EventLog $Project -Property "Capabilities" -Object $Results
+
+                $Results = Remove-Package -Package $Settings.Packages.Remove
+                Write-ToEventLog -EventLog $Project -Property "Packages" -Object $Results
             }
-
-            $Results = Copy-File -Path $Settings.Files.Copy -Parent $WorkingPath
-            Write-ToEventLog -EventLog $Project -Property "Paths" -Object $Results
-
-            $Results = Remove-Path -Path $Settings.Paths.Remove
-            Write-ToEventLog -EventLog $Project -Property "Paths" -Object $Results
-
-            $Results = Remove-Feature -Feature $Settings.Features.Disable
-            Write-ToEventLog -EventLog $Project -Property "Features" -Object $Results
-
-            $Results = Remove-Capability -Capability $Settings.Capabilities.Remove
-            Write-ToEventLog -EventLog $Project -Property "Capabilities" -Object $Results
-
-            $Results = Remove-Package -Package $Settings.Packages.Remove
-            Write-ToEventLog -EventLog $Project -Property "Packages" -Object $Results
         }
         else {
             Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = $Config.FullName; Value = "Skipped"; Status = 0 })

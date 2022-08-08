@@ -1,5 +1,6 @@
 {
     "MinimumBuild": "10.0.19041",
+    "MaximumBuild": "10.0.99999",
     "Capabilities": {
         "Remove": [
             "Microsoft.Windows.WordPad~~~~0.0.1.0",
