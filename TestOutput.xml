@@ -1,39 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="4" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2022-06-11" time="01:32:01">
-  <environment clr-version="4.0.30319.42000" user-domain="fv-az365-950" cwd="D:\a\image-customise\image-customise" platform="Microsoft Windows Server 2022 Datacenter|C:\Windows|\Device\Harddisk0\Partition2" machine-name="fv-az365-950" nunit-version="2.5.8.0" os-version="10.0.20348" user="runneradmin" />
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="4" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2022-08-08" time="23:56:51">
+  <environment clr-version="4.0.30319.42000" user-domain="fv-az479-559" cwd="D:\a\image-customise\image-customise" platform="Microsoft Windows Server 2022 Datacenter|C:\Windows|\Device\Harddisk0\Partition2" machine-name="fv-az479-559" nunit-version="2.5.8.0" os-version="10.0.20348" user="runneradmin" />
   <culture-info current-culture="en-US" current-uiculture="en-US" />
-  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="95.73" asserts="0" description="Pester">
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="9.6804" asserts="0" description="Pester">
     <results>
-      <test-suite type="TestFixture" name="D:\a\image-customise\image-customise\tests\Main.Tests.ps1" executed="True" result="Success" success="True" time="95.73" asserts="0" description="D:\a\image-customise\image-customise\tests\Main.Tests.ps1">
+      <test-suite type="TestFixture" name="D:\a\image-customise\image-customise\tests\Main.Tests.ps1" executed="True" result="Success" success="True" time="9.6804" asserts="0" description="D:\a\image-customise\image-customise\tests\Main.Tests.ps1">
         <results>
-          <test-suite type="TestFixture" name="General project validation" executed="True" result="Success" success="True" time="2.4649" asserts="0" description="General project validation">
+          <test-suite type="TestFixture" name="General project validation" executed="True" result="Success" success="True" time="1.9913" asserts="0" description="General project validation">
             <results>
-              <test-suite type="ParameterizedTest" name="General project validation.Script &lt;file.Name&gt; should exist" executed="True" result="Success" success="True" time="1.223" asserts="0" description="Script &lt;file.Name&gt; should exist">
+              <test-suite type="ParameterizedTest" name="General project validation.Script &lt;file.Name&gt; should exist" executed="True" result="Success" success="True" time="1.0022" asserts="0" description="Script &lt;file.Name&gt; should exist">
                 <results>
-                  <test-case description="Script Install-Defaults.ps1 should exist" name="General project validation.Script Install-Defaults.ps1 should exist" time="1.223" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script Install-Defaults.ps1 should exist" name="General project validation.Script Install-Defaults.ps1 should exist" time="1.0022" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="ParameterizedTest" name="General project validation.Script &lt;file.Name&gt; should be valid PowerShell" executed="True" result="Success" success="True" time="0.4149" asserts="0" description="Script &lt;file.Name&gt; should be valid PowerShell">
+              <test-suite type="ParameterizedTest" name="General project validation.Script &lt;file.Name&gt; should be valid PowerShell" executed="True" result="Success" success="True" time="0.3378" asserts="0" description="Script &lt;file.Name&gt; should be valid PowerShell">
                 <results>
-                  <test-case description="Script Install-Defaults.ps1 should be valid PowerShell" name="General project validation.Script Install-Defaults.ps1 should be valid PowerShell" time="0.4149" asserts="0" success="True" result="Success" executed="True" />
-                </results>
-              </test-suite>
-            </results>
-          </test-suite>
-          <test-suite type="TestFixture" name="Script execution validation" executed="True" result="Success" success="True" time="91.8076" asserts="0" description="Script execution validation">
-            <results>
-              <test-suite type="TestFixture" name="Script execution validation.Validate Install-Defaults.ps1." executed="True" result="Success" success="True" time="89.3338" asserts="0" description="Script execution validation.Validate Install-Defaults.ps1.">
-                <results>
-                  <test-case description="Install-Defaults.ps1 should execute OK" name="Script execution validation.Validate Install-Defaults.ps1..Install-Defaults.ps1 should execute OK" time="89.3201" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script Install-Defaults.ps1 should be valid PowerShell" name="General project validation.Script Install-Defaults.ps1 should be valid PowerShell" time="0.3378" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Feature update script copy works" executed="True" result="Success" success="True" time="91.905" asserts="0" description="Feature update script copy works">
+          <test-suite type="TestFixture" name="Script execution validation" executed="True" result="Success" success="True" time="6.496" asserts="0" description="Script execution validation">
             <results>
-              <test-suite type="TestFixture" name="Feature update script copy works.Target directory exists" executed="True" result="Success" success="True" time="0.085" asserts="0" description="Feature update script copy works.Target directory exists">
+              <test-suite type="TestFixture" name="Script execution validation.Validate Install-Defaults.ps1." executed="True" result="Success" success="True" time="4.4976" asserts="0" description="Script execution validation.Validate Install-Defaults.ps1.">
                 <results>
-                  <test-case description="FeatureUpdates should exist" name="Feature update script copy works.Target directory exists.FeatureUpdates should exist" time="0.0764" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Install-Defaults.ps1 should execute OK" name="Script execution validation.Validate Install-Defaults.ps1..Install-Defaults.ps1 should execute OK" time="4.4718" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Feature update script copy works" executed="True" result="Success" success="True" time="6.5731" asserts="0" description="Feature update script copy works">
+            <results>
+              <test-suite type="TestFixture" name="Feature update script copy works.Target directory exists" executed="True" result="Success" success="True" time="0.0683" asserts="0" description="Feature update script copy works.Target directory exists">
+                <results>
+                  <test-case description="FeatureUpdates should exist" name="Feature update script copy works.Target directory exists.FeatureUpdates should exist" time="0.0583" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
             </results>
