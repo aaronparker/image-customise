@@ -30,8 +30,9 @@ theme:
   features:
     - navigation.instant
     - navigation.top
-    #- navigation.tabs
+    - navigation.tabs
     - navigation.expand
+    - toc.integrate
   palette:
     - scheme: default
       primary: blue
