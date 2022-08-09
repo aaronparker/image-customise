@@ -3,7 +3,9 @@
 ## Machine.All.json
 
 Minimum build: 10.0.14393
+
 Maximum build: 10.0.99999
+
 Type: Direct
 
 | path                                                               | name                               | value  |
@@ -15,7 +17,9 @@ Type: Direct
 ## Machine.Client.json
 
 Minimum build: 10.0.14393
+
 Maximum build: 10.0.99999
+
 | path                                                     | name                               | value |
 | -------------------------------------------------------- | ---------------------------------- | ----- |
 | HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer | DisableEdgeDesktopShortcutCreation | 1     |
@@ -23,7 +27,9 @@ Maximum build: 10.0.99999
 ## User-Windows10.All.json
 
 Minimum build: 10.0.14393
+
 Maximum build: 10.0.19044
+
 Type: DefaultProfile
 
 | path                                                            | name                  | value                                                            |
@@ -38,7 +44,9 @@ Type: DefaultProfile
 ## User.All.json
 
 Minimum build: 10.0.14393
+
 Maximum build: 10.0.99999
+
 Type: DefaultProfile
 
 | path                                                                              | name                                | value |
@@ -62,7 +70,9 @@ Type: DefaultProfile
 ## User.Server.json
 
 Minimum build: 10.0.14393
+
 Maximum build: 10.0.99999
+
 Type: DefaultProfile
 
 | path                                                               | name                          | value |
@@ -73,7 +83,9 @@ Type: DefaultProfile
 ## User.Virtual.json
 
 Minimum build: 10.0.14393
+
 Maximum build: 10.0.99999
+
 Type: DefaultProfile
 
 | path                                                                                                                | name                            | value                            |
