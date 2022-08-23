@@ -465,9 +465,9 @@ try {
     Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Platform"; Value = $Platform; Status = 0 })
 
     $Build = ([System.Environment]::OSVersion.Version).Build
-    $Version = [System.Environment]::OSVersion.Version
+    $OSVersion = [System.Environment]::OSVersion.Version
     Write-Verbose -Message "   Build: $Build."
-    Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Build/version"; Value = $Version; Status = 0 })
+    Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Build/version"; Value = $OSVersion; Status = 0 })
 
     $Model = Get-Model
     Write-Verbose -Message "   Model: $Model."
@@ -477,9 +477,9 @@ try {
     Write-Verbose -Message "      OS: $OSName."
     Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "OSName"; Value = $OSName; Status = 0 })
 
-    $Version = Get-ChildItem -Path $WorkingPath -Filter "VERSION.txt" -Recurse | Get-Content -Raw
-    Write-Verbose -Message "Customisation scripts version: $Version."
-    Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Version"; Value = $Version; Status = 0 })
+    $DisplayVersion = Get-ChildItem -Path $WorkingPath -Filter "VERSION.txt" -Recurse | Get-Content -Raw
+    Write-Verbose -Message "Customisation scripts version: $DisplayVersion."
+    Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = "Version"; Value = $DisplayVersion; Status = 0 })
 
     #region Gather configs and run
     $AllConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.All.json" -Recurse -ErrorAction "SilentlyContinue")
@@ -494,8 +494,8 @@ try {
         $Settings = Get-SettingsContent -Path $Config.FullName
 
         # Implement the settings only if the local build is greater or equal that what's specified in the JSON
-        if ([System.Version]$Version -ge [System.Version]$Settings.MinimumBuild) {
-            if ([System.Version]$Version -le [System.Version]$Settings.MaximumBuild) {
+        if ([System.Version]$OSVersion -ge [System.Version]$Settings.MinimumBuild) {
+            if ([System.Version]$OSVersion -le [System.Version]$Settings.MaximumBuild) {
 
                 # Implement each setting in the JSON
                 switch ($Settings.Registry.Type) {
@@ -544,13 +544,18 @@ try {
                 $Results = Remove-Package -Package $Settings.Packages.Remove
                 Write-ToEventLog -EventLog $Project -Property "Packages" -Object $Results
             }
+            else {
+                Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = $Config.FullName; Value = "Skipped maximum version"; Status = 0 })
+                Write-Verbose -Message "Skip maximum version config: $($Config.FullName)."
+            }
         }
         else {
-            Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = $Config.FullName; Value = "Skipped"; Status = 0 })
-            Write-Verbose -Message "Skip config: $($Config.FullName)."
+            Write-ToEventLog -EventLog $Project -Property "General" -Object ([PSCustomObject]@{Name = $Config.FullName; Value = "Skipped minimum version"; Status = 0 })
+            Write-Verbose -Message "Skip minimum version config: $($Config.FullName)."
         }
     }
     #endregion
+
 
     # If on a client OS, run the script to remove AppX; UWP apps
     if ($Platform -eq "Client") {
@@ -576,7 +581,7 @@ catch {
     $Object = ([PSCustomObject]@{Name = "Result"; Value = $_.Exception.Message; Status = 1 })
     Write-ToEventLog -EventLog $Project -Property "General" -Object $Object
     throw $_.Exception.Message
-    exit 1
+    return 1
 }
 
 try {
@@ -594,7 +599,7 @@ catch {
     $Object = ([PSCustomObject]@{Name = "Result"; Value = $_.Exception.Message; Status = 1 })
     Write-ToEventLog -EventLog $Project -Property "General" -Object $Object
     throw $_.Exception.Message
-    exit 1
+    return 1
 }
 
 # Set uninstall registry value for detecting as an installed application
@@ -602,7 +607,7 @@ $Key = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
 New-Item -Path "$Key\{$Guid}" -Type "RegistryKey" -Force -ErrorAction "SilentlyContinue" | Out-Null
 Set-ItemProperty -Path "$Key\{$Guid}" -Name "DisplayName" -Value $Project -Type "String" -Force -ErrorAction "SilentlyContinue" | Out-Null
 Set-ItemProperty -Path "$Key\{$Guid}" -Name "Publisher" -Value $Publisher -Type "String" -Force -ErrorAction "SilentlyContinue" | Out-Null
-Set-ItemProperty -Path "$Key\{$Guid}" -Name "DisplayVersion" -Value $Version -Type "String" -Force -ErrorAction "SilentlyContinue" | Out-Null
+Set-ItemProperty -Path "$Key\{$Guid}" -Name "DisplayVersion" -Value $DisplayVersion -Type "String" -Force -ErrorAction "SilentlyContinue" | Out-Null
 Set-ItemProperty -Path "$Key\{$Guid}" -Name "RunOn" -Value $RunOn -Type "String" -Force -ErrorAction "SilentlyContinue" | Out-Null
 Set-ItemProperty -Path "$Key\{$Guid}" -Name "SystemComponent" -Value 1 -Type "DWord" -Force -ErrorAction "SilentlyContinue" | Out-Null
 Set-ItemProperty -Path "$Key\{$Guid}" -Name "HelpLink" -Value $HelpLink -Type "String" -Force -ErrorAction "SilentlyContinue" | Out-Null
@@ -610,4 +615,4 @@ Set-ItemProperty -Path "$Key\{$Guid}" -Name "HelpLink" -Value $HelpLink -Type "S
 # Write last entry to the event log and output success
 $Object = ([PSCustomObject]@{Name = "Result"; Value = "Success"; Status = 0 })
 Write-ToEventLog -EventLog $Project -Property "General" -Object $Object
-exit 0
+return 0
