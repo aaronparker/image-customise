@@ -9,9 +9,8 @@
     AUTHOR: Aaron Parker
     TWITTER: @stealthpuppy
 #>
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "")]
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
-[CmdletBinding()]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification = "ShouldProcess will add too much code at this time.")]
+[CmdletBinding(SupportsShouldProcess = $false)]
 param (
     [Parameter(Mandatory = $False)]
     [System.String] $Path = $PSScriptRoot,
@@ -44,7 +43,7 @@ if (!([System.Environment]::Is64BitProcess)) {
         $Arguments = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$($MyInvocation.MyCommand.Definition)`""
         $ProcessPath = $(Join-Path -Path $Env:SystemRoot -ChildPath "\Sysnative\WindowsPowerShell\v1.0\powershell.exe")
         Write-Verbose -Message "Restarting in 64-bit PowerShell."
-        Write-Verbose -Message "FilePath: $ProcessPath."
+        Write-Verbose -Message "File path: $ProcessPath."
         Write-Verbose -Message "Arguments: $Arguments."
         $params = @{
             FilePath     = $ProcessPath
@@ -53,7 +52,7 @@ if (!([System.Environment]::Is64BitProcess)) {
             WindowStyle  = "Hidden"
         }
         Start-Process @params
-        Exit 0
+        exit 0
     }
 }
 #endregion
@@ -63,7 +62,7 @@ function New-ScriptEventLog ($EventLog, $Property) {
     $params = @{
         LogName     = $EventLog
         Source      = $Property
-        ErrorAction = "SilentlyContinue"
+        ErrorAction = "Stop"
     }
     New-EventLog @params
 }
@@ -96,21 +95,19 @@ function Write-ToEventLog ($EventLog, $Property, $Object) {
 function Get-Platform {
     switch -Regex ((Get-CimInstance -ClassName "CIM_OperatingSystem").Caption) {
         "Microsoft Windows Server*" {
-            $Platform = "Server"
+            $Platform = "Server"; break
         }
         "Microsoft Windows 10 Enterprise for Virtual Desktops" {
-            #$Platform = "Multi"
-            $Platform = "Client"
+            $Platform = "Client"; break
         }
         "Microsoft Windows 11 Enterprise for Virtual Desktops" {
-            #$Platform = "Multi"
-            $Platform = "Client"
+            $Platform = "Client"; break
         }
         "Microsoft Windows 10*" {
-            $Platform = "Client"
+            $Platform = "Client"; break
         }
         "Microsoft Windows 11*" {
-            $Platform = "Client"
+            $Platform = "Client"; break
         }
         default {
             $Platform = "Client"
@@ -161,27 +158,17 @@ function Get-Model {
 }
 
 function Get-SettingsContent ($Path) {
-    Write-Verbose -Message "Importing: $Path."
     try {
         $params = @{
             Path        = $Path
             ErrorAction = "SilentlyContinue"
         }
-        $Content = Get-Content @params
+        Write-Verbose -Message "Importing: $Path."
+        $Settings = Get-Content @params | ConvertFrom-Json -ErrorAction "SilentlyContinue"
     }
     catch {
-        $_.Exception.Message
-        return 1
-    }
-    try {
-        $params = @{
-            ErrorAction = "SilentlyContinue"
-        }
-        $Settings = $Content | ConvertFrom-Json @params
-    }
-    catch {
-        $_.Exception.Message
-        return 1
+        # If we have an error we won't get usable data
+        throw $_
     }
     Write-Output -InputObject $Settings
 }
@@ -500,6 +487,7 @@ try {
     $BuildConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.$Build.json" -Recurse -ErrorAction "SilentlyContinue")
     $ModelConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.$Model.json" -Recurse -ErrorAction "SilentlyContinue")
     Write-Verbose -Message "   Found: $(($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs).Count) configs."
+
     foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs)) {
 
         # Read the settings JSON
@@ -508,6 +496,7 @@ try {
         # Implement the settings only if the local build is greater or equal that what's specified in the JSON
         if ([System.Version]$Version -ge [System.Version]$Settings.MinimumBuild) {
             if ([System.Version]$Version -le [System.Version]$Settings.MaximumBuild) {
+
                 # Implement each setting in the JSON
                 switch ($Settings.Registry.Type) {
                     "DefaultProfile" {
@@ -586,8 +575,8 @@ catch {
     # Write last entry to the event log and output failure
     $Object = ([PSCustomObject]@{Name = "Result"; Value = $_.Exception.Message; Status = 1 })
     Write-ToEventLog -EventLog $Project -Property "General" -Object $Object
-    $_.Exception.Message
-    return 1
+    throw $_.Exception.Message
+    exit 1
 }
 
 try {
@@ -604,7 +593,8 @@ try {
 catch {
     $Object = ([PSCustomObject]@{Name = "Result"; Value = $_.Exception.Message; Status = 1 })
     Write-ToEventLog -EventLog $Project -Property "General" -Object $Object
-    $_.Exception.Message
+    throw $_.Exception.Message
+    exit 1
 }
 
 # Set uninstall registry value for detecting as an installed application
@@ -620,4 +610,4 @@ Set-ItemProperty -Path "$Key\{$Guid}" -Name "HelpLink" -Value $HelpLink -Type "S
 # Write last entry to the event log and output success
 $Object = ([PSCustomObject]@{Name = "Result"; Value = "Success"; Status = 0 })
 Write-ToEventLog -EventLog $Project -Property "General" -Object $Object
-return 0
+exit 0
