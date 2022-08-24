@@ -228,7 +228,7 @@ function Set-DefaultUserProfile ($Setting) {
                 WindowStyle  = "Hidden"
                 ErrorAction  = "Continue"
             }
-            $result = Start-Process @params > $Null   
+            $result = Start-Process @params > $Null
         }
         catch {
             Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "LoadDefaultProfile"; Value = $RegPath; Result = 1 })
@@ -255,10 +255,10 @@ function Set-DefaultUserProfile ($Setting) {
             }
             finally {
                 Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = $Item.path; Value = $Msg; Result = $Result })
-                if ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }  
+                if ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
             }
 
-            try {    
+            try {
                 $params = @{
                     Path        = $RegPath
                     Name        = $Item.name
