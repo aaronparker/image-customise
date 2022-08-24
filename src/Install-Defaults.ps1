@@ -60,7 +60,7 @@ if (!([System.Environment]::Is64BitProcess)) {
 #region Functions
 function New-ScriptEventLog ($EventLog, $Property) {
     $params = @{
-        LogName     = $script:Project
+        LogName     = "Customised Defaults"
         Source      = $Property
         ErrorAction = "SilentlyContinue"
     }
@@ -77,7 +77,7 @@ function Write-ToEventLog ($Property, $Object) {
                 default { $EntryType = "Information" }
             }
             $params = @{
-                LogName     = $script:Project
+                LogName     = "Customised Defaults"
                 Source      = $Property
                 EventID     = (100 + [System.Int16]$Item.Status)
                 EntryType   = $EntryType
@@ -576,14 +576,14 @@ catch {
 }
 
 try {
-    $Path = "$env:ProgramData\FeatureUpdates"
-    if ($Path -eq $WorkingPath) {
+    $FeaturePath = "$env:ProgramData\FeatureUpdates"
+    if ($FeaturePath -eq $WorkingPath) {
         $Object = ([PSCustomObject]@{Name = "Result"; Value = "Skipping file copy"; Result = 1 })
         Write-ToEventLog -Property "General" -Object $Object
     }
     else {
-        New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "Continue" | Out-Null
-        Copy-Item -Path $WorkingPath -Destination $Path -Recurse -ErrorAction "SilentlyContinue"
+        New-Item -Path $FeaturePath -ItemType "Directory" -Force -ErrorAction "Continue" | Out-Null
+        Copy-Item -Path $WorkingPath -Destination $FeaturePath -Recurse -ErrorAction "SilentlyContinue"
     }
 }
 catch {
