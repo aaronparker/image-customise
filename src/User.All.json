@@ -89,12 +89,6 @@
                 "type": "DWord"
             },
             {
-                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
-                "name": "EnableTransparency",
-                "value": "0",
-                "type": "DWord"
-            },
-            {
                 "path": "HKCU:\\Software\\Adobe\\Acrobat Reader\\DC\\AVAlert\\cCheckBox",
                 "name": "iAppDoNotTakePDFOwnershipAtLaunchWin10",
                 "value": 1,

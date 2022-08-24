@@ -5,6 +5,12 @@
         "Type": "Direct",
         "Set": [
             {
+                "path": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer",
+                "name": "DisableEdgeDesktopShortcutCreation",
+                "value": 1,
+                "type": "DWord"
+            },
+            {
                 "path": "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\FontSubstitutes",
                 "name": "MS Shell Dlg",
                 "value": "Tahoma",
@@ -15,12 +21,6 @@
                 "name": "MS Shell Dlg 2",
                 "value": "Tahoma",
                 "type": "String"
-            },
-            {
-                "path": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
-                "name": "DisableEdgeDesktopShortcutCreation",
-                "value": 1,
-                "type": "DWord"
             }
         ]
     },
@@ -44,11 +44,11 @@
     },
     "Capabilities": {
         "Remove": [
-            "App.Support.QuickAssist~~~~0.0.1.0",
             "Media.WindowsMediaPlayer~~~~0.0.12.0",
             "XPS.Viewer~~~~0.0.1.0"
         ],
         "Others": [
+            "App.Support.QuickAssist~~~~0.0.1.0",
             "MathRecognizer~~~~0.0.1.0"
         ]
     },

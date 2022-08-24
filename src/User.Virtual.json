@@ -11,10 +11,10 @@
                 "type": "DWord"
             },
             {
-                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
-                "name": "ShellState",
-                "value": "240000003C2800000000000000000000",
-                "type": "Binary"
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                "name": "EnableTransparency",
+                "value": "0",
+                "type": "DWord"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
@@ -67,7 +67,7 @@
             {
                 "path": "HKCU:\\Control Panel\\Desktop",
                 "name": "DragFullWindows",
-                "value": "0",
+                "value": "1",
                 "type": "String"
             },
             {
@@ -162,6 +162,12 @@
             }
         ],
         "Others": [
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
+                "name": "ShellState",
+                "value": "240000003C2800000000000000000000",
+                "type": "Binary"
+            },
             {
                 "path": "HKCU:\\Control Panel\\Desktop",
                 "name": "UserPreferencesMask",
