@@ -70,7 +70,6 @@ function New-ScriptEventLog ($EventLog, $Property) {
 function Write-ToEventLog ($Property, $Object) {
     foreach ($Item in $Object) {
         if ($Item.Value.Length -gt 0) {
-            #Write-Verbose -Message "Event: $($Property); $($Item.Name); $($Item.Value); $($Item.Status)"
             switch ($Item.Status) {
                 0 { $EntryType = "Information" }
                 1 { $EntryType = "Warning" }
@@ -172,23 +171,25 @@ function Get-SettingsContent ($Path) {
 
 function Set-Registry ($Setting) {
     foreach ($Item in $Setting) {
-        try {
-            $params = @{
-                Path        = $Item.path
-                Type        = "RegistryKey"
-                Force       = $True
-                ErrorAction = "SilentlyContinue"
+        if (-not(Test-Path -Path $Item.path)) {
+            try {
+                $params = @{
+                    Path        = $Item.path
+                    Type        = "RegistryKey"
+                    Force       = $True
+                    ErrorAction = "SilentlyContinue"
+                }
+                Write-Verbose "Create path: $RegPath"
+                $ItemResult = New-Item @params
+                $Msg = "CreatePath"; $Result = 0
             }
-            Write-Verbose "Create path: $RegPath"
-            $ItemResult = New-Item @params
-            $Msg = "CreatePath"; $Result = 0
-        }
-        catch {
-            $Msg = $_.Exception.Message; $Result = 1
-        }
-        finally {
-            Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = $Item.path; Value = $Msg; Result = $Result })
-            if ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
+            catch {
+                $Msg = $_.Exception.Message; $Result = 1
+            }
+            finally {
+                Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = $Item.path; Value = $Msg; Result = $Result })
+                if ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
+            }
         }
 
         try {
@@ -231,31 +232,33 @@ function Set-DefaultUserProfile ($Setting) {
             $result = Start-Process @params > $Null
         }
         catch {
-            Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "LoadDefaultProfile"; Value = $RegPath; Result = 1 })
+            Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Load: $RegDefaultUser"; Value = $RegPath; Result = 1 })
             throw $_
         }
-        Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "LoadDefaultProfile"; Value = $RegPath; Result = 0 })
+        Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Load: $RegDefaultUser"; Value = $RegPath; Result = 0 })
 
         # Process Registry Commands
         foreach ($Item in $Setting) {
-            try {
-                $RegPath = $Item.path -replace "HKCU:", $DefaultUserPath
-                $params = @{
-                    Path        = $RegPath
-                    Type        = "RegistryKey"
-                    Force       = $True
-                    ErrorAction = "Continue"
+            $RegPath = $Item.path -replace "HKCU:", $DefaultUserPath
+            if (-not(Test-Path -Path $RegPath)) {
+                try {
+                    $params = @{
+                        Path        = $RegPath
+                        Type        = "RegistryKey"
+                        Force       = $True
+                        ErrorAction = "Continue"
+                    }
+                    Write-Verbose "Create path: $RegPath"
+                    $ItemResult = New-Item @params
+                    $Msg = "CreatePath"; $Result = 0
                 }
-                Write-Verbose "Create path: $RegPath"
-                $ItemResult = New-Item @params
-                $Msg = "CreatePath"; $Result = 0
-            }
-            catch {
-                $Msg = $_.Exception.Message; $Result = 1
-            }
-            finally {
-                Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = $Item.path; Value = $Msg; Result = $Result })
-                if ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
+                catch {
+                    $Msg = $_.Exception.Message; $Result = 1
+                }
+                finally {
+                    Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = $Item.path; Value = $Msg; Result = $Result })
+                    if ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
+                }
             }
 
             try {
@@ -299,7 +302,7 @@ function Set-DefaultUserProfile ($Setting) {
             $Msg = $_.Exception.Message; $Result = 1
         }
         Write-Verbose -Message "Unload: $RegDefaultUser. Result: $Result"
-        Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Unload"; Value = $Msg; Result = $Result })
+        Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Unload: $RegDefaultUser"; Value = $Msg; Result = $Result })
     }
 }
 
@@ -319,12 +322,12 @@ function Copy-File ($Path, $Parent) {
                     ErrorAction = "Continue"
                 }
                 Copy-Item @params
-                $Msg = "CopyItem"; $Result = 0
+                $Msg = "Copy path"; $Result = 0
             }
             catch {
                 $Msg = $_.Exception.Message; $Result = 1
             }
-            Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "$($Item.path); $($Item.name); $($Item.value)"; Value = $Msg; Result = $Result })
+            Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = $Item.Destination; Value = $Msg; Result = $Result })
         }
         else {
             Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = $Source; Value = "Does not exist"; Result = 1 })
@@ -497,6 +500,7 @@ try {
 
         # Read the settings JSON
         $Settings = Get-SettingsContent -Path $Config.FullName
+        Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Config file"; Value = $Config.Name; Result = 0 })
 
         # Implement the settings only if the local build is greater or equal that what's specified in the JSON
         if ([System.Version]$OSVersion -ge [System.Version]$Settings.MinimumBuild) {
@@ -603,6 +607,6 @@ Set-ItemProperty -Path "$Key\{$Guid}" -Name "SystemComponent" -Value 1 -Type "DW
 Set-ItemProperty -Path "$Key\{$Guid}" -Name "HelpLink" -Value $HelpLink -Type "String" -Force -ErrorAction "Continue" | Out-Null
 
 # Write last entry to the event log and output success
-$Object = ([PSCustomObject]@{Name = "Result"; Value = "Success"; Result = 0 })
+$Object = ([PSCustomObject]@{Name = "Install-Defaults.ps1"; Value = "Success"; Result = 0 })
 Write-ToEventLog -Property "General" -Object $Object
 return 0

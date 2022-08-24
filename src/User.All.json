@@ -95,7 +95,7 @@
                 "type": "DWord"
             },
             {
-                "path": "HKCU:\\Software\\Adobe\\Acrobat Acrobat\\DC\\AVAlert\\cCheckBox",
+                "path": "HKCU:\\Software\\Adobe\\Adobe Acrobat\\DC\\AVAlert\\cCheckBox",
                 "name": "iAppDoNotTakePDFOwnershipAtLaunchWin10",
                 "value": 1,
                 "type": "DWord"
