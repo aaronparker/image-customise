@@ -580,14 +580,15 @@ catch {
 }
 
 try {
-    $FeaturePath = "$env:ProgramData\FeatureUpdates"
+    # Copy the source files for use with upgrades
+    $FeaturePath = "$env:ProgramData\FeatureUpdates\image-customise"
     if ($FeaturePath -eq $WorkingPath) {
         $Object = ([PSCustomObject]@{Name = "Result"; Value = "Skipping file copy"; Result = 1 })
         Write-ToEventLog -Property "General" -Object $Object
     }
     else {
         New-Item -Path $FeaturePath -ItemType "Directory" -Force -ErrorAction "Continue" | Out-Null
-        Copy-Item -Path $WorkingPath -Destination $FeaturePath -Recurse -ErrorAction "SilentlyContinue"
+        Copy-Item -Path "$WorkingPath\*.*" -Destination $FeaturePath -Recurse -ErrorAction "SilentlyContinue"
     }
 }
 catch {
