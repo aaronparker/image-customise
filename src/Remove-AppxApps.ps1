@@ -77,7 +77,7 @@ param (
         # "Microsoft.MicrosoftAccessoryCenter_8wekyb3d8bbwe",
         # "Microsoft.MicrosoftEdge.Stable_8wekyb3d8bbwe",
         # "Microsoft.MicrosoftJournal_8wekyb3d8bbwe",
-        "Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe",
+        # "Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe",
         "Microsoft.MicrosoftSolitaireCollection_8wekyb3d8bbwe",
         # "Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe",
         "Microsoft.MixedReality.Portal_8wekyb3d8bbwe",
@@ -179,7 +179,7 @@ begin {
             $appMatch = $False
             foreach ($app in $ProtectList) {
                 if ($package -match $app) {
-                    Write-Verbose -Message "$($MyInvocation.MyCommand): Excluding package from removal: [$package]"
+                    Write-Verbose -Message "Excluding package from removal: [$package]"
                     $appMatch = $True
                 }
             }
@@ -191,7 +191,7 @@ begin {
 
     # Get elevated status. if elevated we'll remove packages from all users and provisioned packages
     [System.Boolean] $Elevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
-    if ($Elevated) { Write-Verbose -Message "$($MyInvocation.MyCommand): Running with elevated privileges. Removing provisioned packages as well." }
+    if ($Elevated) { Write-Verbose -Message "Running with elevated privileges. Removing provisioned packages as well." }
 
     switch ($Operation) {
         "BlockList" {
@@ -199,16 +199,16 @@ begin {
             $packagesToRemove = Edit-ProtectedApp -PackageList $BlockList
         }
         "AllowList" {
-            Write-Warning -Message "$($MyInvocation.MyCommand): AllowList action may break stuff."
+            Write-Warning -Message "AllowList action may break stuff."
             if ($Elevated) {
                 # Get packages from the current system for all users
-                Write-Verbose -Message "$($MyInvocation.MyCommand): Enumerating all users apps."
+                Write-Verbose -Message "Enumerating all users apps."
                 $packagesAllUsers = Get-AppxPackage -AllUsers -PackageTypeFilter "Main", "Resource" | `
                     Where-Object { $_.NonRemovable -eq $False } | Select-Object -Property "PackageFamilyName"
             }
             else {
                 # Get packages for the current user
-                Write-Verbose -Message "$($MyInvocation.MyCommand): Enumerating current user apps only."
+                Write-Verbose -Message "Enumerating current user apps only."
                 $packagesAllUsers = Get-AppxPackage -PackageTypeFilter "Main", "Resource" | `
                     Where-Object { $_.NonRemovable -eq $False } | Select-Object -Property "PackageFamilyName"
             }
@@ -217,7 +217,7 @@ begin {
 
             if ($Null -ne $uniquePackagesAllUsers) {
                 # Filter out the AllowListed apps
-                Write-Verbose -Message "$($MyInvocation.MyCommand): Filtering AllowListed apps."
+                Write-Verbose -Message "Filtering AllowListed apps."
                 $packagesWithoutAllowList = Compare-Object -ReferenceObject $uniquePackagesAllUsers -DifferenceObject $AllowList -PassThru
 
                 # Filter list if it contains apps from the $protectList
@@ -237,7 +237,7 @@ process {
         # Get the AppX package object by passing the string to the left of the underscore
         # to Get-AppxPackage and passing the resulting package object to Remove-AppxPackage
         $Name = ($app -split "_")[0]
-        Write-Verbose -Message "$($MyInvocation.MyCommand): Evaluating: [$Name]."
+        Write-Verbose -Message "Evaluating: [$Name]."
         if ($Elevated) {
             $package = Get-AppxPackage -Name $Name -AllUsers
         }
@@ -251,7 +251,7 @@ process {
                     $package | Remove-AppxPackage -AllUsers -ErrorAction "SilentlyContinue"
                 }
                 catch [System.Exception] {
-                    Write-Warning -Message "$($MyInvocation.MyCommand): Failed to remove: [$($package.PackageFullName)]."
+                    Write-Warning -Message "Failed to remove: [$($package.PackageFullName)]."
                     $Value = "Failed"; $Status = 1
                 }
                 Write-Output -InputObject ([PSCustomObject]@{Name = $package.PackageFullName; Value = $Value; Status = $Status })
@@ -260,7 +260,7 @@ process {
 
         # Remove the provisioned package as well, completely from the system
         if ($Elevated) {
-            $package = Get-AppxProvisionedPackage -Online | Where-Object DisplayName -EQ (($app -split "_")[0])
+            $package = Get-AppxProvisionedPackage -Online | Where-Object DisplayName -eq (($app -split "_")[0])
             if ($package) {
                 if ($PSCmdlet.ShouldProcess($package.PackageName, "Remove Provisioned app")) {
                     try {
@@ -268,11 +268,11 @@ process {
                         $action = Remove-AppxProvisionedPackage -Online -PackageName $package.PackageName -ErrorAction "SilentlyContinue"
                     }
                     catch [System.Exception] {
-                        Write-Warning -Message "$($MyInvocation.MyCommand): Failed to remove: [$($package.PackageName)]."
+                        Write-Warning -Message "Failed to remove: [$($package.PackageName)]."
                         $Value = "Failed"; $Status = 1
                     }
                     Write-Output -InputObject ([PSCustomObject]@{Name = $package.PackageFullName; Value = $Value; Status = $Status })
-                    if ($action.RestartNeeded -eq $True) { Write-Warning -Message "$($MyInvocation.MyCommand): Reboot required: [$($package.PackageName)]" }
+                    if ($action.RestartNeeded -eq $True) { Write-Warning -Message "Reboot required: [$($package.PackageName)]" }
                 }
             }
         }

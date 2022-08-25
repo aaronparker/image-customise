@@ -34,7 +34,7 @@ param (
     [System.String[]] $Properties = @("General", "Registry", "Paths", "StartMenu", "Features", "Capabilities", "Packages", "AppX"),
 
     [Parameter(Mandatory = $False)]
-    [System.String] $AppxMode = "Allow"
+    [System.String] $AppxMode = "Block"
 )
 
 #region Restart if running in a 32-bit session
@@ -558,17 +558,19 @@ try {
 
         # Get the script location
         $Script = Get-ChildItem -Path $WorkingPath -Filter "Remove-AppxApps.ps1" -Recurse -ErrorAction "Continue"
-        if ($Null -ne $Script) {
-            Write-ToEventLog -Property "AppX" -Object ([PSCustomObject]@{Name = "Script"; Value = $Script.FullName; Result = 1 })
-
-            switch ($AppxMode) {
-                "Block" { $Apps = & $Script.FullName -Operation "BlockList" }
-                "Allow" { $Apps = & $Script.FullName -Operation "AllowList" }
-            }
-            Write-ToEventLog -Property "AppX" -Object $Apps
+        if ($Null -eq $Script) {
+            $Object = ([PSCustomObject]@{Name = "Remove-AppxApps.ps1"; Value = "Script not found"; Result = 1 })
+            Write-ToEventLog -Property "AppX" -Object $Object
         }
         else {
-            Write-ToEventLog -Property "AppX" -Object ([PSCustomObject]@{Name = "Script"; Value = "Remove-AppxApps.ps1"; Result = 0 })
+            Write-ToEventLog -Property "AppX" -Object ([PSCustomObject]@{Name = "Run script"; Value = $Script.FullName; Result = 0 })
+            switch ($AppxMode) {
+                "Block" { $Apps = & $Script.FullName -Operation "BlockList"; break }
+                "Allow" { $Apps = & $Script.FullName -Operation "AllowList"; break }
+            }
+            $RemovedApps = $Apps | Where-Object { $_.Value -eq "Removed" }
+            $Object = ([PSCustomObject]@{Name = "Remove-AppxApps.ps1"; Value = $RemovedApps.Name; Result = 0 })
+            Write-ToEventLog -Property "AppX" -Object $Object
         }
     }
 }
