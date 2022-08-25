@@ -39,13 +39,17 @@
             "SMB1Protocol",
             "WorkFolders-Client",
             "FaxServicesClientPackage",
-            "WindowsMediaPlayer"
+            "WindowsMediaPlayer",
+            "MicrosoftWindowsPowerShellV2Root",
+            "MicrosoftWindowsPowerShellV2"
         ]
     },
     "Capabilities": {
         "Remove": [
             "Media.WindowsMediaPlayer~~~~0.0.12.0",
-            "XPS.Viewer~~~~0.0.1.0"
+            "XPS.Viewer~~~~0.0.1.0",
+            "Print.Fax.Scan~~~~0.0.1.0",
+            "Browser.InternetExplorer~~~~0.0.11.0"
         ],
         "Others": [
             "App.Support.QuickAssist~~~~0.0.1.0",
