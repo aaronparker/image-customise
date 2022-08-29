@@ -114,7 +114,6 @@ param (
         # "Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe",
         # "Microsoft.WindowsTerminal_8wekyb3d8bbwe",
         "Microsoft.XboxApp_8wekyb3d8bbwe",
-        "Microsoft.XboxGameCallableUI_cw5n1h2txyewy",
         "Microsoft.XboxGameOverlay_8wekyb3d8bbwe",
         "Microsoft.XboxGamingOverlay_8wekyb3d8bbwe",
         "Microsoft.YourPhone_8wekyb3d8bbwe",
