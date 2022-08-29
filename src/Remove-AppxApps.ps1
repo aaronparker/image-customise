@@ -80,6 +80,7 @@ param (
         # "Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe",
         "Microsoft.MicrosoftSolitaireCollection_8wekyb3d8bbwe",
         # "Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe",
+        "Microsoft.MSPaint_8wekyb3d8bbwe",
         "Microsoft.MixedReality.Portal_8wekyb3d8bbwe",
         "Microsoft.Office.Desktop_8wekyb3d8bbwe",
         "Microsoft.Office.Desktop.Access_8wekyb3d8bbwe",
@@ -120,7 +121,9 @@ param (
         "Microsoft.ZuneMusic_8wekyb3d8bbwe",
         # "Microsoft.ZuneVideo_8wekyb3d8bbwe",
         # "MicrosoftCorporationII.QuickAssist_8wekyb3d8bbwe",
-        "MicrosoftTeams_8wekyb3d8bbwe"
+        "MicrosoftTeams_8wekyb3d8bbwe",
+        "Disney.37853FC22B2CE_6rarf9sa4v8jt",
+        "SpotifyAB.SpotifyMusic_zpdnekdrzrea0"
     ),
 
     [parameter(Mandatory = $False, parameterSetName = "AllowList", HelpMessage = "Specify an AppX package or packages to keep, removing all others.")]
@@ -143,7 +146,8 @@ param (
         "MicrosoftCorporationII.WindowsAppRuntime.Main.1.0_8wekyb3d8bbwe",
         "Microsoft.WindowsAppRuntime.Singleton_8wekyb3d8bbwe",
         "Microsoft.WinAppRuntime.DDLM.3.469.1654.0-x6_8wekyb3d8bbwe",
-        "Microsoft.WinAppRuntime.DDLM.3.469.1654.0-x8_8wekyb3d8bbwe"
+        "Microsoft.WinAppRuntime.DDLM.3.469.1654.0-x8_8wekyb3d8bbwe",
+        "Microsoft.XboxGameCallableUI_cw5n1h2txyewy"
     ),
 
     [parameter(Mandatory = $False)]
@@ -169,7 +173,8 @@ begin {
                 "Microsoft.NET*",
                 "Microsoft.Services*",
                 "Microsoft.UI*",
-                "Microsoft.VCLibs*"
+                "Microsoft.VCLibs*",
+                "Microsoft.XboxGameCallableUI*"
             ),
             [parameter(Mandatory = $False)]
             [System.String[]] $PackageList
@@ -237,45 +242,54 @@ process {
         # Get the AppX package object by passing the string to the left of the underscore
         # to Get-AppxPackage and passing the resulting package object to Remove-AppxPackage
         $Name = ($app -split "_")[0]
-        Write-Verbose -Message "Evaluating: [$Name]."
-        if ($Elevated) {
-            $package = Get-AppxPackage -Name $Name -AllUsers
-        }
-        else {
-            $package = Get-AppxPackage -Name $Name
-        }
-        if ($package) {
-            if ($PSCmdlet.ShouldProcess($package.PackageFullName, "Remove User app")) {
-                try {
-                    $Value = "Removed"; $Status = 0
-                    $package | Remove-AppxPackage -AllUsers -ErrorAction "SilentlyContinue"
+        try {
+            # if ($Elevated) {
+            #     Write-Verbose -Message "Get package for all users: [$Name]."
+            #     $Value = "Removed"; $Status = 0; $Msg = "None"
+            #     if ($PSCmdlet.ShouldProcess($Name, "Remove All User app")) {
+            #         Get-AppxPackage -Name $Name -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction "SilentlyContinue"
+            #     }
+            # }
+            # else {
+                Write-Verbose -Message "Get package: [$Name]."
+                $Value = "Removed"; $Status = 0; $Msg = "None"
+                if ($PSCmdlet.ShouldProcess($Name, "Remove User app")) {
+                    Get-AppxPackage -Name $Name | Remove-AppxPackage -ErrorAction "SilentlyContinue"
                 }
-                catch [System.Exception] {
-                    Write-Warning -Message "Failed to remove: [$($package.PackageFullName)]."
-                    $Value = "Failed"; $Status = 1
-                }
-                Write-Output -InputObject ([PSCustomObject]@{Name = $package.PackageFullName; Value = $Value; Status = $Status })
-            }
+            #}
         }
+        catch [System.Exception] {
+            $Value = "Failed"; $Status = 1; $Msg = $_.Exception.Message
+        }
+        $Output = [PSCustomObject]@{
+            Name   = $Name
+            Value  = $Value
+            Status = $Status
+            Error  = $Msg
+        }
+        Write-Output -InputObject $output
+    }
 
-        # Remove the provisioned package as well, completely from the system
-        if ($Elevated) {
-            $package = Get-AppxProvisionedPackage -Online | Where-Object DisplayName -eq (($app -split "_")[0])
-            if ($package) {
-                if ($PSCmdlet.ShouldProcess($package.PackageName, "Remove Provisioned app")) {
-                    try {
-                        $Value = "Removed"; $Status = 0
-                        $action = Remove-AppxProvisionedPackage -Online -PackageName $package.PackageName -ErrorAction "SilentlyContinue"
-                    }
-                    catch [System.Exception] {
-                        Write-Warning -Message "Failed to remove: [$($package.PackageName)]."
-                        $Value = "Failed"; $Status = 1
-                    }
-                    Write-Output -InputObject ([PSCustomObject]@{Name = $package.PackageFullName; Value = $Value; Status = $Status })
-                    if ($action.RestartNeeded -eq $True) { Write-Warning -Message "Reboot required: [$($package.PackageName)]" }
-                }
+    # Remove the provisioned package as well, completely from the system
+    if ($Elevated) {
+        try {
+            $Value = "Removed"; $Status = 0; $Msg = "None"
+            if ($PSCmdlet.ShouldProcess($package.PackageName, "Remove Provisioned app")) {
+                Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -eq (($app -split "_")[0]) } | `
+                    Remove-AppxProvisionedPackage -Online -PackageName $package.PackageName -ErrorAction "SilentlyContinue"
             }
         }
+        catch [System.Exception] {
+            $Value = "Failed"; $Status = 1; $Msg = $_.Exception.Message
+        }
+        $Output = [PSCustomObject]@{
+            Name   = $Name
+            Value  = $Value
+            Status = $Status
+            Error  = $Msg
+        }
+        Write-Output -InputObject $output
+        if ($action.RestartNeeded -eq $True) { Write-Warning -Message "Reboot required: [$($package.PackageName)]" }
     }
 }
 
