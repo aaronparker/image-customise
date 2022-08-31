@@ -10,15 +10,15 @@
         .PARAMETER Operation
             Specify the AppX removal operation - either BlockList or AllowList.
 
-        .PARAMETER BlockList
+        .PARAMETER PackageFamilyNameBlockList
             Specify an array of AppX packages to 'BlockList' or remove from the current Windows instance, all other apps will remain installed. The script will use the BlockList by default.
 
-            The default BlockList is primarily aimed at configuring AppX packages for physical PCs.
+            The default BlockList is primarily aimed at configuring AppX packages for physical PCs or persistent virtual desktops.
 
-        .PARAMETER AllowList
+        .PARAMETER PackageFamilyNameAllowList
             Specify an array of AppX packages to 'AllowList' or keep in the current Windows instance. All apps except this list will be removed from the current Windows instance.
 
-            The default AllowList is primarily aimed at configuring AppX packages for virtual desktops.
+            The default AllowList is primarily aimed at configuring AppX packages for optimising virtual desktops and gold images for virtual desktops.
 
         .EXAMPLE
             PS C:\> .\Remove-AppxApps.ps1 -Operation BlockList
@@ -31,12 +31,12 @@
             Remove the default list of AllowListed AppX packages stored in the function.
 
          .EXAMPLE
-            PS C:\> .\Remove-AppxApps.ps1 -Operation BlockList -BlockList "Microsoft.3DBuilder_8wekyb3d8bbwe", "Microsoft.XboxApp_8wekyb3d8bbwe"
+            PS C:\> .\Remove-AppxApps.ps1 -Operation BlockList -PackageFamilyNameBlockList "Microsoft.3DBuilder_8wekyb3d8bbwe", "Microsoft.XboxApp_8wekyb3d8bbwe"
 
             Remove a specific set of AppX packages a specified in the -BlockList argument.
 
          .EXAMPLE
-            PS C:\> .\Remove-AppxApps.ps1 -Operation AllowList -AllowList "Microsoft.BingNews_8wekyb3d8bbwe", "Microsoft.BingWeather_8wekyb3d8bbwe"
+            PS C:\> .\Remove-AppxApps.ps1 -Operation AllowList -PackageFamilyNameAllowList "Microsoft.BingNews_8wekyb3d8bbwe", "Microsoft.BingWeather_8wekyb3d8bbwe"
 
             Remove AppX packages from the system except those specified in the -AllowList argument.
 
@@ -51,13 +51,14 @@
 #>
 [CmdletBinding(SupportsShouldProcess = $True, DefaultParameterSetName = "BlockList")]
 param (
-    [parameter(Mandatory = $False, ParameterSetName = "BlockList", HelpMessage = "Specify whether the operation is a BlockList or AllowList.")]
-    [parameter(Mandatory = $False, ParameterSetName = "AllowList", HelpMessage = "Specify whether the operation is a BlockList or AllowList.")]
+    [Parameter(Mandatory = $False, ParameterSetName = "BlockList", HelpMessage = "Specify whether the operation is a BlockList or AllowList.")]
+    [Parameter(Mandatory = $False, ParameterSetName = "AllowList", HelpMessage = "Specify whether the operation is a BlockList or AllowList.")]
     [ValidateSet('BlockList', 'AllowList')]
     [System.String] $Operation = "BlockList",
 
-    [parameter(Mandatory = $False, ParameterSetName = "BlockList", HelpMessage = "Specify an AppX package or packages to remove.")]
-    [System.String[]] $BlockList = (
+    [Parameter(Mandatory = $False, ParameterSetName = "BlockList", HelpMessage = "Specify an AppX package or packages to remove.")]
+    [Alias("BlockList")]
+    [System.Collections.ArrayList] $PackageFamilyNameBlockList = (
         "7EE7776C.LinkedInforWindows_w1wdnht996qgy",
         "Clipchamp.Clipchamp_yxz26nhyzhsrt",
         "king.com.CandyCrushFriends_kgqvnymyfvs32",
@@ -125,8 +126,9 @@ param (
         "SpotifyAB.SpotifyMusic_zpdnekdrzrea0"
     ),
 
-    [parameter(Mandatory = $False, parameterSetName = "AllowList", HelpMessage = "Specify an AppX package or packages to keep, removing all others.")]
-    [System.String[]] $AllowList = (
+    [Parameter(Mandatory = $False, parameterSetName = "AllowList", HelpMessage = "Specify an AppX package or packages to keep, removing all others.")]
+    [Alias("AllowList")]
+    [System.Collections.ArrayList] $PackageFamilyNameAllowList = (
         "Microsoft.549981C3F5F10_8wekyb3d8bbwe",
         "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe",
         "Microsoft.Wallet_8wekyb3d8bbwe",
@@ -147,21 +149,15 @@ param (
         "Microsoft.WinAppRuntime.DDLM.3.469.1654.0-x6_8wekyb3d8bbwe",
         "Microsoft.WinAppRuntime.DDLM.3.469.1654.0-x8_8wekyb3d8bbwe",
         "Microsoft.XboxGameCallableUI_cw5n1h2txyewy"
-    ),
-
-    [parameter(Mandatory = $False)]
-    [System.String] $Path = $PSScriptRoot
+    )
 )
 
 begin {
-    Write-Verbose -Message "Execution path: $Path."
-
     #region functions
     function Edit-ProtectedApp {
         <# Filter out a set of apps that we'll never try to remove #>
         param (
-            [parameter(Mandatory = $False)]
-            [System.String[]] $ProtectList = (
+            [System.Collections.ArrayList] $ProtectList = (
                 "Microsoft.WindowsStore_8wekyb3d8bbwe",
                 "Microsoft.MicrosoftEdge_8wekyb3d8bbwe",
                 "Microsoft.Windows.Cortana_cw5n1h2txyewy",
@@ -175,8 +171,7 @@ begin {
                 "Microsoft.VCLibs*",
                 "Microsoft.XboxGameCallableUI*"
             ),
-            [parameter(Mandatory = $False)]
-            [System.String[]] $PackageList
+            [System.Collections.ArrayList] $PackageList
         )
         [System.Array] $FilteredList = @()
         foreach ($package in $PackageList) {
@@ -200,7 +195,7 @@ begin {
     switch ($Operation) {
         "BlockList" {
             # Filter list if it contains apps from the $protectList
-            $packagesToRemove = Edit-ProtectedApp -PackageList $BlockList
+            $packagesToRemove = Edit-ProtectedApp -PackageList $PackageFamilyNameBlockList
         }
         "AllowList" {
             Write-Warning -Message "AllowList action may break stuff."
@@ -222,7 +217,7 @@ begin {
             if ($Null -ne $uniquePackagesAllUsers) {
                 # Filter out the AllowListed apps
                 Write-Verbose -Message "Filtering AllowListed apps."
-                $packagesWithoutAllowList = Compare-Object -ReferenceObject $uniquePackagesAllUsers -DifferenceObject $AllowList -PassThru
+                $packagesWithoutAllowList = Compare-Object -ReferenceObject $uniquePackagesAllUsers -DifferenceObject $PackageFamilyNameAllowList -PassThru
 
                 # Filter list if it contains apps from the $protectList
                 $packagesToRemove = Edit-ProtectedApp -PackageList $packagesWithoutAllowList
@@ -237,58 +232,51 @@ begin {
 process {
     # Remove the apps; Walk through each package in the array
     foreach ($app in $packagesToRemove) {
+        $Name = ($app -split "_")[0]
 
         # Get the AppX package object by passing the string to the left of the underscore
         # to Get-AppxPackage and passing the resulting package object to Remove-AppxPackage
-        $Name = ($app -split "_")[0]
         try {
-            # if ($Elevated) {
-            #     Write-Verbose -Message "Get package for all users: [$Name]."
-            #     $Value = "Removed"; $Status = 0; $Msg = "None"
-            #     if ($PSCmdlet.ShouldProcess($Name, "Remove All User app")) {
-            #         Get-AppxPackage -Name $Name -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction "SilentlyContinue"
-            #     }
-            # }
-            # else {
-                Write-Verbose -Message "Get package: [$Name]."
-                $Value = "Removed"; $Status = 0; $Msg = "None"
-                if ($PSCmdlet.ShouldProcess($Name, "Remove User app")) {
-                    Get-AppxPackage -Name $Name | Remove-AppxPackage -ErrorAction "SilentlyContinue"
-                }
-            #}
-        }
-        catch [System.Exception] {
-            $Value = "Failed"; $Status = 1; $Msg = $_.Exception.Message
-        }
-        $Output = [PSCustomObject]@{
-            Name   = $Name
-            Value  = $Value
-            Status = $Status
-            Error  = $Msg
-        }
-        Write-Output -InputObject $output
-    }
-
-    # Remove the provisioned package as well, completely from the system
-    if ($Elevated) {
-        try {
+            #Write-Verbose -Message "Get user package: [$Name]."
             $Value = "Removed"; $Status = 0; $Msg = "None"
-            if ($PSCmdlet.ShouldProcess($package.PackageName, "Remove Provisioned app")) {
-                Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -eq (($app -split "_")[0]) } | `
-                    Remove-AppxProvisionedPackage -Online -PackageName $package.PackageName -ErrorAction "SilentlyContinue"
+            if ($PSCmdlet.ShouldProcess($Name, "Remove User app")) {
+                Get-AppxPackage -Name $Name | Remove-AppxPackage -ErrorAction "SilentlyContinue"
             }
         }
         catch [System.Exception] {
             $Value = "Failed"; $Status = 1; $Msg = $_.Exception.Message
         }
         $Output = [PSCustomObject]@{
+            Type   = "UserPackage"
             Name   = $Name
-            Value  = $Value
+            State  = $Value
             Status = $Status
             Error  = $Msg
         }
         Write-Output -InputObject $output
-        if ($action.RestartNeeded -eq $True) { Write-Warning -Message "Reboot required: [$($package.PackageName)]" }
+
+        # Remove the provisioned package completely from the system
+        if ($Elevated -eq $True) {
+            try {
+                Write-Verbose -Message "Get provisioned package: [$Name]."
+                $Value = "Removed"; $Status = 0; $Msg = "None"
+                if ($PSCmdlet.ShouldProcess($Name, "Remove Provisioned app")) {
+                    Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -eq $Name } | `
+                        Remove-AppxProvisionedPackage -Online -AllUsers -ErrorAction "SilentlyContinue"
+                }
+            }
+            catch [System.Exception] {
+                $Value = "Failed"; $Status = 1; $Msg = $_.Exception.Message
+            }
+            $Output = [PSCustomObject]@{
+                Type   = "ProvisionedPackage"
+                Name   = $Name
+                State  = $Value
+                Status = $Status
+                Error  = $Msg
+            }
+            Write-Output -InputObject $output
+        }
     }
 }
 
