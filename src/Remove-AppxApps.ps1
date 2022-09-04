@@ -42,7 +42,7 @@
 
         .NOTES
  	        NAME: Remove-AppxApps.ps1
-	        VERSION: 3.0
+	        VERSION: 3.5
 	        AUTHOR: Aaron Parker
 	        TWITTER: @stealthpuppy
 
@@ -240,15 +240,15 @@ process {
             #Write-Verbose -Message "Get user package: [$Name]."
             $Value = "Removed"; $Status = 0; $Msg = "None"
             if ($PSCmdlet.ShouldProcess($Name, "Remove User app")) {
-                Get-AppxPackage -Name $Name | Remove-AppxPackage -ErrorAction "SilentlyContinue"
+                Get-AppxPackage -Name $Name | Remove-AppxPackage -ErrorAction "SilentlyContinue" | Out-Null
             }
         }
         catch [System.Exception] {
             $Value = "Failed"; $Status = 1; $Msg = $_.Exception.Message
         }
         $Output = [PSCustomObject]@{
-            Type   = "UserPackage"
             Name   = $Name
+            Type   = "UserPackage"
             State  = $Value
             Status = $Status
             Error  = $Msg
@@ -262,15 +262,15 @@ process {
                 $Value = "Removed"; $Status = 0; $Msg = "None"
                 if ($PSCmdlet.ShouldProcess($Name, "Remove Provisioned app")) {
                     Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -eq $Name } | `
-                        Remove-AppxProvisionedPackage -Online -AllUsers -ErrorAction "SilentlyContinue"
+                        Remove-AppxProvisionedPackage -Online -AllUsers -ErrorAction "SilentlyContinue" | Out-Null
                 }
             }
             catch [System.Exception] {
                 $Value = "Failed"; $Status = 1; $Msg = $_.Exception.Message
             }
             $Output = [PSCustomObject]@{
-                Type   = "ProvisionedPackage"
                 Name   = $Name
+                Type   = "ProvisionedPackage"
                 State  = $Value
                 Status = $Status
                 Error  = $Msg
