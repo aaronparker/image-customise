@@ -1,0 +1,15 @@
+{
+    "MinimumBuild": "10.0.22000",
+    "MaximumBuild": "10.0.29999",
+    "Registry": {
+        "Type": "Direct",
+        "Set": [
+            {
+                "path": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Communications",
+                "name": "ConfigureChatAutoInstall",
+                "value": 0,
+                "type": "DWord"
+            }
+        ]
+    }
+}
