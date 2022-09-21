@@ -169,6 +169,68 @@ function Get-SettingsContent ($Path) {
     Write-Output -InputObject $Settings
 }
 
+function Set-RegistryOwner {
+    # Links: https://stackoverflow.com/questions/12044432/how-do-i-take-ownership-of-a-registry-key-via-powershell
+    # "S-1-5-32-544" - Administrators
+    param($RootKey, $Key, [System.Security.Principal.SecurityIdentifier]$Sid = "S-1-5-32-544", $Recurse = $true)
+
+    switch -regex ($rootKey) {
+        "HKCU|HKEY_CURRENT_USER" { $RootKey = "CurrentUser" }
+        "HKLM|HKEY_LOCAL_MACHINE" { $RootKey = "LocalMachine" }
+        "HKCR|HKEY_CLASSES_ROOT" { $RootKey = "ClassesRoot" }
+        "HKCC|HKEY_CURRENT_CONFIG" { $RootKey = "CurrentConfig" }
+        "HKU|HKEY_USERS" { $RootKey = "Users" }
+    }
+
+    try {
+        ### Step 1 - escalate current process's privilege
+        # get SeTakeOwnership, SeBackup and SeRestore privileges before executes next lines, script needs Admin privilege
+        $Import = '[DllImport("ntdll.dll")] public static extern int RtlAdjustPrivilege(ulong a, bool b, bool c, ref bool d);'
+        $Ntdll = Add-Type -Member $import -Name "NtDll" -PassThru
+        $Privileges = @{ SeTakeOwnership = 9; SeBackup = 17; SeRestore = 18 }
+        foreach ($i in $Privileges.Values) {
+            $null = $Ntdll::RtlAdjustPrivilege($i, 1, 0, [ref]0)
+        }
+
+        function Set-RegistryKeyOwner {
+            param($RootKey, $Key, $Sid, $Recurse, $RecurseLevel = 0)
+
+            ### Step 2 - get ownerships of key - it works only for current key
+            $RegKey = [Microsoft.Win32.Registry]::$RootKey.OpenSubKey($Key, "ReadWriteSubTree", "TakeOwnership")
+            $Acl = New-Object -TypeName "System.Security.AccessControl.RegistrySecurity"
+            $Acl.SetOwner($Sid)
+            $RegKey.SetAccessControl($Acl)
+
+            ### Step 3 - enable inheritance of permissions (not ownership) for current key from parent
+            $Acl.SetAccessRuleProtection($false, $false)
+            $RegKey.SetAccessControl($Acl)
+
+            ### Step 4 - only for top-level key, change permissions for current key and propagate it for subkeys
+            # to enable propagations for subkeys, it needs to execute Steps 2-3 for each subkey (Step 5)
+            if ($RecurseLevel -eq 0) {
+                $RegKey = $RegKey.OpenSubKey("", "ReadWriteSubTree", "ChangePermissions")
+                $Rule = New-Object -TypeName System.Security.AccessControl.RegistryAccessRule($Sid, "FullControl", "ContainerInherit", "None", "Allow")
+                $Acl.ResetAccessRule($Rule)
+                $RegKey.SetAccessControl($Acl)
+            }
+
+            ### Step 5 - recursively repeat steps 2-5 for subkeys
+            if ($Recurse) {
+                foreach ($SubKey in $RegKey.OpenSubKey("").GetSubKeyNames()) {
+                    Set-RegistryKeyOwner $RootKey ($Key + "\" + $SubKey) $Sid $Recurse ($RecurseLevel + 1)
+                }
+            }
+        }
+
+        Set-RegistryKeyOwner $RootKey $Key $Sid $Recurse
+        $Msg = "Success"; $Result = 0
+    }
+    catch {
+        $Msg = $_.Exception.Message; $Result = 1
+    }
+    Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Set-RegistryOwner: $RootKey, $Key, $Sid"; Value = $Msg; Result = $Result })
+}
+
 function Set-Registry ($Setting) {
     foreach ($Item in $Setting) {
         if (-not(Test-Path -Path $Item.path)) {
@@ -507,6 +569,11 @@ try {
             if ([System.Version]$OSVersion -le [System.Version]$Settings.MaximumBuild) {
 
                 # Implement each setting in the JSON
+                if ($Settings.Registry.ChangeOwner.Length -gt 0) {
+                    foreach ($Item in $Settings.Registry.ChangeOwner) {
+                        Set-RegistryOwner -RootKey $Item.Root -Key $Item.Key -Sid $Item.Sid
+                    }
+                }
                 switch ($Settings.Registry.Type) {
                     "DefaultProfile" {
                         Set-DefaultUserProfile -Setting $Settings.Registry.Set; break

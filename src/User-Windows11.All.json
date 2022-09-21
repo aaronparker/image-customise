@@ -3,6 +3,13 @@
     "MaximumBuild": "10.0.29999",
     "Registry": {
         "Type": "Direct",
+        "ChangeOwner": [
+            {
+                "Root": "HKLM",
+                "Key": "Software\\Microsoft\\Windows\\CurrentVersion\\Communications",
+                "Sid": "S-1-5-18"
+            }
+        ],
         "Set": [
             {
                 "path": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Communications",
