@@ -80,5 +80,6 @@
         "Winlogon",
         "WINWORD",
         "Zune"
-    ]
+    ],
+    "pester.autoRunOnSave": false
 }

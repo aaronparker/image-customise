@@ -31,10 +31,13 @@ param (
     [System.String] $Helplink = "https://stealthpuppy.com/image-customise/",
 
     [Parameter(Mandatory = $False)]
-    [System.String[]] $Properties = @("General", "Registry", "Paths", "StartMenu", "Features", "Capabilities", "Packages", "AppX"),
+    [System.String[]] $Properties = @("General", "Registry", "Paths", "StartMenu", "Features", "Capabilities", "Packages", "AppX", "Language"),
 
     [Parameter(Mandatory = $False)]
-    [System.String] $AppxMode = "Block"
+    [System.String] $AppxMode = "Block",
+
+    [Parameter(Mandatory = $False)]
+    [System.String] $Language = "en-AU"
 )
 
 #region Restart if running in a 32-bit session
@@ -60,7 +63,7 @@ if (!([System.Environment]::Is64BitProcess)) {
 #region Functions
 function New-ScriptEventLog ($EventLog, $Property) {
     $params = @{
-        LogName     = "Customised Defaults"
+        LogName     = $EventLog
         Source      = $Property
         ErrorAction = "SilentlyContinue"
     }
@@ -619,7 +622,6 @@ try {
     }
     #endregion
 
-
     # If on a client OS, run the script to remove AppX; UWP apps
     if ($Platform -eq "Client") {
 
@@ -638,6 +640,41 @@ try {
             $RemovedApps = $Apps | Where-Object { $_.Value -eq "Removed" }
             $Object = ([PSCustomObject]@{Name = "Remove-AppxApps.ps1"; Value = $RemovedApps.Name; Result = 0 })
             Write-ToEventLog -Property "AppX" -Object $Object
+        }
+
+        # Set language support
+        if ($Language -eq "Skip") {
+            Write-Verbose -Message "Skip install language support."
+            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language"; Value = "Skipped"; Result = 0})
+        }
+        else {
+            try {
+                $params = @{
+                    Language        = $Language
+                    CopyToSettings  = $True
+                    ExcludeFeatures = $False
+                }
+                Write-Verbose -Message "Install language: $Language."
+                $Msg = "Success"; $Result = 0
+                Install-Language @params | Out-Null
+            }
+            catch {
+                $Msg = $_.Exception.Message; $Result = 1
+            }
+            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language: $Language"; Value = $Msg; Result = $Result })
+            try {
+                $params = @{
+                    Language = $Language
+                    PassThru = $False
+                }
+                Write-Verbose -Message "Set system language: $Language."
+                $Msg = "Success"; $Result = 0
+                Set-SystemPreferredUILanguage @params
+            }
+            catch {
+                $Msg = $_.Exception.Message; $Result = 1
+            }
+            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system language: $Language"; Value = $Msg; Result = $Result })
         }
     }
 }
