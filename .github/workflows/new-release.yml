@@ -55,16 +55,6 @@ jobs:
             releases\Install-Defaults.intunewin
             releases\image-customise.zip
 
-      - name: Update App.json
-        shell: powershell
-        run: |
-          $Version = Get-Content -Path "${{ github.workspace }}\src\VERSION.txt"
-          $params = @{
-            Path    = "${{ github.workspace }}\win32\App.json"
-            Version = $Version
-          }
-          . .\ci\Update-PackageJson.ps1 @params
-
       - name: Commit changes
         id: commit
         uses: stefanzweifel/git-auto-commit-action@v4

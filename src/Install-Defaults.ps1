@@ -220,12 +220,12 @@ function Set-RegistryOwner {
             ### Step 5 - recursively repeat steps 2-5 for subkeys
             if ($Recurse) {
                 foreach ($SubKey in $RegKey.OpenSubKey("").GetSubKeyNames()) {
-                    Set-RegistryKeyOwner $RootKey ($Key + "\" + $SubKey) $Sid $Recurse ($RecurseLevel + 1)
+                    Set-RegistryKeyOwner -RootKey $RootKey -Key ($Key + "\" + $SubKey) -Sid $Sid -Recurse $Recurse -RecurseLevel ($RecurseLevel + 1)
                 }
             }
         }
 
-        Set-RegistryKeyOwner $RootKey $Key $Sid $Recurse
+        Set-RegistryKeyOwner -RootKey $RootKey -Key $Key -Sid $Sid -Recurse $Recurse
         $Msg = "Success"; $Result = 0
     }
     catch {
