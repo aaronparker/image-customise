@@ -8,19 +8,22 @@
                 "path": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer",
                 "name": "DisableEdgeDesktopShortcutCreation",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Prevents the Microsoft Edge short added to the public desktop"
             },
             {
                 "path": "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\FontSubstitutes",
                 "name": "MS Shell Dlg",
                 "value": "Tahoma",
-                "type": "String"
+                "type": "String",
+                "note": "Replaces the `MS Shell Dlg` font with `Tahoma` for UI consistency"
             },
             {
                 "path": "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\FontSubstitutes",
                 "name": "MS Shell Dlg 2",
                 "value": "Tahoma",
-                "type": "String"
+                "type": "String",
+                "note": "Replaces the `MS Shell Dlg 2` font with `Tahoma` for UI consistency"
             }
         ]
     },
@@ -49,7 +52,7 @@
             "Media.WindowsMediaPlayer~~~~0.0.12.0",
             "XPS.Viewer~~~~0.0.1.0"
         ],
-        "Others": [
+        "OtherCapabilities": [
             "App.Support.QuickAssist~~~~0.0.1.0",
             "MathRecognizer~~~~0.0.1.0",
             "Browser.InternetExplorer~~~~0.0.11.0",

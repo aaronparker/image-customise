@@ -37,7 +37,7 @@ param (
     [System.String] $AppxMode = "Block",
 
     [Parameter(Mandatory = $False)]
-    [System.String] $Language = "en-AU"
+    [System.String] $Language = "Skip"
 )
 
 #region Restart if running in a 32-bit session

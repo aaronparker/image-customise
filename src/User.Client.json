@@ -32,7 +32,7 @@
                 "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\WSUS\\SetupConfig.ini"
             }
         ],
-        "Copy1": [
+        "Others": [
             {
                 "Source": "desktop-config.json",
                 "Destination": "C:\\Users\\Default\\AppData\\Roaming\\Microsoft\\Teams\\desktop-config.json"

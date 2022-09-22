@@ -7,7 +7,7 @@
             "Print.Fax.Scan~~~~0.0.1.0",
             "Print.Management.Console~~~~0.0.1.0"
         ],
-        "Others": [
+        "OtherCapabilities": [
             "Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0"
         ]
     }

@@ -8,97 +8,99 @@
                 "path": "HKCU:\\Software\\Microsoft\\TabletTip\\1.7",
                 "name": "TipbandDesiredVisibility",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Hides the touch keyboard on the taskbar"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Network\\Persistent Connections",
                 "name": "SaveConnections",
                 "value": "No",
-                "Type": "String"
+                "Type": "String",
+                "note": "Prevents persistent mapped drives in Explorer. Assumes scripts or GPP are used to map network drives"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo",
                 "name": "Enabled",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Turns off the feature that lets apps use the advertising ID"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\AppHost",
                 "name": "EnableWebContentEvaluation",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Turns on Smart Screen for apps"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
                 "name": "SystemPaneSuggestionsEnabled",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Disables app suggestions in the Start menu"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
                 "name": "LaunchTo",
                 "value": 1,
-                "type": "DWord"
-            },
-            {
-                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-                "name": "MMTaskbarGlomLevel",
-                "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Configures File Explorer to start on This PC"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
                 "name": "SeparateProcess",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Runs File Explorer windows in different processes so that one window crash won't affect all windows"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
                 "name": "TaskbarGlomLevel",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Configures Taskbar buttons on the primary monitor to combine when the Taskbar is full"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-                "name": "TaskbarDa",
-                "value": 0,
-                "type": "DWord"
-            },
-            {
-                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-                "name": "TaskbarMn",
-                "value": 0,
-                "type": "DWord"
+                "name": "MMTaskbarGlomLevel",
+                "value": 1,
+                "type": "DWord",
+                "note": "Configures Taskbar buttons on secondary monitors to combine when the Taskbar is full"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced\\People",
                 "name": "PeopleBand",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Removes the People icon from the Taskbar"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\PenWorkspace",
                 "name": "PenWorkspaceButtonDesiredVisibility",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Removes the Pen Workspace from the Taskbar"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
                 "name": "SearchboxTaskbarMode",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Collapses the Search box into an icon on the Taskbar"
             },
             {
                 "path": "HKCU:\\Software\\Adobe\\Acrobat Reader\\DC\\AVAlert\\cCheckbox",
                 "name": "iAppDoNotTakePDFOwnershipAtLaunchWin10",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Prevents the default file type dialog box at Adobe Acrobat Reader DC first launch"
             },
             {
                 "path": "HKCU:\\Software\\Adobe\\Adobe Acrobat\\DC\\AVAlert\\cCheckbox",
                 "name": "iAppDoNotTakePDFOwnershipAtLaunchWin10",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Prevents the default file type dialog box at Adobe Acrobat Pro/Standard DC first launch"
             }
         ]
     }

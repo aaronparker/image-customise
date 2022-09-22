@@ -8,13 +8,15 @@
                 "path": "HKCU:\\Software\\Microsoft\\ServerManager",
                 "name": "DoNotOpenServerManagerAtLogon",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Prevents Server Manager from starting at login"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
                 "name": "EnableBlurBehind",
                 "value": 1,
-                "Type": "DWord"
+                "Type": "DWord",
+                "note": "Disable blur for the Start menu, Taskbar and windows"
             }
         ]
     },
@@ -35,11 +37,6 @@
         ]
     },
     "Files": {
-        "Copy1": [
-            {
-                "Source": "desktop-config.json",
-                "Destination": "C:\\Users\\Default\\AppData\\Roaming\\Microsoft\\Teams\\desktop-config.json"
-            }
-        ]
+        "Copy": []
     }
 }

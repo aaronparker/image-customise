@@ -2,163 +2,176 @@
     "MinimumBuild": "10.0.14393",
     "MaximumBuild": "10.0.99999",
     "Registry": {
+        "Source": "https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/rds-vdi-recommendations-2004",
         "Type": "DefaultProfile",
         "Set": [
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
                 "name": "EnableBlurBehind",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Disable blur for the Start menu, Taskbar and windows"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
                 "name": "EnableTransparency",
                 "value": "0",
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Disable transparency for the Start menu, Taskbar and windows"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
                 "name": "IconsOnly",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Show icons only and not document previews"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
                 "name": "ListviewAlphaSelect",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Disables the translucent selection rectangle in File Explorer"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
                 "name": "ListviewShadow",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Disables drop shadows on icons in File Explorer"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
                 "name": "ShowCompColor",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Changes the font colour for compressed NTFS files / directories"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
                 "name": "ShowInfoTip",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Disables tooltips in File Explorer"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
                 "name": "TaskbarAnimations",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Disables animations in the Taskbar"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\DWM",
                 "name": "EnableAeroPeek",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Disables Peek at desktop and Taskbar thumbnail live previews"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\DWM",
                 "name": "AlwaysHibernateThumbnails",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Disables Taskbar preview thumbnail cache"
             },
             {
                 "path": "HKCU:\\Control Panel\\Desktop",
                 "name": "DragFullWindows",
                 "value": "1",
-                "type": "String"
-            },
-            {
-                "path": "HKCU:\\Control Panel\\Desktop",
-                "name": "FontSmoothing",
-                "value": "2",
-                "type": "String"
-            },
-            {
-                "path": "HKCU:\\Control Panel\\Desktop",
-                "name": "FontSmoothingType",
-                "value": "2",
-                "type": "String"
+                "type": "String",
+                "note": "Disables the display of the window contents when dragging"
             },
             {
                 "path": "HKCU:\\Control Panel\\Desktop\\WindowMetrics",
                 "name": "MinAnimate",
                 "value": "0",
-                "type": "String"
+                "type": "String",
+                "note": "Disables animations for minimise and maximise actions for windows"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
                 "name": "SubscribedContent-338393Enabled",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Disables suggested content in the Settings app"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
                 "name": "SubscribedContent-353694Enabled",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Disables suggested content in the Settings app"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
                 "name": "SubscribedContent-353696Enabled",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Disables suggested content in the Settings app"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
                 "name": "SubscribedContent-338388Enabled",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Disables suggested content in the Settings app"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
                 "name": "SubscribedContent-338389Enabled",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Disables suggested content in the Settings app"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
                 "name": "SystemPaneSuggestionsEnabled",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Disables suggestions in the Start menu"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.Windows.Photos_8wekyb3d8bbwe",
                 "name": "Disabled",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Prevents the Photos app from running in the background"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.Windows.Photos_8wekyb3d8bbwe",
                 "name": "DisabledByUser",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Prevents the Photos app from running in the background"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.SkypeApp_kzf8qxf38zg5c",
                 "name": "Disabled",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Prevents the Skype app from running in the background"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.SkypeApp_kzf8qxf38zg5c",
                 "name": "DisabledByUser",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Prevents the Skype app from running in the background"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.YourPhone_8wekyb3d8bbwe",
                 "name": "Disabled",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Prevents the Your Phone app from running in the background"
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.YourPhone_8wekyb3d8bbwe",
                 "name": "DisabledByUser",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Prevents the Your Phone app from running in the background"
             }
         ],
         "Others": [
@@ -185,6 +198,18 @@
                 "name": "HttpAcceptLanguageOptOut",
                 "value": 1,
                 "type": "DWord"
+            },
+            {
+                "path": "HKCU:\\Control Panel\\Desktop",
+                "name": "FontSmoothing",
+                "value": "2",
+                "type": "String"
+            },
+            {
+                "path": "HKCU:\\Control Panel\\Desktop",
+                "name": "FontSmoothingType",
+                "value": "2",
+                "type": "String"
             }
         ]
     }

@@ -2,20 +2,37 @@
     "MinimumBuild": "10.0.22000",
     "MaximumBuild": "10.0.29999",
     "Registry": {
-        "Type": "Direct",
-        "ChangeOwner": [
-            {
-                "Root": "HKLM",
-                "Key": "Software\\Microsoft\\Windows\\CurrentVersion\\Communications",
-                "Sid": "S-1-5-18"
-            }
-        ],
+        "Type": "DefaultProfile",
         "Set": [
             {
-                "path": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Communications",
-                "name": "ConfigureChatAutoInstall",
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "TaskbarDa",
                 "value": 0,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Remove the Widgets icon from the Taskbar"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "TaskbarMn",
+                "value": 0,
+                "type": "DWord",
+                "note": "Remove the Chat icon from the Taskbar"
+            }
+        ],
+        "SetOthers": [
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "TaskbarAl",
+                "value": 0,
+                "type": "DWord",
+                "note": "Aligns the Windows 11 Start button to the left of the Taskbar"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "ShowTaskViewButton",
+                "value": 0,
+                "type": "DWord",
+                "note": "Removes the Windows 11 Task View button on the Taskbar"
             }
         ]
     }

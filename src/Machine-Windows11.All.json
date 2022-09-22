@@ -1,0 +1,24 @@
+{
+    "MinimumBuild": "10.0.22000",
+    "MaximumBuild": "10.0.29999",
+    "Registry": {
+        "Type": "Direct",
+        "ChangeOwner": [
+            {
+                "Root": "HKLM",
+                "Key": "Software\\Microsoft\\Windows\\CurrentVersion\\Communications",
+                "Sid": "S-1-5-18",
+                "note": "Changes the owner of the key to SYSTEM"
+            }
+        ],
+        "Set": [
+            {
+                "path": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Communications",
+                "name": "ConfigureChatAutoInstall",
+                "value": 0,
+                "type": "DWord",
+                "note": "Prevents the install of the consumer Microsoft Teams client"
+            }
+        ]
+    }
+}

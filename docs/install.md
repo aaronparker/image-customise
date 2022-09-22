@@ -10,7 +10,7 @@ To use the scripts in an operating system deployment pipeline, download the zip 
 
 ![Windows Custom Defaults release hosted on GitHub](assets/img/githubrelease.png)
 
-## Install and Detection
+## Install
 
 Installation of the Windows Customised Defaults is handled by `Install-Defaults.ps1`. When using a deployment tool such as MDT, ConfigMgr or Intune, use the following command for install:
 
@@ -18,11 +18,25 @@ Installation of the Windows Customised Defaults is handled by `Install-Defaults.
 C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy RemoteSigned -File .\Install-Defaults.ps1
 ```
 
+### Enable Language Support
+
+`Install-Defaults.ps1` can install language packs and configure system-wide language settings on Windows 10 and Windows 11, for example:
+
+```powershell
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy RemoteSigned -File .\Install-Defaults.ps1 -Language "en-AU"
+```
+
+Use `Install-Defaults.ps1 -Language "<language code>"` to install language support for a specified language. Supports `Skip` (the default setting) to skip the install of language settings or the bcp47 tag of the language to install.
+
+This uses the [Install-Language](https://learn.microsoft.com/en-au/powershell/module/languagepackmanagement/install-language) and [Set-SystemPreferredUILanguage](https://learn.microsoft.com/en-au/powershell/module/languagepackmanagement/set-systempreferreduilanguage) commands to install language packs and configure the default system language but requires minimum version Windows 10 and 11 - ensure the Windows instance is update to date for this feature to work.
+
+## Detection
+
 Once installed, the following registry information can be used to detect that the package is installed:
 
 * Key - `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\f38de27b-799e-4c30-8a01-bfdedc622944`
 * Value - `DisplayVersion`
-* Data - `2201.27.82` (the version number of the current release)
+* Data - `2209.04.111` (the version number of the current release)
 
 ### Microsoft Intune
 

@@ -2,12 +2,14 @@
     "MinimumBuild": "10.0.14393",
     "MaximumBuild": "10.0.99999",
     "Registry": {
+        "Type": "Direct",
         "Set": [
             {
                 "path": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
                 "name": "DisableEdgeDesktopShortcutCreation",
                 "value": 1,
-                "type": "DWord"
+                "type": "DWord",
+                "note": "Prevents the Microsoft Edge short added to the public desktop"
             }
         ]
     },
