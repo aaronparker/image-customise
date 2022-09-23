@@ -687,7 +687,7 @@ catch {
 
 try {
     # Copy the source files for use with upgrades
-    $FeaturePath = "$env:ProgramData\FeatureUpdates\image-customise"
+    $FeaturePath = "$env:SystemRoot\Setup\Scripts"
     if ($FeaturePath -eq $WorkingPath) {
         $Object = ([PSCustomObject]@{Name = "Result"; Value = "Skipping file copy"; Result = 1 })
         Write-ToEventLog -Property "General" -Object $Object

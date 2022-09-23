@@ -26,20 +26,11 @@
         ]
     },
     "Files": {
-        "Copy": [
-            {
-                "Source": "SetupConfig.ini",
-                "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\WSUS\\SetupConfig.ini"
-            }
-        ],
-        "Others": [
+        "Copy": [],
+        "OtherFiles": [
             {
                 "Source": "desktop-config.json",
                 "Destination": "C:\\Users\\Default\\AppData\\Roaming\\Microsoft\\Teams\\desktop-config.json"
-            },
-            {
-                "Source": "SetupConfig.ini",
-                "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\WSUS\\SetupConfig.ini"
             }
         ]
     }

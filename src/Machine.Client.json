@@ -16,12 +16,8 @@
     "Files": {
         "Copy": [
             {
-                "Source": "Remove-AppxApps.ps1",
-                "Destination": "C:\\ProgramData\\FeatureUpdates\\Remove-AppxApps.ps1"
-            },
-            {
                 "Source": "SetupComplete.cmd",
-                "Destination": "C:\\ProgramData\\FeatureUpdates\\SetupComplete.cmd"
+                "Destination": "C:\\Windows\\Setup\\Scripts\\SetupComplete.cmd"
             }
         ]
     }

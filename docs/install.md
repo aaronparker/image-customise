@@ -26,7 +26,7 @@ C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Remot
 C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy RemoteSigned -File .\Install-Defaults.ps1 -Language "en-AU"
 ```
 
-Use `Install-Defaults.ps1 -Language "<language code>"` to install language support for a specified language. Supports `Skip` (the default setting) to skip the install of language settings or the bcp47 tag of the language to install.
+Use `Install-Defaults.ps1 -Language "<language code>"` to install language support for a specified language. Supports the **bcp47** tag of the language to install; however, `Skip` is the default value which will skip the install of language settings.
 
 This uses the [Install-Language](https://learn.microsoft.com/en-au/powershell/module/languagepackmanagement/install-language) and [Set-SystemPreferredUILanguage](https://learn.microsoft.com/en-au/powershell/module/languagepackmanagement/set-systempreferreduilanguage) commands to install language packs and configure the default system language but requires minimum version Windows 10 and 11 - ensure the Windows instance is update to date for this feature to work.
 
@@ -44,7 +44,7 @@ The solution is also provided in `.intunewin` format to enable direct import int
 
 Settings for importing the Windows Customised Defaults as a Win32 package into Intune are maintained here: [App.json](https://github.com/aaronparker/image-customise/blob/main/App.json). This can be used with the [IntuneWin32AppPackager](https://github.com/MSEndpointMgr/IntuneWin32AppPackager) to automate import into Intune.
 
-![Windows Custom Defaults as a Win32 application in Microsoft Intune](assets/img/intuneapp01.png)
+![Windows Custom Defaults as a Win32 application in Microsoft Intune](assets/img/intuneapp.jpeg)
 
 ## Download and Install
 
