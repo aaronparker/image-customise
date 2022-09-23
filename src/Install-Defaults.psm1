@@ -11,7 +11,9 @@ function New-ScriptEventLog ($EventLog, $Property) {
     New-EventLog @params
 }
 
-function Write-ToEventLog ($Property, $Object) {
+function Write-ToEventLog {
+    [CmdletBinding()]
+    param ($Property, $Object)
     foreach ($Item in $Object) {
         if ($Item.Value.Length -gt 0) {
             switch ($Item.Status) {

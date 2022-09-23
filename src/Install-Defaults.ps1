@@ -138,7 +138,7 @@ try {
                         Set-Registry -Setting $Settings.Registry.Set; break
                     }
                     default {
-                        Write-Verbose -Message "Skip registry."
+                        Write-Verbose -Message "Skip registry: $($Config.FullName)."
                         Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Registry"; Value = "Skipped"; Result = 0 })
                     }
                 }
@@ -235,6 +235,7 @@ catch {
     # Write last entry to the event log and output failure
     $Object = ([PSCustomObject]@{Name = "Result"; Value = $_.Exception.Message; Result = 1 })
     Write-ToEventLog -Property "General" -Object $Object
+    Write-Error -Message $_.Exception.Message
     return 1
 }
 
@@ -261,6 +262,7 @@ try {
 catch {
     $Object = ([PSCustomObject]@{Name = "Result"; Value = $_.Exception.Message; Result = 1 })
     Write-ToEventLog -Property "General" -Object $Object
+    Write-Error -Message $_.Exception.Message
     return 1
 }
 

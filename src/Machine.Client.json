@@ -14,11 +14,6 @@
         ]
     },
     "Files": {
-        "Copy": [
-            {
-                "Source": "SetupComplete.cmd",
-                "Destination": "C:\\Windows\\Setup\\Scripts\\SetupComplete.cmd"
-            }
-        ]
+        "Copy": []
     }
 }
