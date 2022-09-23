@@ -1,18 +1,25 @@
 <#
     Functions used by Install-Defaults.ps1
 #>
+#[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification = "ShouldProcess will add too much code at this time.")]
+[CmdletBinding(SupportsShouldProcess = $true)]
+param ()
 
-function New-ScriptEventLog ($EventLog, $Property) {
+function New-ScriptEventLog {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param ($EventLog, $Property)
     $params = @{
         LogName     = $EventLog
         Source      = $Property
         ErrorAction = "SilentlyContinue"
     }
-    New-EventLog @params
+    if ($PSCmdlet.ShouldProcess($EventLog, "New-EventLog")) {
+        New-EventLog @params
+    }
 }
 
 function Write-ToEventLog {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Property, $Object)
     foreach ($Item in $Object) {
         if ($Item.Value.Length -gt 0) {
@@ -29,7 +36,9 @@ function Write-ToEventLog {
                 Message     = "$($Item.Name), $($Item.Value), $($Item.Status)"
                 ErrorAction = "Continue"
             }
-            Write-EventLog @params
+            if ($PSCmdlet.ShouldProcess("Customised Defaults", "Write-EventLog")) {
+                Write-EventLog @params
+            }
         }
     }
 }
@@ -118,6 +127,7 @@ function Get-SettingsContent ($Path) {
 function Set-RegistryOwner {
     # Links: https://stackoverflow.com/questions/12044432/how-do-i-take-ownership-of-a-registry-key-via-powershell
     # "S-1-5-32-544" - Administrators
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param($RootKey, $Key, [System.Security.Principal.SecurityIdentifier]$Sid = "S-1-5-32-544", $Recurse = $true)
 
     switch -regex ($rootKey) {
@@ -139,25 +149,38 @@ function Set-RegistryOwner {
         }
 
         function Set-RegistryKeyOwner {
+            [CmdletBinding(SupportsShouldProcess = $true)]
             param($RootKey, $Key, $Sid, $Recurse, $RecurseLevel = 0)
 
             ### Step 2 - get ownerships of key - it works only for current key
             $RegKey = [Microsoft.Win32.Registry]::$RootKey.OpenSubKey($Key, "ReadWriteSubTree", "TakeOwnership")
             $Acl = New-Object -TypeName "System.Security.AccessControl.RegistrySecurity"
-            $Acl.SetOwner($Sid)
-            $RegKey.SetAccessControl($Acl)
+            if ($PSCmdlet.ShouldProcess($Sid, "SetOwner")) {
+                $Acl.SetOwner($Sid)
+            }
+            if ($PSCmdlet.ShouldProcess($RegKey, "SetAccessControl")) {
+                $RegKey.SetAccessControl($Acl)
+            }
 
             ### Step 3 - enable inheritance of permissions (not ownership) for current key from parent
-            $Acl.SetAccessRuleProtection($false, $false)
-            $RegKey.SetAccessControl($Acl)
+            if ($PSCmdlet.ShouldProcess("ACL", "SetAccessRuleProtection")) {
+                $Acl.SetAccessRuleProtection($false, $false)
+            }
+            if ($PSCmdlet.ShouldProcess($RegKey, "SetAccessControl")) {
+                $RegKey.SetAccessControl($Acl)
+            }
 
             ### Step 4 - only for top-level key, change permissions for current key and propagate it for subkeys
             # to enable propagations for subkeys, it needs to execute Steps 2-3 for each subkey (Step 5)
             if ($RecurseLevel -eq 0) {
                 $RegKey = $RegKey.OpenSubKey("", "ReadWriteSubTree", "ChangePermissions")
                 $Rule = New-Object -TypeName System.Security.AccessControl.RegistryAccessRule($Sid, "FullControl", "ContainerInherit", "None", "Allow")
-                $Acl.ResetAccessRule($Rule)
-                $RegKey.SetAccessControl($Acl)
+                if ($PSCmdlet.ShouldProcess("ACL", "ResetAccessRule")) {
+                    $Acl.ResetAccessRule($Rule)
+                }
+                if ($PSCmdlet.ShouldProcess($RegKey, "SetAccessControl")) {
+                    $RegKey.SetAccessControl($Acl)
+                }
             }
 
             ### Step 5 - recursively repeat steps 2-5 for subkeys
@@ -177,7 +200,9 @@ function Set-RegistryOwner {
     Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Set-RegistryOwner: $RootKey, $Key, $Sid"; Value = $Msg; Result = $Result })
 }
 
-function Set-Registry ($Setting) {
+function Set-Registry {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param ($Setting)
     foreach ($Item in $Setting) {
         if (-not(Test-Path -Path $Item.path)) {
             try {
@@ -188,7 +213,9 @@ function Set-Registry ($Setting) {
                     ErrorAction = "SilentlyContinue"
                 }
                 Write-Verbose "Create path: $RegPath"
-                $ItemResult = New-Item @params
+                if ($PSCmdlet.ShouldProcess($RegPath, "New-Item")) {
+                    $ItemResult = New-Item @params
+                }
                 $Msg = "CreatePath"; $Result = 0
             }
             catch {
@@ -209,7 +236,9 @@ function Set-Registry ($Setting) {
                 Force       = $True
                 ErrorAction = "Continue"
             }
-            Set-ItemProperty @params > $Null
+            if ($PSCmdlet.ShouldProcess("$($Item.path), $($Item.name), $($Item.value)", "Set-ItemProperty")) {
+                Set-ItemProperty @params > $Null
+            }
             $Msg = "SetValue"; $Result = 0
         }
         catch {
@@ -220,7 +249,9 @@ function Set-Registry ($Setting) {
     }
 }
 
-function Set-DefaultUserProfile ($Setting) {
+function Set-DefaultUserProfile {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param ($Setting)
     try {
         # Variables
         $RegDefaultUser = "$env:SystemDrive\Users\Default\NTUSER.DAT"
@@ -237,7 +268,9 @@ function Set-DefaultUserProfile ($Setting) {
                 WindowStyle  = "Hidden"
                 ErrorAction  = "Continue"
             }
-            $result = Start-Process @params > $Null
+            if ($PSCmdlet.ShouldProcess("reg load $RegPath $RegDefaultUser", "Start-Process")) {
+                $result = Start-Process @params > $Null
+            }
         }
         catch {
             Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Load: $RegDefaultUser"; Value = $RegPath; Result = 1 })
@@ -257,7 +290,9 @@ function Set-DefaultUserProfile ($Setting) {
                         ErrorAction = "Continue"
                     }
                     Write-Verbose "Create path: $RegPath"
-                    $ItemResult = New-Item @params
+                    if ($PSCmdlet.ShouldProcess($RegPath, "New-Item")) {
+                        $ItemResult = New-Item @params
+                    }
                     $Msg = "CreatePath"; $Result = 0
                 }
                 catch {
@@ -278,7 +313,9 @@ function Set-DefaultUserProfile ($Setting) {
                     Force       = $True
                     ErrorAction = "Continue"
                 }
-                Set-ItemProperty @params > $Null
+                if ($PSCmdlet.ShouldProcess("$RegPath, $($Item.name), $($Item.value)", "Set-ItemProperty")) {
+                    Set-ItemProperty @params > $Null
+                }
                 $Msg = "SetValue"; $Result = 0
             }
             catch {
@@ -303,7 +340,9 @@ function Set-DefaultUserProfile ($Setting) {
                 WindowStyle  = "Hidden"
                 ErrorAction  = "Continue"
             }
-            Start-Process @params > $Null
+            if ($PSCmdlet.ShouldProcess("reg unload $($DefaultUserPath -replace ':', '')", "Start-Process")) {
+                Start-Process @params > $Null
+            }
             $Msg = "Success"; $Result = 0
         }
         catch {
@@ -314,7 +353,9 @@ function Set-DefaultUserProfile ($Setting) {
     }
 }
 
-function Copy-File ($Path, $Parent) {
+function Copy-File {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param ($Path, $Parent)
     foreach ($Item in $Path) {
         $Source = $(Join-Path -Path $Parent -ChildPath $Item.Source)
         Write-Verbose -Message "Source: $Source."
@@ -329,7 +370,9 @@ function Copy-File ($Path, $Parent) {
                     Force       = $True
                     ErrorAction = "Continue"
                 }
-                Copy-Item @params
+                if ($PSCmdlet.ShouldProcess("$Source to $($Item.Destination)", "Copy-Item")) {
+                    Copy-Item @params
+                }
                 $Msg = "Copy path"; $Result = 0
             }
             catch {
@@ -343,7 +386,9 @@ function Copy-File ($Path, $Parent) {
     }
 }
 
-function New-Directory ($Path) {
+function New-Directory {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param ($Path)
     if (Test-Path -Path $Path -ErrorAction "Continue") {
         Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = $Path; Value = "Exists"; Result = 0 })
     }
@@ -354,7 +399,9 @@ function New-Directory ($Path) {
                 ItemType    = "Directory"
                 ErrorAction = "Continue"
             }
-            New-Item @params > $Null
+            if ($PSCmdlet.ShouldProcess($Path, "New-Item")) {
+                New-Item @params > $Null
+            }
             $Msg = "CreatePath"; $Result = 0
         }
         catch {
@@ -364,7 +411,9 @@ function New-Directory ($Path) {
     }
 }
 
-function Remove-Path ($Path) {
+function Remove-Path {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param ($Path)
     foreach ($Item in $Path) {
         if (Test-Path -Path $Item -ErrorAction "Continue") {
             Write-Verbose -Message "Remove-Item: $Item."
@@ -376,7 +425,9 @@ function Remove-Path ($Path) {
                     Force       = $True
                     ErrorAction = "Continue"
                 }
-                Remove-Item @params
+                if ($PSCmdlet.ShouldProcess($Item, "Remove-Item")) {
+                    Remove-Item @params
+                }
                 $Msg = "RemovePath"; $Result = 0
             }
             catch {
@@ -387,7 +438,10 @@ function Remove-Path ($Path) {
     }
 }
 
-function Remove-Feature ($Feature) {
+function Remove-Feature {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param ($Feature)
+
     if ($Feature.Count -ge 1) {
         Write-Verbose -Message "Remove features."
         $Feature | ForEach-Object { Get-WindowsOptionalFeature -Online -FeatureName $_ -ErrorAction "Continue" } | `
@@ -400,7 +454,9 @@ function Remove-Feature ($Feature) {
                     NoRestart   = $True
                     ErrorAction = "Continue"
                 }
-                Disable-WindowsOptionalFeature @params | Out-Null
+                if ($PSCmdlet.ShouldProcess($_.FeatureName, "Disable-WindowsOptionalFeature")) {
+                    Disable-WindowsOptionalFeature @params | Out-Null
+                }
                 $Msg = "RemoveFeature"; $Result = 0
             }
             catch {
@@ -411,7 +467,10 @@ function Remove-Feature ($Feature) {
     }
 }
 
-function Remove-Capability ($Capability) {
+function Remove-Capability {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param ($Capability)
+
     if ($Capability.Count -ge 1) {
         Write-Verbose -Message "Remove capabilities."
         foreach ($Item in $Capability) {
@@ -422,7 +481,9 @@ function Remove-Capability ($Capability) {
                     Online      = $True
                     ErrorAction = "Continue"
                 }
-                Remove-WindowsCapability @params | Out-Null
+                if ($PSCmdlet.ShouldProcess($Item, "Remove-WindowsCapability")) {
+                    Remove-WindowsCapability @params | Out-Null
+                }
                 $Msg = "RemoveCapability"; $Result = 0
             }
             catch {
@@ -433,7 +494,10 @@ function Remove-Capability ($Capability) {
     }
 }
 
-function Remove-Package ($Package) {
+function Remove-Package {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param ($Package)
+
     if ($Package.Count -ge 1) {
         Write-Verbose -Message "Remove packages."
         foreach ($Item in $Package) {
@@ -446,7 +510,9 @@ function Remove-Package ($Package) {
                         Online      = $True
                         ErrorAction = "Continue"
                     }
-                    Remove-WindowsPackage @params | Out-Null
+                    if ($PSCmdlet.ShouldProcess($_.PackageName, "Remove-WindowsPackage")) {
+                        Remove-WindowsPackage @params | Out-Null
+                    }
                     $Msg = "RemovePackage"; $Result = 0
                 }
                 catch {

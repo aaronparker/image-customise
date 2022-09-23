@@ -4,7 +4,7 @@
     Configuration changes to a default install of Windows during provisioning.
 
     .NOTES
-    NAME: Invoke-Scripts.ps1
+    NAME: Remove-Defaults.ps1
     AUTHOR: Aaron Parker, Insentra
 #>
 [CmdletBinding()]
@@ -14,12 +14,12 @@ param (
 )
 try {
     $RegPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{$Guid}"
-    If (Test-Path -Path $RegPath -ErrorAction "SilentlyContinue") {
+    if (Test-Path -Path $RegPath -ErrorAction "SilentlyContinue") {
         Remove-Item -Path $RegPath -Force
     }
 }
 catch {
-    $_
-    Exit 1
+    throw $_
+    exit 1
 }
-Exit 0
+exit 0

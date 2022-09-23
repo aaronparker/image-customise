@@ -9,8 +9,8 @@
     AUTHOR: Aaron Parker
     TWITTER: @stealthpuppy
 #>
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification = "ShouldProcess will add too much code at this time.")]
-[CmdletBinding(SupportsShouldProcess = $false)]
+#[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification = "ShouldProcess will add too much code at this time.")]
+[CmdletBinding(SupportsShouldProcess = $true)]
 param (
     [Parameter(Mandatory = $False)]
     [System.String] $Path = $PSScriptRoot,
