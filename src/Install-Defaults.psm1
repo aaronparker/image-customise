@@ -23,7 +23,7 @@ function Write-ToEventLog {
     param ($Property, $Object)
     foreach ($Item in $Object) {
         if ($Item.Value.Length -gt 0) {
-            switch ($Item.Status) {
+            switch ($Item.Result) {
                 0 { $EntryType = "Information" }
                 1 { $EntryType = "Warning" }
                 default { $EntryType = "Information" }
@@ -31,9 +31,9 @@ function Write-ToEventLog {
             $params = @{
                 LogName     = "Customised Defaults"
                 Source      = $Property
-                EventID     = (100 + [System.Int16]$Item.Status)
+                EventID     = (100 + [System.Int16]$Item.Result)
                 EntryType   = $EntryType
-                Message     = "$($Item.Name), $($Item.Value), $($Item.Status)"
+                Message     = "$($Item.Name), $($Item.Value), $($Item.Result)"
                 ErrorAction = "Continue"
             }
             if ($PSCmdlet.ShouldProcess("Customised Defaults", "Write-EventLog")) {
@@ -203,6 +203,7 @@ function Set-RegistryOwner {
 function Set-Registry {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Setting)
+
     foreach ($Item in $Setting) {
         if (-not(Test-Path -Path $Item.path)) {
             try {
@@ -300,7 +301,9 @@ function Set-DefaultUserProfile {
                 }
                 finally {
                     Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = $Item.path; Value = $Msg; Result = $Result })
-                    if ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
+                    if ($Null -ne $ItemResult) {
+                        if ("Handle" -in ($ItemResult | Get-Member -ErrorAction "SilentlyContinue" | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
+                    }
                 }
             }
 
@@ -522,4 +525,9 @@ function Remove-Package {
             }
         }
     }
+}
+
+function Get-CurrentUserSid {
+    $MyID = New-Object -TypeName System.Security.Principal.NTAccount([Environment]::UserName)
+    return $MyID.Translate([System.Security.Principal.SecurityIdentifier]).toString()
 }

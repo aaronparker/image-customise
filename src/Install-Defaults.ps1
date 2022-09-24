@@ -62,12 +62,18 @@ if (!([System.Environment]::Is64BitProcess)) {
 
 #region Functions
 try {
-    Import-Module -Name $(Join-Path -Path $PSScriptRoot -ChildPath "Install-Defaults.psm1")
+    Import-Module -Name $(Join-Path -Path $PSScriptRoot -ChildPath "Install-Defaults.psm1") -Force
 }
 catch {
     throw $_
 }
 #endregion
+
+# Splat WhatIf and Verbose preferences to pass to functions
+$prefs = @{
+    WhatIf  = $WhatIfPreference
+    Verbose = $VerbosePreference
+}
 
 # Configure working path
 if ($Path.Length -eq 0) { $WorkingPath = $PWD.Path } else { $WorkingPath = $Path }
@@ -81,7 +87,7 @@ try {
     # Start logging
     $PSProcesses = Get-CimInstance -ClassName "Win32_Process" -Filter "Name = 'powershell.exe'" | Select-Object -Property "CommandLine"
     foreach ($Process in $PSProcesses) {
-        $Object = ([PSCustomObject]@{Name = "CommandLine"; Value = $Process.CommandLine; Result = 0 })
+        $Object = [PSCustomObject]@{Name = "CommandLine"; Value = $Process.CommandLine; Result = 0 }
         Write-ToEventLog -Property "General" -Object $Object
     }
 
@@ -117,7 +123,7 @@ try {
     foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs)) {
 
         # Read the settings JSON
-        $Settings = Get-SettingsContent -Path $Config.FullName
+        $Settings = Get-SettingsContent -Path $Config.FullName @prefs
         Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Config file"; Value = $Config.Name; Result = 0 })
 
         # Implement the settings only if the local build is greater or equal that what's specified in the JSON
@@ -127,15 +133,15 @@ try {
                 # Implement each setting in the JSON
                 if ($Settings.Registry.ChangeOwner.Length -gt 0) {
                     foreach ($Item in $Settings.Registry.ChangeOwner) {
-                        Set-RegistryOwner -RootKey $Item.Root -Key $Item.Key -Sid $Item.Sid
+                        Set-RegistryOwner -RootKey $Item.Root -Key $Item.Key -Sid $Item.Sid @prefs
                     }
                 }
                 switch ($Settings.Registry.Type) {
                     "DefaultProfile" {
-                        Set-DefaultUserProfile -Setting $Settings.Registry.Set; break
+                        Set-DefaultUserProfile -Setting $Settings.Registry.Set @prefs; break
                     }
                     "Direct" {
-                        Set-Registry -Setting $Settings.Registry.Set; break
+                        Set-Registry -Setting $Settings.Registry.Set @prefs; break
                     }
                     default {
                         Write-Verbose -Message "Skip registry: $($Config.FullName)."
@@ -146,22 +152,22 @@ try {
                 switch ($Settings.StartMenu.Type) {
                     "Server" {
                         if ((Get-WindowsFeature -Name $Settings.StartMenu.Feature).InstallState -eq "Installed") {
-                            Copy-File -Path $Settings.StartMenu.Exists -Parent $WorkingPath
+                            Copy-File -Path $Settings.StartMenu.Exists -Parent $WorkingPath @prefs
                         }
                         else {
-                            Copy-File -Path $Settings.StartMenu.NotExists -Parent $WorkingPath
+                            Copy-File -Path $Settings.StartMenu.NotExists -Parent $WorkingPath @prefs
                         }
                     }
                     "Client" {
-                        Copy-File -Path $Settings.StartMenu.$OSName -Parent $WorkingPath
+                        Copy-File -Path $Settings.StartMenu.$OSName -Parent $WorkingPath @prefs
                     }
                 }
 
-                Copy-File -Path $Settings.Files.Copy -Parent $WorkingPath
-                Remove-Path -Path $Settings.Paths.Remove
-                Remove-Feature -Feature $Settings.Features.Disable
-                Remove-Capability -Capability $Settings.Capabilities.Remove
-                Remove-Package -Package $Settings.Packages.Remove
+                Copy-File -Path $Settings.Files.Copy -Parent $WorkingPath @prefs
+                Remove-Path -Path $Settings.Paths.Remove @prefs
+                Remove-Feature -Feature $Settings.Features.Disable @prefs
+                Remove-Capability -Capability $Settings.Capabilities.Remove @prefs
+                Remove-Package -Package $Settings.Packages.Remove @prefs
             }
             else {
                 Write-Verbose -Message "Skip maximum version config: $($Config.FullName)."
@@ -181,17 +187,17 @@ try {
         # Get the script location
         $Script = Get-ChildItem -Path $WorkingPath -Filter "Remove-AppxApps.ps1" -Recurse -ErrorAction "Continue"
         if ($Null -eq $Script) {
-            $Object = ([PSCustomObject]@{Name = "Remove-AppxApps.ps1"; Value = "Script not found"; Result = 1 })
+            $Object = [PSCustomObject]@{Name = "Remove-AppxApps.ps1"; Value = "Script not found"; Result = 1 }
             Write-ToEventLog -Property "AppX" -Object $Object
         }
         else {
             Write-ToEventLog -Property "AppX" -Object ([PSCustomObject]@{Name = "Run script"; Value = $Script.FullName; Result = 0 })
             switch ($AppxMode) {
-                "Block" { $Apps = & $Script.FullName -Operation "BlockList"; break }
-                "Allow" { $Apps = & $Script.FullName -Operation "AllowList"; break }
+                "Block" { $Apps = & $Script.FullName -Operation "BlockList" @prefs; break }
+                "Allow" { $Apps = & $Script.FullName -Operation "AllowList" @prefs; break }
             }
-            $RemovedApps = $Apps | Where-Object { $_.Value -eq "Removed" }
-            $Object = ([PSCustomObject]@{Name = "Remove-AppxApps.ps1"; Value = $RemovedApps.Name; Result = 0 })
+            $RemovedApps = $Apps | Where-Object { $_.State -eq "Removed" }
+            $Object = [PSCustomObject]@{Name = "Removed AppX apps "; Value = ($RemovedApps.Name | Select-Object -Unique); Result = 0 }
             Write-ToEventLog -Property "AppX" -Object $Object
         }
 
@@ -209,7 +215,9 @@ try {
                 }
                 Write-Verbose -Message "Install language: $Language."
                 $Msg = "Success"; $Result = 0
-                Install-Language @params | Out-Null
+                if ($PSCmdlet.ShouldProcess($Language, "Install-Language")) {
+                    Install-Language @params | Out-Null
+                }
             }
             catch {
                 $Msg = $_.Exception.Message; $Result = 1
@@ -222,7 +230,9 @@ try {
                 }
                 Write-Verbose -Message "Set system language: $Language."
                 $Msg = "Success"; $Result = 0
-                Set-SystemPreferredUILanguage @params
+                if ($PSCmdlet.ShouldProcess($Language, "Set-SystemPreferredUILanguage")) {
+                    Set-SystemPreferredUILanguage @params
+                }
             }
             catch {
                 $Msg = $_.Exception.Message; $Result = 1
@@ -233,7 +243,7 @@ try {
 }
 catch {
     # Write last entry to the event log and output failure
-    $Object = ([PSCustomObject]@{Name = "Result"; Value = $_.Exception.Message; Result = 1 })
+    $Object = [PSCustomObject]@{Name = "Result"; Value = $_.Exception.Message; Result = 1 }
     Write-ToEventLog -Property "General" -Object $Object
     Write-Error -Message $_.Exception.Message
     return 1
@@ -243,7 +253,7 @@ try {
     # Copy the source files for use with upgrades
     $FeaturePath = "$env:SystemRoot\Setup\Scripts"
     if ($FeaturePath -eq $WorkingPath) {
-        $Object = ([PSCustomObject]@{Name = "Copy to $env:SystemRoot\Setup\Scripts"; Value = "Skipping file copy"; Result = 1 })
+        $Object = [PSCustomObject]@{Name = "Copy to $env:SystemRoot\Setup\Scripts"; Value = "Skipping file copy"; Result = 1 }
         Write-ToEventLog -Property "General" -Object $Object
     }
     else {
@@ -255,12 +265,12 @@ try {
         catch {
             $Msg = $_.Exception.Message; $Result = 1
         }
-        $Object = ([PSCustomObject]@{Name = "Copy to $env:SystemRoot\Setup\Scripts"; Value = $Msg; Result = $Result })
+        $Object = [PSCustomObject]@{Name = "Copy to $env:SystemRoot\Setup\Scripts"; Value = $Msg; Result = $Result }
         Write-ToEventLog -Property "General" -Object $Object
     }
 }
 catch {
-    $Object = ([PSCustomObject]@{Name = "Result"; Value = $_.Exception.Message; Result = 1 })
+    $Object = [PSCustomObject]@{Name = "Result"; Value = $_.Exception.Message; Result = 1 }
     Write-ToEventLog -Property "General" -Object $Object
     Write-Error -Message $_.Exception.Message
     return 1
@@ -269,14 +279,16 @@ catch {
 # Set uninstall registry value for detecting as an installed application
 $Key = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
 New-Item -Path "$Key\{$Guid}" -Type "RegistryKey" -Force -ErrorAction "Continue" | Out-Null
-Set-ItemProperty -Path "$Key\{$Guid}" -Name "DisplayName" -Value $Project -Type "String" -Force -ErrorAction "Continue" | Out-Null
-Set-ItemProperty -Path "$Key\{$Guid}" -Name "Publisher" -Value $Publisher -Type "String" -Force -ErrorAction "Continue" | Out-Null
-Set-ItemProperty -Path "$Key\{$Guid}" -Name "DisplayVersion" -Value $DisplayVersion -Type "String" -Force -ErrorAction "Continue" | Out-Null
-Set-ItemProperty -Path "$Key\{$Guid}" -Name "RunOn" -Value $RunOn -Type "String" -Force -ErrorAction "Continue" | Out-Null
-Set-ItemProperty -Path "$Key\{$Guid}" -Name "SystemComponent" -Value 1 -Type "DWord" -Force -ErrorAction "Continue" | Out-Null
-Set-ItemProperty -Path "$Key\{$Guid}" -Name "HelpLink" -Value $HelpLink -Type "String" -Force -ErrorAction "Continue" | Out-Null
+if ($PSCmdlet.ShouldProcess("Set uninstall key values")) {
+    Set-ItemProperty -Path "$Key\{$Guid}" -Name "DisplayName" -Value $Project -Type "String" -Force -ErrorAction "Continue" | Out-Null
+    Set-ItemProperty -Path "$Key\{$Guid}" -Name "Publisher" -Value $Publisher -Type "String" -Force -ErrorAction "Continue" | Out-Null
+    Set-ItemProperty -Path "$Key\{$Guid}" -Name "DisplayVersion" -Value $DisplayVersion -Type "String" -Force -ErrorAction "Continue" | Out-Null
+    Set-ItemProperty -Path "$Key\{$Guid}" -Name "RunOn" -Value $RunOn -Type "String" -Force -ErrorAction "Continue" | Out-Null
+    Set-ItemProperty -Path "$Key\{$Guid}" -Name "SystemComponent" -Value 1 -Type "DWord" -Force -ErrorAction "Continue" | Out-Null
+    Set-ItemProperty -Path "$Key\{$Guid}" -Name "HelpLink" -Value $HelpLink -Type "String" -Force -ErrorAction "Continue" | Out-Null
+}
 
 # Write last entry to the event log and output success
-$Object = ([PSCustomObject]@{Name = "Install-Defaults.ps1"; Value = "Success"; Result = 0 })
+$Object = [PSCustomObject]@{Name = "Install-Defaults.ps1"; Value = "Success"; Result = 0 }
 Write-ToEventLog -Property "General" -Object $Object
 return 0

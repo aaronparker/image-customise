@@ -9,6 +9,12 @@
                 "Key": "Software\\Microsoft\\Windows\\CurrentVersion\\Communications",
                 "Sid": "S-1-5-18",
                 "note": "Changes the owner of the key to SYSTEM"
+            },
+            {
+                "Root": "HKLM",
+                "Key": "Software\\Microsoft\\Windows\\CurrentVersion\\Communications",
+                "Sid": "S-1-5-32-544",
+                "note": "Changes the owner of the key to Administrators"
             }
         ],
         "Set": [
