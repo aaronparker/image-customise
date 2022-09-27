@@ -35,14 +35,14 @@ theme:
     - toc.integrate
   palette:
     - scheme: default
-      primary: blue
-      accent: blue
+      primary: blue grey
+      accent: blue grey
       toggle:
         icon: material/toggle-switch-off-outline
         name: Switch to dark mode
     - scheme: slate
-      primary: blue
-      accent: blue
+      primary: blue grey
+      accent: blue grey
       toggle:
         icon: material/weather-night
         name: Switch to light mode
@@ -62,6 +62,12 @@ plugins:
   - minify:
       minify_html: true
       minify_js: true
+  - social:
+      cards: true
+      cards_color:
+        fill: "#455a63"
+        text: "#FFFFFF"
+      cards_font: Roboto
 
 # Extensions
 markdown_extensions:
