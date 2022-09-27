@@ -25,6 +25,7 @@ jobs:
           python-version: 3.x
       - run: |
           pip install mkdocs-material
+          pip install pillow cairosvg
           git pull origin main
           pip install -r requirements.txt
           mkdocs gh-deploy --force
