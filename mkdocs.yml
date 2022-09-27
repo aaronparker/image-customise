@@ -57,8 +57,6 @@ theme:
 # Plugins
 plugins:
   - search
-  - redirects:
-      redirect_maps:
   - minify:
       minify_html: true
       minify_js: true
