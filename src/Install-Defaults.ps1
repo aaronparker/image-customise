@@ -43,7 +43,7 @@ param (
 if (!([System.Environment]::Is64BitProcess)) {
     if ([System.Environment]::Is64BitOperatingSystem) {
 
-        # Create a string from the passed paramters
+        # Create a string from the passed parameters
         [System.String]$ParameterString = ""
         foreach ($Parameter in $PSBoundParameters.GetEnumerator()) {
             $ParameterString += " -$($Parameter.Key) $($Parameter.Value)"

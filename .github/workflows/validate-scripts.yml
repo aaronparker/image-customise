@@ -60,7 +60,7 @@ jobs:
           $Config.Run.PassThru = $True
           $Config.TestResult.Enabled = $True
           $Config.TestResult.OutputFormat = "NUnitXml"
-          $Config.TestResult.OutputPath = "${{ github.workspace }}\TestOutput.xml"
+          $Config.TestResult.OutputPath = "${{ github.workspace }}\tests\TestOutput.xml"
           Invoke-Pester -Configuration $Config
 
       - name: Get version
@@ -91,3 +91,17 @@ jobs:
       - name: "Run if no changes have been detected"
         if: steps.commit.outputs.changes_detected == 'false'
         run: echo "No changes detected."
+
+      # Upload test results
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: "${{ github.workspace }}\\tests\\TestResults.xml"
+
+      # Publish test results
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        if: always()
+        with:
+          nunit_files: "${{ github.workspace }}\\tests\\TestResults.xml"
