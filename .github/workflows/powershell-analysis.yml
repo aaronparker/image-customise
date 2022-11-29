@@ -1,4 +1,4 @@
-name: powershell-analysis
+name: "PowerShell analysis"
 
 on:
   push:

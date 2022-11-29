@@ -48,7 +48,7 @@ Describe "General project validation" -ForEach $Scripts {
 
 Describe "Validate module file" {
     BeforeAll {
-        $ModuleFile = Join-Path -Path $ProjectRoot -ChildPath "Install-Defaults.psm1"
+        $ModuleFile = Get-ChildItem -Path $PWD -Include "Install-Defaults.psm1" -Recurse
     }
 
     Context "Module should validate OK" {
@@ -61,7 +61,7 @@ Describe "Validate module file" {
 # Per script tests
 Describe "Script execution validation" -Tag "Windows" {
     BeforeAll {
-        $Script = Get-ChildItem -Path $ProjectRoot -Include "Install-Defaults.ps1" -Recurse
+        $Script = Get-ChildItem -Path $PWD -Include "Install-Defaults.ps1" -Recurse
     }
 
     Context "Validate <script.Name>." {

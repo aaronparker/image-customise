@@ -1,4 +1,4 @@
-name: validate-Install-Defaults.ps1
+name: "Validate project"
 
 # Environment variables
 env:
@@ -10,9 +10,8 @@ on:
     branches:
       - main
     paths:
-      - '.github/workflows/validate-scripts.yml'
       - 'src/**'
-      - 'tests/**'
+      - 'tests/*.ps1'
       - '!src/VERSION.txt'
 
   # Allows you to run this workflow manually from the Actions tab
