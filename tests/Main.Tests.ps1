@@ -19,7 +19,7 @@ BeforeDiscovery {
     }
 
     # Get the scripts to test
-    $Scripts = @(Get-ChildItem -Path $ProjectRoot -Include "Install-Defaults.ps*" -Recurce)
+    $Scripts = @(Get-ChildItem -Path $ProjectRoot -Include "Install-Defaults.ps*" -Recurse)
     $testCase = $Scripts | ForEach-Object { @{file = $_ } }
 }
 
