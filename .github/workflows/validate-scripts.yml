@@ -50,16 +50,18 @@ jobs:
           Install-Module -Name "Pester" -SkipPublisherCheck -Force
 
       # Run Pester tests
-      - name: Run Pester tests
+      - name: Test with Pester
         shell: powershell
+        working-directory: "${{ github.workspace }}"
         run: |
           Import-Module -Name "Pester" -Force
           $Config = [PesterConfiguration]::Default
-          $Config.Run.Path = "${{ github.workspace }}\tests"
-          $Config.Run.PassThru = $True
-          $Config.TestResult.Enabled = $True
+          $Config.Run.Path = ".\tests"
+          $Config.Run.PassThru = $true
+          $Config.CodeCoverage.Enabled = $false
+          $Config.TestResult.Enabled = $true
           $Config.TestResult.OutputFormat = "NUnitXml"
-          $Config.TestResult.OutputPath = "${{ github.workspace }}\tests\TestOutput.xml"
+          $Config.TestResult.OutputPath = ".\tests\TestResults.xml"
           Invoke-Pester -Configuration $Config
 
       - name: Get version
