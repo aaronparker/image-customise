@@ -53,7 +53,7 @@ Describe "Validate module file" {
 
     Context "Module should validate OK" {
         It "Should import OK" {
-            Import-Module -Name $ModuleFile -Force | Should -Not -Throw
+             { Import-Module -Name $ModuleFile -Force } | Should -Not -Throw
         }
     }
 }
