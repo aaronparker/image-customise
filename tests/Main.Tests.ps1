@@ -19,51 +19,56 @@ BeforeDiscovery {
     }
 
     # Get the scripts to test
-    $Scripts = @(Get-ChildItem -Path $ProjectRoot -Include "Install-Defaults.ps*" -Recurse)
-    $testCase = $Scripts | ForEach-Object { @{file = $_ } }
+    $Scripts = @(Get-ChildItem -Path $ProjectRoot -Include "*.ps*" -Recurse)
+    $TestCases = $Scripts | ForEach-Object { @{File = $_ } }
 }
 
 # All scripts validation
 Describe "General project validation" -ForEach $Scripts {
     BeforeAll {
         # Renaming the automatic $_ variable to $application to make it easier to work with
-        $file = $_
+        $File = $_
     }
 
     Context "Project should validate OK" {
-        It "Script <file.Name> should exist" -TestCases $testCase {
-            param ($file)
-            $file.FullName | Should -Exist
+        It "Script <file.Name> should exist" -TestCases $TestCases {
+            param ($File)
+            $File.FullName | Should -Exist
         }
 
-        It "Script <file.Name> should be valid PowerShell" -TestCases $testCase {
-            param ($file)
-            $contents = Get-Content -Path $file.FullName -ErrorAction "Stop"
+        It "Script <file.Name> should be valid PowerShell" -TestCases $TestCases {
+            param ($File)
+            $contents = Get-Content -Path $File.FullName -ErrorAction "Stop"
             $errors = $null
             $null = [System.Management.Automation.PSParser]::Tokenize($contents, [ref]$errors)
             $errors.Count | Should -Be 0
         }
     }
+}
+
+Describe "Validate module file" {
+    BeforeAll {
+        $ModuleFile = Join-Path -Path $ProjectRoot -ChildPath "Install-Defaults.psm1"
+    }
 
     Context "Module should validate OK" {
         It "Should import OK" {
-            Import-Module -Name $(Join-Path -Path $ProjectRoot -ChildPath "Install-Defaults.psm1") | Should -Not -Throw
+            Import-Module -Name $ModuleFile -Force | Should -Not -Throw
         }
     }
 }
 
 # Per script tests
-Describe "Script execution validation" -Tag "Windows" -ForEach $Scripts {
+Describe "Script execution validation" -Tag "Windows" {
     BeforeAll {
-        # Renaming the automatic $_ variable to $application to make it easier to work with
-        $script = $_
+        $Script = Get-ChildItem -Path $ProjectRoot -Include "Install-Defaults.ps1" -Recurse
     }
 
     Context "Validate <script.Name>." {
         It "<script.Name> should execute OK" {
             Push-Location -Path $ProjectRoot
-            Write-Host "Running script: $($script.FullName)."
-            $Result = . $script.FullName -Path $ProjectRoot -Verbose
+            Write-Host "Running script: $($Script.FullName)."
+            $Result = . $Script.FullName -Path $ProjectRoot -Verbose
             $Result | Should -Be 0
             Pop-Location
         }
