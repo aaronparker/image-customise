@@ -36,6 +36,9 @@ param (
     [System.String] $AppxMode = "Block",
 
     [Parameter(Mandatory = $False)]
+    [System.String] $FeatureUpdatePath = "$env:SystemRoot\System32\Update\Run\$Guid",
+
+    [Parameter(Mandatory = $False)]
     [System.String] $Language = "Skip"
 )
 
@@ -220,8 +223,8 @@ if ($Platform -eq "Client") {
         catch {
             $Msg = $_.Exception.Message; $Result = 1
         }
-
         Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Import module LanguagePackManagement"; Value = $Msg; Result = $Result })
+
         try {
             $params = @{
                 Language        = $Language
@@ -237,8 +240,8 @@ if ($Platform -eq "Client") {
         catch {
             $Msg = $_.Exception.Message; $Result = 1
         }
-
         Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language: $Language"; Value = $Msg; Result = $Result })
+
         try {
             $params = @{
                 Language = $Language
@@ -258,21 +261,20 @@ if ($Platform -eq "Client") {
 }
 
 # Copy the source files for use with upgrades
-$FeaturePath = "$env:SystemRoot\Setup\Scripts"
-if ($FeaturePath -eq $WorkingPath) {
-    $Object = [PSCustomObject]@{Name = "Copy to $env:SystemRoot\Setup\Scripts"; Value = "Skipping file copy"; Result = 1 }
+if ($FeatureUpdatePath -eq $WorkingPath) {
+    $Object = [PSCustomObject]@{Name = "Copy to $FeatureUpdatePath"; Value = "Skipping file copy"; Result = 1 }
     Write-ToEventLog -Property "General" -Object $Object
 }
 else {
     try {
-        New-Item -Path $FeaturePath -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
-        Copy-Item -Path "$WorkingPath\*.*" -Destination $FeaturePath -Recurse -ErrorAction "SilentlyContinue"
+        New-Item -Path $FeatureUpdatePath -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
+        Copy-Item -Path "$WorkingPath\*.*" -Destination $FeatureUpdatePath -Recurse -ErrorAction "SilentlyContinue"
         $Msg = "Success"; $Result = 0
     }
     catch {
         $Msg = $_.Exception.Message; $Result = 1
     }
-    $Object = [PSCustomObject]@{Name = "Copy to $env:SystemRoot\Setup\Scripts"; Value = $Msg; Result = $Result }
+    $Object = [PSCustomObject]@{Name = "Copy to $FeatureUpdatePath"; Value = $Msg; Result = $Result }
     Write-ToEventLog -Property "General" -Object $Object
 }
 
@@ -289,6 +291,6 @@ if ($PSCmdlet.ShouldProcess("Set uninstall key values")) {
 }
 
 # Write last entry to the event log and output success
-$Object = [PSCustomObject]@{Name = "Install-Defaults.ps1"; Value = "Complete"; Result = 0 }
+$Object = [PSCustomObject]@{Name = "Install-Defaults.ps1"; Value = "Complete"; Result = $Result }
 Write-ToEventLog -Property "General" -Object $Object
 if ($Result -eq 1) { return 1 } else { return 0 }

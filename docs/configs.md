@@ -34,4 +34,4 @@ Each JSON file includes a `MinimumBuild` property that can be used to ensure spe
 `Install-Defaults.ps1` performs additional tasks not defined in the JSON configuration files:
 
 * Removes inbox Universal Windows Platform (AppX) apps - see [Remove UWP apps](https://stealthpuppy.com/image-customise/appxapps/)
-* Copies the solution as a [Custom Script to Windows Setup](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/add-a-custom-script-to-windows-setup). This enables the Custom Defaults to be re-run during an in-place upgrade
+* Copies the solution as a [Run custom actions during feature update](https://learn.microsoft.com/en-gb/windows-hardware/manufacture/desktop/windows-setup-enable-custom-actions?view=windows-11). This enables the Custom Defaults to be re-run during an in-place upgrade
