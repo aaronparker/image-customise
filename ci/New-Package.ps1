@@ -1,10 +1,6 @@
-
 <#
     .SYNOPSIS
         Creates a .intunewin file for the customise scripts that can be uploaded into Intune as a Win32 application
-
-    .NOTES
-
 #>
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "")]
 [CmdletBinding()]
@@ -13,28 +9,28 @@ param (
     [System.String] $Path = "$Env:Temp\Intune"
 )
 
-If (Test-Path -Path env:GITHUB_WORKSPACE -ErrorAction "SilentlyContinue") {
-    $projectRoot = Resolve-Path -Path $env:GITHUB_WORKSPACE
+if (Test-Path -Path env:GITHUB_WORKSPACE -ErrorAction "SilentlyContinue") {
+    $ProjectRoot = Resolve-Path -Path $env:GITHUB_WORKSPACE
 }
-Else {
+else {
     # Local Testing
-    $projectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
+    $ProjectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
 }
 
 #region Setup package paths
-$PackagePath = Join-Path -Path $projectRoot -ChildPath "src"
+$PackagePath = Join-Path -Path $ProjectRoot -ChildPath "src"
 Write-Verbose -Message "Package path: $PackagePath."
-If (!(Test-Path -Path $PackagePath)) { New-Item -Path $PackagePath -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $Null }
+if (!(Test-Path -Path $PackagePath)) { New-Item -Path $PackagePath -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $Null }
 
-$PackageOutput = $(Join-Path -Path $projectRoot -ChildPath "releases")
+$PackageOutput = $(Join-Path -Path $ProjectRoot -ChildPath "releases")
 Write-Verbose -Message "Output path: $PackageOutput."
-If (!(Test-Path -Path $PackageOutput)) { New-Item -Path $PackageOutput -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $Null }
+if (!(Test-Path -Path $PackageOutput)) { New-Item -Path $PackageOutput -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $Null }
 #endregion
 
 #region Package the app
 try {
     # Download the Intune Win32 wrapper
-    If (!(Test-Path -Path $Path)) { New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $Null }
+    if (!(Test-Path -Path $Path)) { New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $Null }
     $Win32Wrapper = "https://raw.githubusercontent.com/microsoft/Microsoft-Win32-Content-Prep-Tool/master/IntuneWinAppUtil.exe"
     $wrapperBin = Join-Path -Path $Path -ChildPath $(Split-Path -Path $Win32Wrapper -Leaf)
     $params = @{
@@ -45,7 +41,7 @@ try {
     Invoke-WebRequest @params
 }
 catch [System.Exception] {
-    Throw "Failed to download IntuneWinAppUtil.exe with: $($_.Exception.Message)"
+    throw "Failed to download IntuneWinAppUtil.exe with: $($_.Exception.Message)"
 }
 
 try {
@@ -62,7 +58,7 @@ try {
     Start-Process @params
 }
 catch [System.Exception] {
-    Throw "Failed to convert to an Intunewin package with: $($_.Exception.Message)"
+    throw "Failed to convert to an Intunewin package with: $($_.Exception.Message)"
 }
 try {
     $params = @{
@@ -73,7 +69,7 @@ try {
     $IntuneWinFile = Get-ChildItem
 }
 catch {
-    Throw "Failed to find an Intunewin package in $PackageOutput with: $($_.Exception.Message)"
+    throw "Failed to find an Intunewin package in $PackageOutput with: $($_.Exception.Message)"
 }
 Write-Verbose -Message "Found package: $($IntuneWinFile.FullName)."
 #endregion
@@ -87,5 +83,9 @@ try {
     Compress-Archive @params
 }
 catch {
-    Throw "Failed to compress scripts with: $($_.Exception.Message)"
+    throw "Failed to compress scripts with: $($_.Exception.Message)"
 }
+
+# Output what's been created in the releases folder
+Write-Host ""
+Get-ChildItem -Path $PackageOutput
