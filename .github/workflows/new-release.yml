@@ -52,5 +52,5 @@ jobs:
         with:
           prerelease: true
           files: |
-            "${{ github.workspace }}\releases\Install-Defaults.intunewin"
-            "${{ github.workspace }}\releases\image-customise.zip"
+            "releases/Install-Defaults.intunewin"
+            "releases/image-customise.zip"
