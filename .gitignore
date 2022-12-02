@@ -39,4 +39,6 @@ Thumbs.db:encryptable
 # Exclude the releases folder
 releases/**
 
+# mkdocs folders
+site
 .cache

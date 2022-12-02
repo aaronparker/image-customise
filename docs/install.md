@@ -36,7 +36,7 @@ Once installed, the following registry information can be used to detect that th
 
 * Key - `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\f38de27b-799e-4c30-8a01-bfdedc622944`
 * Value - `DisplayVersion`
-* Data - `2209.04.111` (the version number of the current release)
+* Data - `2211.29.129` (the version number of the current release)
 
 ### Microsoft Intune
 
@@ -45,6 +45,10 @@ The solution is also provided in `.intunewin` format to enable direct import int
 Settings for importing the Windows Customised Defaults as a Win32 package into Intune are maintained here: [App.json](https://github.com/aaronparker/image-customise/blob/main/App.json). This can be used with the [IntuneWin32AppPackager](https://github.com/MSEndpointMgr/IntuneWin32AppPackager) to automate import into Intune.
 
 ![Windows Custom Defaults as a Win32 application in Microsoft Intune](assets/img/intuneapp.jpeg)
+
+!!! note ""
+
+    To enable support for multiple languages, create multiple Win32 applications with different command lines - one for each required language.
 
 ## Download and Install
 

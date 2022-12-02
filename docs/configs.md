@@ -35,3 +35,25 @@ Each JSON file includes a `MinimumBuild` property that can be used to ensure spe
 
 * Removes inbox Universal Windows Platform (AppX) apps - see [Remove UWP apps](https://stealthpuppy.com/image-customise/appxapps/)
 * Copies the solution as a [Run custom actions during feature update](https://learn.microsoft.com/en-gb/windows-hardware/manufacture/desktop/windows-setup-enable-custom-actions?view=windows-11). This enables the Custom Defaults to be re-run during an in-place upgrade
+
+## Script Process Visualisation
+
+Here's an visualisation of how the `Install-Defaults.ps1` works:
+
+```mermaid
+graph TD
+    A[Invoke Install-Defaults.ps1] -->B(Get OS platform)
+    B --> C(Get OS version)
+    C --> D(Get hardware model)
+    D --> E(Gather .json configs)
+    E -->|All| F[Install configs for all platforms]
+    E -->|Platform| G[Install configs for target OS] -->J
+    E -->|Build| H[Install configs for OS version] -->J
+    E -->|Model| I[Install configs for hardware model] -->J
+    F --> J{Client OS?}
+    J -->|Yes| K[Remove AppX apps]
+    J --> L[Copy project files to feature update path]
+    L --> M[Write uninstall info to registry]
+    K --> N{Language specified?}
+    N -->|Yes|O[Install & set default language]
+```
