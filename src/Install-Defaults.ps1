@@ -30,7 +30,7 @@ param (
     [System.String] $Helplink = "https://stealthpuppy.com/image-customise/",
 
     [Parameter(Mandatory = $False)]
-    [System.String[]] $Properties = @("General", "Registry", "Paths", "StartMenu", "Features", "Capabilities", "Packages", "AppX", "Language"),
+    [System.String[]] $Properties = @("General", "Registry", "Paths", "StartMenu", "Features", "Capabilities", "Packages", "AppX", "Language", "Services"),
 
     [Parameter(Mandatory = $False)]
     [System.String] $AppxMode = "Block",
@@ -124,10 +124,10 @@ Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Version"
 
 #region Gather configs
 $AllConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.All.json" -Recurse -ErrorAction "Continue")
-$PlatformConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.$Platform.json" -Recurse -ErrorAction "Continue")
-$BuildConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.$Build.json" -Recurse -ErrorAction "Continue")
 $ModelConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.$Model.json" -Recurse -ErrorAction "Continue")
-Write-Verbose -Message "Found: $(($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs).Count) configs."
+$BuildConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.$Build.json" -Recurse -ErrorAction "Continue")
+$PlatformConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.$Platform.json" -Recurse -ErrorAction "Continue")
+Write-Verbose -Message "Found: $(($AllConfigs + $ModelConfigs + $BuildConfigs + $PlatformConfigs).Count) configs."
 
 # Implement the settings defined in each config file
 foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs)) {
@@ -178,6 +178,9 @@ foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConf
             Remove-Feature -Feature $Settings.Features.Disable @prefs
             Remove-Capability -Capability $Settings.Capabilities.Remove @prefs
             Remove-Package -Package $Settings.Packages.Remove @prefs
+            Stop-ServiceName -Service $Settings.Services.Stop @prefs
+            Start-ServiceName -Service $Settings.Services.Start @prefs
+            Restart-ServiceName -Service $Settings.Services.Restart @prefs
         }
         else {
             Write-Verbose -Message "Skip maximum version config: $($Config.FullName)."
@@ -191,10 +194,10 @@ foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConf
 }
 #endregion
 
-# If on a client OS, run the script to remove AppX; UWP apps
+# If on a client OS..
 if ($Platform -eq "Client") {
 
-    # Get the script location
+    # Run the script to remove AppX/UWP apps; Get the script location
     $Script = Get-ChildItem -Path $WorkingPath -Filter "Remove-AppxApps.ps1" -Recurse -ErrorAction "Continue"
     if ($Null -eq $Script) {
         $Object = [PSCustomObject]@{Name = "Remove-AppxApps.ps1"; Value = "Script not found"; Result = 1 }
@@ -211,13 +214,15 @@ if ($Platform -eq "Client") {
         Write-ToEventLog -Property "AppX" -Object $Object
     }
 
-    # Set language support
     if ($Language -eq "Skip") {
         Write-Verbose -Message "Skip install language support."
         Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language"; Value = "Skipped"; Result = 0 })
     }
     else {
+        # Set language support by installing the specified language pack
+        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Language pack install"; Value = "Start"; Result = 0 })
         try {
+            $Msg = "Success"; $Result = 0
             Import-Module -Name "LanguagePackManagement"
         }
         catch {
@@ -240,7 +245,7 @@ if ($Platform -eq "Client") {
         catch {
             $Msg = $_.Exception.Message; $Result = 1
         }
-        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language: $Language"; Value = $Msg; Result = $Result })
+        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language pack: $Language"; Value = $Msg; Result = $Result })
 
         try {
             $params = @{

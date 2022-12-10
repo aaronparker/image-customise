@@ -1,7 +1,6 @@
 <#
     Functions used by Install-Defaults.ps1
 #>
-#[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification = "ShouldProcess will add too much code at this time.")]
 [CmdletBinding(SupportsShouldProcess = $true)]
 param ()
 
@@ -530,4 +529,58 @@ function Remove-Package {
 function Get-CurrentUserSid {
     $MyID = New-Object -TypeName System.Security.Principal.NTAccount([Environment]::UserName)
     return $MyID.Translate([System.Security.Principal.SecurityIdentifier]).toString()
+}
+
+function Restart-ServiceName {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param ($Service)
+
+    foreach ($Item in $Service) {
+        try {
+            $Msg = "Success"; $Result = 0
+            if ($PSCmdlet.ShouldProcess($Item, "Start-Service")) {
+                Get-Service -Name $Item -ErrorAction "Ignore" | Restart-Service -Force
+            }
+        }
+        catch {
+            $Msg = $_.Exception.Message; $Result = 1
+        }
+        Write-ToEventLog -Property "Services" -Object ([PSCustomObject]@{Name = "Restart service: $Item;"; Value = $Msg; Result = $Result })
+    }
+}
+
+function Start-ServiceName {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param ($Service)
+
+    foreach ($Item in $Service) {
+        try {
+            $Msg = "Success"; $Result = 0
+            if ($PSCmdlet.ShouldProcess($Item, "Start-Service")) {
+                Get-Service -Name $Item -ErrorAction "Ignore" | Start-Service -Force
+            }
+        }
+        catch {
+            $Msg = $_.Exception.Message; $Result = 1
+        }
+        Write-ToEventLog -Property "Services" -Object ([PSCustomObject]@{Name = "Start service: $Item;"; Value = $Msg; Result = $Result })
+    }
+}
+
+function Stop-ServiceName {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param ($Service)
+
+    foreach ($Item in $Service) {
+        try {
+            $Msg = "Success"; $Result = 0
+            if ($PSCmdlet.ShouldProcess($Item, "Start-Service")) {
+                Get-Service -Name $Item -ErrorAction "Ignore" | Stop-Service -Force
+            }
+        }
+        catch {
+            $Msg = $_.Exception.Message; $Result = 1
+        }
+        Write-ToEventLog -Property "Services" -Object ([PSCustomObject]@{Name = "Stop service: $Item;"; Value = $Msg; Result = $Result })
+    }
 }
