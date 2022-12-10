@@ -101,6 +101,20 @@
                 "value": 1,
                 "type": "DWord",
                 "note": "Prevents the default file type dialog box at Adobe Acrobat Pro/Standard DC first launch"
+            },
+            {
+                "path": "HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\location\\NonPackaged",
+                "name": "Value",
+                "value": "ALlow",
+                "type": "String",
+                "note": "Enables location services for Win32 applications"
+            },
+            {
+                "path": "HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\location",
+                "name": "Value",
+                "value": "ALlow",
+                "type": "String",
+                "note": "Enables location services for Universal Windows Platform Apps"
             }
         ]
     }
