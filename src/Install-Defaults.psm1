@@ -531,7 +531,7 @@ function Get-CurrentUserSid {
     return $MyID.Translate([System.Security.Principal.SecurityIdentifier]).toString()
 }
 
-function Restart-ServiceName {
+function Restart-NamedService {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Service)
 
@@ -549,7 +549,7 @@ function Restart-ServiceName {
     }
 }
 
-function Start-ServiceName {
+function Start-NamedService {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Service)
 
@@ -567,7 +567,7 @@ function Start-ServiceName {
     }
 }
 
-function Stop-ServiceName {
+function Stop-NamedService {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Service)
 
@@ -583,4 +583,53 @@ function Stop-ServiceName {
         }
         Write-ToEventLog -Property "Services" -Object ([PSCustomObject]@{Name = "Stop service: $Item;"; Value = $Msg; Result = $Result })
     }
+}
+
+function Install-SystemLanguage {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param ($Language)
+
+    Write-Verbose "Start language pack install: $Language"
+    Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Language pack install"; Value = "Start"; Result = 0 })
+    try {
+        $Msg = "Success"; $Result = 0
+        Import-Module -Name "LanguagePackManagement"
+    }
+    catch {
+        $Msg = $_.Exception.Message; $Result = 1
+    }
+    Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Import module LanguagePackManagement"; Value = $Msg; Result = $Result })
+
+    try {
+        $params = @{
+            Language        = $Language
+            CopyToSettings  = $True
+            ExcludeFeatures = $False
+        }
+        Write-Verbose -Message "Install language: $Language."
+        $Msg = "Success"; $Result = 0
+        if ($PSCmdlet.ShouldProcess($Language, "Install-Language")) {
+            Install-Language @params | Out-Null
+        }
+    }
+    catch {
+        $Msg = $_.Exception.Message; $Result = 1
+    }
+    Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language pack: $Language"; Value = $Msg; Result = $Result })
+
+    try {
+        $params = @{
+            Language = $Language
+            PassThru = $False
+        }
+        Write-Verbose -Message "Set system language: $Language."
+        $Msg = "Success"; $Result = 0
+        if ($PSCmdlet.ShouldProcess($Language, "Set-SystemPreferredUILanguage")) {
+            Set-SystemPreferredUILanguage @params
+        }
+    }
+    catch {
+        $Msg = $_.Exception.Message; $Result = 1
+    }
+    Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system language: $Language"; Value = $Msg; Result = $Result })
 }

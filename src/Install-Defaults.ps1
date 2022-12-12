@@ -5,7 +5,7 @@
     Configuration changes to a default install of Windows during provisioning.
 
     .NOTES
-    NAME: Invoke-Scripts.ps1
+    NAME: Invoke-Defaults.ps1
     AUTHOR: Aaron Parker
     TWITTER: @stealthpuppy
 #>
@@ -133,6 +133,7 @@ Write-Verbose -Message "Found: $(($AllConfigs + $ModelConfigs + $BuildConfigs + 
 foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs)) {
 
     # Read the settings JSON
+    Write-Verbose "Running config: $($Config.FullName)"
     $Settings = Get-SettingsContent -Path $Config.FullName @prefs
     Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Config file"; Value = $Config.Name; Result = 0 })
 
@@ -178,9 +179,9 @@ foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConf
             Remove-Feature -Feature $Settings.Features.Disable @prefs
             Remove-Capability -Capability $Settings.Capabilities.Remove @prefs
             Remove-Package -Package $Settings.Packages.Remove @prefs
-            Stop-ServiceName -Service $Settings.Services.Stop @prefs
-            Start-ServiceName -Service $Settings.Services.Start @prefs
-            Restart-ServiceName -Service $Settings.Services.Restart @prefs
+            Stop-NamedService -Service $Settings.Services.Stop @prefs
+            Start-NamedService -Service $Settings.Services.Start @prefs
+            Restart-NamedService -Service $Settings.Services.Restart @prefs
         }
         else {
             Write-Verbose -Message "Skip maximum version config: $($Config.FullName)."
@@ -220,48 +221,7 @@ if ($Platform -eq "Client") {
     }
     else {
         # Set language support by installing the specified language pack
-        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Language pack install"; Value = "Start"; Result = 0 })
-        try {
-            $Msg = "Success"; $Result = 0
-            Import-Module -Name "LanguagePackManagement"
-        }
-        catch {
-            $Msg = $_.Exception.Message; $Result = 1
-        }
-        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Import module LanguagePackManagement"; Value = $Msg; Result = $Result })
-
-        try {
-            $params = @{
-                Language        = $Language
-                CopyToSettings  = $True
-                ExcludeFeatures = $False
-            }
-            Write-Verbose -Message "Install language: $Language."
-            $Msg = "Success"; $Result = 0
-            if ($PSCmdlet.ShouldProcess($Language, "Install-Language")) {
-                Install-Language @params | Out-Null
-            }
-        }
-        catch {
-            $Msg = $_.Exception.Message; $Result = 1
-        }
-        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language pack: $Language"; Value = $Msg; Result = $Result })
-
-        try {
-            $params = @{
-                Language = $Language
-                PassThru = $False
-            }
-            Write-Verbose -Message "Set system language: $Language."
-            $Msg = "Success"; $Result = 0
-            if ($PSCmdlet.ShouldProcess($Language, "Set-SystemPreferredUILanguage")) {
-                Set-SystemPreferredUILanguage @params
-            }
-        }
-        catch {
-            $Msg = $_.Exception.Message; $Result = 1
-        }
-        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system language: $Language"; Value = $Msg; Result = $Result })
+        Install-SystemLanguage -Language $Language
     }
 }
 
