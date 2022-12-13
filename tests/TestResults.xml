@@ -1,130 +1,130 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="35" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2022-12-13" time="00:57:51">
-  <environment clr-version="4.0.30319.42000" user-domain="fv-az206-4" cwd="D:\a\image-customise\image-customise" platform="Microsoft Windows Server 2022 Datacenter|C:\Windows|\Device\Harddisk0\Partition2" machine-name="fv-az206-4" nunit-version="2.5.8.0" os-version="10.0.20348" user="runneradmin" />
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="35" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2022-12-13" time="02:56:27">
+  <environment clr-version="4.0.30319.42000" user-domain="fv-az407-584" cwd="D:\a\image-customise\image-customise" platform="Microsoft Windows Server 2022 Datacenter|C:\Windows|\Device\Harddisk0\Partition2" machine-name="fv-az407-584" nunit-version="2.5.8.0" os-version="10.0.20348" user="runneradmin" />
   <culture-info current-culture="en-US" current-uiculture="en-US" />
-  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="87.2605" asserts="0" description="Pester">
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="110.6626" asserts="0" description="Pester">
     <results>
-      <test-suite type="TestFixture" name="D:\a\image-customise\image-customise\tests\Main.Tests.ps1" executed="True" result="Success" success="True" time="87.2605" asserts="0" description="D:\a\image-customise\image-customise\tests\Main.Tests.ps1">
+      <test-suite type="TestFixture" name="D:\a\image-customise\image-customise\tests\Main.Tests.ps1" executed="True" result="Success" success="True" time="110.6626" asserts="0" description="D:\a\image-customise\image-customise\tests\Main.Tests.ps1">
         <results>
-          <test-suite type="TestFixture" name="General project validation" executed="True" result="Success" success="True" time="2.3191" asserts="0" description="General project validation">
+          <test-suite type="TestFixture" name="General project validation" executed="True" result="Success" success="True" time="1.9224" asserts="0" description="General project validation">
             <results>
-              <test-suite type="TestFixture" name="General project validation.Project should validate OK" executed="True" result="Success" success="True" time="2.1279" asserts="0" description="General project validation.Project should validate OK">
+              <test-suite type="TestFixture" name="General project validation.Project should validate OK" executed="True" result="Success" success="True" time="1.7701" asserts="0" description="General project validation.Project should validate OK">
                 <results>
-                  <test-suite type="ParameterizedTest" name="General project validation.Project should validate OK.Script &lt;file.Name&gt; should exist" executed="True" result="Success" success="True" time="1.1818" asserts="0" description="Script &lt;file.Name&gt; should exist">
+                  <test-suite type="ParameterizedTest" name="General project validation.Project should validate OK.Script &lt;file.Name&gt; should exist" executed="True" result="Success" success="True" time="0.9855" asserts="0" description="Script &lt;file.Name&gt; should exist">
                     <results>
-                      <test-case description="Script Install-Defaults.ps1 should exist" name="General project validation.Project should validate OK.Script Install-Defaults.ps1 should exist" time="1.1488" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Install-Defaults.psm1 should exist" name="General project validation.Project should validate OK.Script Install-Defaults.psm1 should exist" time="0.0075" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Remove-AppxApps.ps1 should exist" name="General project validation.Project should validate OK.Script Remove-AppxApps.ps1 should exist" time="0.0195" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Remove-Defaults.ps1 should exist" name="General project validation.Project should validate OK.Script Remove-Defaults.ps1 should exist" time="0.006" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Install-Defaults.ps1 should exist" name="General project validation.Project should validate OK.Script Install-Defaults.ps1 should exist" time="0.973" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Install-Defaults.psm1 should exist" name="General project validation.Project should validate OK.Script Install-Defaults.psm1 should exist" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Remove-AppxApps.ps1 should exist" name="General project validation.Project should validate OK.Script Remove-AppxApps.ps1 should exist" time="0.0041" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Remove-Defaults.ps1 should exist" name="General project validation.Project should validate OK.Script Remove-Defaults.ps1 should exist" time="0.0039" asserts="0" success="True" result="Success" executed="True" />
                     </results>
                   </test-suite>
-                  <test-suite type="ParameterizedTest" name="General project validation.Project should validate OK.Script &lt;file.Name&gt; should be valid PowerShell" executed="True" result="Success" success="True" time="0.3715" asserts="0" description="Script &lt;file.Name&gt; should be valid PowerShell">
+                  <test-suite type="ParameterizedTest" name="General project validation.Project should validate OK.Script &lt;file.Name&gt; should be valid PowerShell" executed="True" result="Success" success="True" time="0.3115" asserts="0" description="Script &lt;file.Name&gt; should be valid PowerShell">
                     <results>
-                      <test-case description="Script Install-Defaults.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Install-Defaults.ps1 should be valid PowerShell" time="0.3341" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Install-Defaults.psm1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Install-Defaults.psm1 should be valid PowerShell" time="0.0157" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Remove-AppxApps.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Remove-AppxApps.ps1 should be valid PowerShell" time="0.0107" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Remove-Defaults.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Remove-Defaults.ps1 should be valid PowerShell" time="0.0111" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Install-Defaults.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Install-Defaults.ps1 should be valid PowerShell" time="0.2804" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Install-Defaults.psm1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Install-Defaults.psm1 should be valid PowerShell" time="0.0119" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Remove-AppxApps.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Remove-AppxApps.ps1 should be valid PowerShell" time="0.0104" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Remove-Defaults.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Remove-Defaults.ps1 should be valid PowerShell" time="0.0088" asserts="0" success="True" result="Success" executed="True" />
                     </results>
                   </test-suite>
                 </results>
               </test-suite>
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="General project validation" executed="True" result="Success" success="True" time="2.4162" asserts="0" description="General project validation">
+          <test-suite type="TestFixture" name="General project validation" executed="True" result="Success" success="True" time="2.0841" asserts="0" description="General project validation">
             <results>
-              <test-suite type="TestFixture" name="General project validation.Project should validate OK" executed="True" result="Success" success="True" time="0.0886" asserts="0" description="General project validation.Project should validate OK">
+              <test-suite type="TestFixture" name="General project validation.Project should validate OK" executed="True" result="Success" success="True" time="0.1561" asserts="0" description="General project validation.Project should validate OK">
                 <results>
-                  <test-suite type="ParameterizedTest" name="General project validation.Project should validate OK.Script &lt;file.Name&gt; should exist" executed="True" result="Success" success="True" time="0.025" asserts="0" description="Script &lt;file.Name&gt; should exist">
+                  <test-suite type="ParameterizedTest" name="General project validation.Project should validate OK.Script &lt;file.Name&gt; should exist" executed="True" result="Success" success="True" time="0.018" asserts="0" description="Script &lt;file.Name&gt; should exist">
                     <results>
-                      <test-case description="Script Install-Defaults.ps1 should exist" name="General project validation.Project should validate OK.Script Install-Defaults.ps1 should exist" time="0.0063" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Install-Defaults.psm1 should exist" name="General project validation.Project should validate OK.Script Install-Defaults.psm1 should exist" time="0.0066" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Remove-AppxApps.ps1 should exist" name="General project validation.Project should validate OK.Script Remove-AppxApps.ps1 should exist" time="0.006" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Remove-Defaults.ps1 should exist" name="General project validation.Project should validate OK.Script Remove-Defaults.ps1 should exist" time="0.0061" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Install-Defaults.ps1 should exist" name="General project validation.Project should validate OK.Script Install-Defaults.ps1 should exist" time="0.0041" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Install-Defaults.psm1 should exist" name="General project validation.Project should validate OK.Script Install-Defaults.psm1 should exist" time="0.005" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Remove-AppxApps.ps1 should exist" name="General project validation.Project should validate OK.Script Remove-AppxApps.ps1 should exist" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Remove-Defaults.ps1 should exist" name="General project validation.Project should validate OK.Script Remove-Defaults.ps1 should exist" time="0.0043" asserts="0" success="True" result="Success" executed="True" />
                     </results>
                   </test-suite>
-                  <test-suite type="ParameterizedTest" name="General project validation.Project should validate OK.Script &lt;file.Name&gt; should be valid PowerShell" executed="True" result="Success" success="True" time="0.0546" asserts="0" description="Script &lt;file.Name&gt; should be valid PowerShell">
+                  <test-suite type="ParameterizedTest" name="General project validation.Project should validate OK.Script &lt;file.Name&gt; should be valid PowerShell" executed="True" result="Success" success="True" time="0.0365" asserts="0" description="Script &lt;file.Name&gt; should be valid PowerShell">
                     <results>
-                      <test-case description="Script Install-Defaults.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Install-Defaults.ps1 should be valid PowerShell" time="0.0109" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Install-Defaults.psm1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Install-Defaults.psm1 should be valid PowerShell" time="0.0156" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Remove-AppxApps.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Remove-AppxApps.ps1 should be valid PowerShell" time="0.0102" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Remove-Defaults.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Remove-Defaults.ps1 should be valid PowerShell" time="0.0178" asserts="0" success="True" result="Success" executed="True" />
-                    </results>
-                  </test-suite>
-                </results>
-              </test-suite>
-            </results>
-          </test-suite>
-          <test-suite type="TestFixture" name="General project validation" executed="True" result="Success" success="True" time="2.5505" asserts="0" description="General project validation">
-            <results>
-              <test-suite type="TestFixture" name="General project validation.Project should validate OK" executed="True" result="Success" success="True" time="0.1266" asserts="0" description="General project validation.Project should validate OK">
-                <results>
-                  <test-suite type="ParameterizedTest" name="General project validation.Project should validate OK.Script &lt;file.Name&gt; should exist" executed="True" result="Success" success="True" time="0.0259" asserts="0" description="Script &lt;file.Name&gt; should exist">
-                    <results>
-                      <test-case description="Script Install-Defaults.ps1 should exist" name="General project validation.Project should validate OK.Script Install-Defaults.ps1 should exist" time="0.0062" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Install-Defaults.psm1 should exist" name="General project validation.Project should validate OK.Script Install-Defaults.psm1 should exist" time="0.006" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Remove-AppxApps.ps1 should exist" name="General project validation.Project should validate OK.Script Remove-AppxApps.ps1 should exist" time="0.006" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Remove-Defaults.ps1 should exist" name="General project validation.Project should validate OK.Script Remove-Defaults.ps1 should exist" time="0.0077" asserts="0" success="True" result="Success" executed="True" />
-                    </results>
-                  </test-suite>
-                  <test-suite type="ParameterizedTest" name="General project validation.Project should validate OK.Script &lt;file.Name&gt; should be valid PowerShell" executed="True" result="Success" success="True" time="0.092" asserts="0" description="Script &lt;file.Name&gt; should be valid PowerShell">
-                    <results>
-                      <test-case description="Script Install-Defaults.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Install-Defaults.ps1 should be valid PowerShell" time="0.0104" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Install-Defaults.psm1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Install-Defaults.psm1 should be valid PowerShell" time="0.0153" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Remove-AppxApps.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Remove-AppxApps.ps1 should be valid PowerShell" time="0.0578" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Remove-Defaults.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Remove-Defaults.ps1 should be valid PowerShell" time="0.0084" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Install-Defaults.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Install-Defaults.ps1 should be valid PowerShell" time="0.009" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Install-Defaults.psm1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Install-Defaults.psm1 should be valid PowerShell" time="0.0134" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Remove-AppxApps.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Remove-AppxApps.ps1 should be valid PowerShell" time="0.0085" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Remove-Defaults.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Remove-Defaults.ps1 should be valid PowerShell" time="0.0056" asserts="0" success="True" result="Success" executed="True" />
                     </results>
                   </test-suite>
                 </results>
               </test-suite>
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="General project validation" executed="True" result="Success" success="True" time="2.6571" asserts="0" description="General project validation">
+          <test-suite type="TestFixture" name="General project validation" executed="True" result="Success" success="True" time="2.1569" asserts="0" description="General project validation">
             <results>
-              <test-suite type="TestFixture" name="General project validation.Project should validate OK" executed="True" result="Success" success="True" time="0.0976" asserts="0" description="General project validation.Project should validate OK">
+              <test-suite type="TestFixture" name="General project validation.Project should validate OK" executed="True" result="Success" success="True" time="0.0676" asserts="0" description="General project validation.Project should validate OK">
                 <results>
-                  <test-suite type="ParameterizedTest" name="General project validation.Project should validate OK.Script &lt;file.Name&gt; should exist" executed="True" result="Success" success="True" time="0.0235" asserts="0" description="Script &lt;file.Name&gt; should exist">
+                  <test-suite type="ParameterizedTest" name="General project validation.Project should validate OK.Script &lt;file.Name&gt; should exist" executed="True" result="Success" success="True" time="0.0168" asserts="0" description="Script &lt;file.Name&gt; should exist">
                     <results>
-                      <test-case description="Script Install-Defaults.ps1 should exist" name="General project validation.Project should validate OK.Script Install-Defaults.ps1 should exist" time="0.0063" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Install-Defaults.psm1 should exist" name="General project validation.Project should validate OK.Script Install-Defaults.psm1 should exist" time="0.0057" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Remove-AppxApps.ps1 should exist" name="General project validation.Project should validate OK.Script Remove-AppxApps.ps1 should exist" time="0.0058" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Remove-Defaults.ps1 should exist" name="General project validation.Project should validate OK.Script Remove-Defaults.ps1 should exist" time="0.0056" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Install-Defaults.ps1 should exist" name="General project validation.Project should validate OK.Script Install-Defaults.ps1 should exist" time="0.0043" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Install-Defaults.psm1 should exist" name="General project validation.Project should validate OK.Script Install-Defaults.psm1 should exist" time="0.0043" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Remove-AppxApps.ps1 should exist" name="General project validation.Project should validate OK.Script Remove-AppxApps.ps1 should exist" time="0.0041" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Remove-Defaults.ps1 should exist" name="General project validation.Project should validate OK.Script Remove-Defaults.ps1 should exist" time="0.0041" asserts="0" success="True" result="Success" executed="True" />
                     </results>
                   </test-suite>
-                  <test-suite type="ParameterizedTest" name="General project validation.Project should validate OK.Script &lt;file.Name&gt; should be valid PowerShell" executed="True" result="Success" success="True" time="0.0454" asserts="0" description="Script &lt;file.Name&gt; should be valid PowerShell">
+                  <test-suite type="ParameterizedTest" name="General project validation.Project should validate OK.Script &lt;file.Name&gt; should be valid PowerShell" executed="True" result="Success" success="True" time="0.0448" asserts="0" description="Script &lt;file.Name&gt; should be valid PowerShell">
                     <results>
-                      <test-case description="Script Install-Defaults.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Install-Defaults.ps1 should be valid PowerShell" time="0.0107" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Install-Defaults.psm1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Install-Defaults.psm1 should be valid PowerShell" time="0.0159" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Remove-AppxApps.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Remove-AppxApps.ps1 should be valid PowerShell" time="0.0103" asserts="0" success="True" result="Success" executed="True" />
-                      <test-case description="Script Remove-Defaults.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Remove-Defaults.ps1 should be valid PowerShell" time="0.0085" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Install-Defaults.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Install-Defaults.ps1 should be valid PowerShell" time="0.019" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Install-Defaults.psm1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Install-Defaults.psm1 should be valid PowerShell" time="0.0114" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Remove-AppxApps.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Remove-AppxApps.ps1 should be valid PowerShell" time="0.009" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Remove-Defaults.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Remove-Defaults.ps1 should be valid PowerShell" time="0.0055" asserts="0" success="True" result="Success" executed="True" />
                     </results>
                   </test-suite>
                 </results>
               </test-suite>
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Validate module file" executed="True" result="Success" success="True" time="2.8159" asserts="0" description="Validate module file">
+          <test-suite type="TestFixture" name="General project validation" executed="True" result="Success" success="True" time="2.2636" asserts="0" description="General project validation">
             <results>
-              <test-suite type="TestFixture" name="Validate module file.Module should validate OK" executed="True" result="Success" success="True" time="0.1455" asserts="0" description="Validate module file.Module should validate OK">
+              <test-suite type="TestFixture" name="General project validation.Project should validate OK" executed="True" result="Success" success="True" time="0.1018" asserts="0" description="General project validation.Project should validate OK">
                 <results>
-                  <test-case description="Should import OK" name="Validate module file.Module should validate OK.Should import OK" time="0.1379" asserts="0" success="True" result="Success" executed="True" />
+                  <test-suite type="ParameterizedTest" name="General project validation.Project should validate OK.Script &lt;file.Name&gt; should exist" executed="True" result="Success" success="True" time="0.0151" asserts="0" description="Script &lt;file.Name&gt; should exist">
+                    <results>
+                      <test-case description="Script Install-Defaults.ps1 should exist" name="General project validation.Project should validate OK.Script Install-Defaults.ps1 should exist" time="0.0039" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Install-Defaults.psm1 should exist" name="General project validation.Project should validate OK.Script Install-Defaults.psm1 should exist" time="0.0038" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Remove-AppxApps.ps1 should exist" name="General project validation.Project should validate OK.Script Remove-AppxApps.ps1 should exist" time="0.0037" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Remove-Defaults.ps1 should exist" name="General project validation.Project should validate OK.Script Remove-Defaults.ps1 should exist" time="0.0038" asserts="0" success="True" result="Success" executed="True" />
+                    </results>
+                  </test-suite>
+                  <test-suite type="ParameterizedTest" name="General project validation.Project should validate OK.Script &lt;file.Name&gt; should be valid PowerShell" executed="True" result="Success" success="True" time="0.081" asserts="0" description="Script &lt;file.Name&gt; should be valid PowerShell">
+                    <results>
+                      <test-case description="Script Install-Defaults.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Install-Defaults.ps1 should be valid PowerShell" time="0.0073" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Install-Defaults.psm1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Install-Defaults.psm1 should be valid PowerShell" time="0.0609" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Remove-AppxApps.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Remove-AppxApps.ps1 should be valid PowerShell" time="0.0073" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="Script Remove-Defaults.ps1 should be valid PowerShell" name="General project validation.Project should validate OK.Script Remove-Defaults.ps1 should be valid PowerShell" time="0.0055" asserts="0" success="True" result="Success" executed="True" />
+                    </results>
+                  </test-suite>
                 </results>
               </test-suite>
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Script execution validation" executed="True" result="Success" success="True" time="83.6047" asserts="0" description="Script execution validation">
+          <test-suite type="TestFixture" name="Validate module file" executed="True" result="Success" success="True" time="2.3994" asserts="0" description="Validate module file">
             <results>
-              <test-suite type="TestFixture" name="Script execution validation.Validate Install-Defaults.ps1." executed="True" result="Success" success="True" time="80.7769" asserts="0" description="Script execution validation.Validate Install-Defaults.ps1.">
+              <test-suite type="TestFixture" name="Validate module file.Module should validate OK" executed="True" result="Success" success="True" time="0.127" asserts="0" description="Validate module file.Module should validate OK">
                 <results>
-                  <test-case description="Install-Defaults.ps1 should execute OK" name="Script execution validation.Validate Install-Defaults.ps1..Install-Defaults.ps1 should execute OK" time="80.7662" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should import OK" name="Validate module file.Module should validate OK.Should import OK" time="0.121" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Feature update script copy works" executed="True" result="Success" success="True" time="83.6873" asserts="0" description="Feature update script copy works">
+          <test-suite type="TestFixture" name="Script execution validation" executed="True" result="Success" success="True" time="107.5344" asserts="0" description="Script execution validation">
             <results>
-              <test-suite type="TestFixture" name="Feature update script copy works.Target directory exists" executed="True" result="Success" success="True" time="0.0733" asserts="0" description="Feature update script copy works.Target directory exists">
+              <test-suite type="TestFixture" name="Script execution validation.Validate Install-Defaults.ps1." executed="True" result="Success" success="True" time="105.1265" asserts="0" description="Script execution validation.Validate Install-Defaults.ps1.">
                 <results>
-                  <test-case description="FeatureUpdates should exist" name="Feature update script copy works.Target directory exists.FeatureUpdates should exist" time="0.0659" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Install-Defaults.ps1 should execute OK" name="Script execution validation.Validate Install-Defaults.ps1..Install-Defaults.ps1 should execute OK" time="105.1182" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Feature update script copy works" executed="True" result="Success" success="True" time="107.6002" asserts="0" description="Feature update script copy works">
+            <results>
+              <test-suite type="TestFixture" name="Feature update script copy works.Target directory exists" executed="True" result="Success" success="True" time="0.0589" asserts="0" description="Feature update script copy works.Target directory exists">
+                <results>
+                  <test-case description="FeatureUpdates should exist" name="Feature update script copy works.Target directory exists.FeatureUpdates should exist" time="0.0537" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
             </results>
