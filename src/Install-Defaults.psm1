@@ -557,7 +557,7 @@ function Start-NamedService {
         try {
             $Msg = "Success"; $Result = 0
             if ($PSCmdlet.ShouldProcess($Item, "Start-Service")) {
-                Get-Service -Name $Item -ErrorAction "Ignore" | Start-Service -Force
+                Get-Service -Name $Item -ErrorAction "Ignore" | Start-Service
             }
         }
         catch {
