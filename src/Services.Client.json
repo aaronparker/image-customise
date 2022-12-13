@@ -1,12 +1,23 @@
 {
     "MinimumBuild": "10.0.14393",
     "MaximumBuild": "10.0.99999",
+    "Registry": {
+        "Type": "Direct",
+        "Set": [
+            {
+                "path": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\tzautoupdate",
+                "name": "Start",
+                "value": 3,
+                "type": "DWord",
+                "note": "Enable Set time zone automatically"
+            }
+        ]
+    },
     "Services": {
-        "Restart": [
-            "tzautoupdate",
-            "W32Time"
-        ],
+        "Restart": [],
         "Stop": [],
-        "Start": []
+        "Start": [
+            "tzautoupdate"
+        ]
     }
 }

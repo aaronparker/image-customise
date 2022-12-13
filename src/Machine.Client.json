@@ -10,20 +10,6 @@
                 "value": 1,
                 "type": "DWord",
                 "note": "Prevents the Microsoft Edge short added to the public desktop"
-            },
-            {
-                "path": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\tzautoupdate",
-                "name": "Start",
-                "value": 3,
-                "type": "DWord",
-                "note": "Enable Set time zone automatically"
-            },
-            {
-                "path": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\W32Time\\Parameters",
-                "name": "Type",
-                "value": "NTP",
-                "type": "String",
-                "note": "Sets the default authoritative time service. This is the default value"
             }
         ]
     },
