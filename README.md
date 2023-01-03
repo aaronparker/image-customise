@@ -6,4 +6,4 @@ Designed for use with deploying physical PCs and virtual desktop gold images, th
 
 Documentation on how to use and implement these scripts is found here: [Windows Customised Defaults](https://stealthpuppy.com/image-customise/).
 
-![Build status](https://github.com/aaronparker/image-customise/actions/workflows/validate-scripts.yml/badge.svg) [![Twitter Follow](https://img.shields.io/twitter/follow/stealthpuppy?logo=twitter&style=flat-square)](https://twitter.com/stealthpuppy?ref_src=twsrc%5Etfw)
+![Build status](https://github.com/aaronparker/image-customise/actions/workflows/validate-scripts.yml/badge.svg) [![codecov](https://codecov.io/gh/aaronparker/image-customise/branch/main/graph/badge.svg?token=PINVKVG70I)](https://codecov.io/gh/aaronparker/image-customise) [![Twitter Follow](https://img.shields.io/twitter/follow/stealthpuppy?logo=twitter&style=flat-square)](https://twitter.com/stealthpuppy?ref_src=twsrc%5Etfw)
