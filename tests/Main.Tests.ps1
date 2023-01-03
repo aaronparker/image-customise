@@ -59,7 +59,7 @@ Describe "Validate module file" {
 }
 
 # Per script tests
-Describe "Script execution validation" -Tag "Windows" {
+Describe "Install script execution validation" -Tag "Windows" {
     BeforeAll {
         $Script = Get-ChildItem -Path $PWD -Include "Install-Defaults.ps1" -Recurse
     }
@@ -68,8 +68,7 @@ Describe "Script execution validation" -Tag "Windows" {
         It "<script.Name> should execute OK" {
             Push-Location -Path $ProjectRoot
             Write-Host "Running script: $($Script.FullName)."
-            $Result = . $Script.FullName -Path $ProjectRoot -Verbose
-            $Result | Should -Be 0
+            & $Script.FullName -Path $ProjectRoot | Should -Be 0
             Pop-Location
         }
     }
@@ -91,6 +90,36 @@ Describe "Feature update script copy works" {
     Context "Each script should exist" -ForEach $Files {
         It "$_ should exist" {
             Test-Path -Path $_ | Should -BeTrue
+        }
+    }
+}
+
+Describe "Remove-AppxApps script execution validation" -Tag "Windows" {
+    BeforeAll {
+        $Script = Get-ChildItem -Path $PWD -Include "Remove-AppxApps.ps1" -Recurse
+    }
+
+    Context "Validate <script.Name>." {
+        It "<script.Name> should execute OK" {
+            Push-Location -Path $ProjectRoot
+            Write-Host "Running script: $($Script.FullName)."
+            & $Script.FullName | Should -Be 0
+            Pop-Location
+        }
+    }
+}
+
+Describe "Uninstall script execution validation" -Tag "Windows" {
+    BeforeAll {
+        $Script = Get-ChildItem -Path $PWD -Include "Remove-Defaults.ps1" -Recurse
+    }
+
+    Context "Validate <script.Name>." {
+        It "<script.Name> should execute OK" {
+            Push-Location -Path $ProjectRoot
+            Write-Host "Running script: $($Script.FullName)."
+            & $Script.FullName -Path $ProjectRoot | Should -Be 0
+            Pop-Location
         }
     }
 }

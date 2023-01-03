@@ -1,10 +1,8 @@
 name: "Validate project"
 
-# Environment variables
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-# Controls when the action will run. 
 on:
   push:
     branches:
@@ -13,18 +11,14 @@ on:
       - 'src/**'
       - 'tests/*.ps1'
       - '!src/VERSION.txt'
-
-  # Allows you to run this workflow manually from the Actions tab
+      - '.github/workflows/validate-scripts.yml'
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   validate:
     runs-on: windows-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
         with:
           ref: main
@@ -54,14 +48,18 @@ jobs:
         shell: powershell
         working-directory: "${{ github.workspace }}"
         run: |
-          Import-Module -Name "Pester" -Force
+          Import-Module -Name "Pester" -Force -ErrorAction "Stop"
+
           $Config = [PesterConfiguration]::Default
-          $Config.Run.Path = ".\tests"
-          $Config.Run.PassThru = $true
-          $Config.CodeCoverage.Enabled = $false
-          $Config.TestResult.Enabled = $true
+          $Config.Run.Path = "$env:GITHUB_WORKSPACE\tests"
+          $Config.Run.PassThru = $True
+          $Config.CodeCoverage.Enabled = $True
+          $Config.CodeCoverage.Path = "$env:GITHUB_WORKSPACE\src"
+          $Config.CodeCoverage.OutputFormat = "JaCoCo"
+          $Config.CodeCoverage.OutputPath = "$env:GITHUB_WORKSPACE\CodeCoverage.xml"
+          $Config.TestResult.Enabled = $True
           $Config.TestResult.OutputFormat = "NUnitXml"
-          $Config.TestResult.OutputPath = ".\tests\TestResults.xml"
+          $Config.TestResult.OutputPath = "$env:GITHUB_WORKSPACE\tests\TestResults.xml"
           Invoke-Pester -Configuration $Config
 
       - name: Get version
@@ -106,3 +104,12 @@ jobs:
         if: always()
         with:
           nunit_files: "${{ github.workspace }}\\tests\\TestResults.xml"
+
+      - name: Upload to Codecov
+        id: codecov
+        if: always()
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./CodeCoverage.xml
+          verbose: true
