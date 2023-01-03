@@ -10,24 +10,22 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $False)]
-    [System.String] $Guid = "f38de27b-799e-4c30-8a01-bfdedc622944"
+    [System.String] $Guid = "f38de27b-799e-4c30-8a01-bfdedc622944",
+
+    [Parameter(Mandatory = $False)]
+    [System.String] $FeatureUpdatePath = "$env:SystemRoot\System32\Update\Run\$Guid"
 )
 try {
     $RegPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{$Guid}"
-    if (Test-Path -Path $RegPath -ErrorAction "SilentlyContinue") {
-        Remove-Item -Path $RegPath -Force -ErrorAction "SilentlyContinue"
+    if (Test-Path -Path $RegPath) {
+        Remove-Item -Path $RegPath -Force -ErrorAction "Continue"
     }
 
-    $FilePath = @("$Env:SystemRoot\Setup\Scripts\Install-Defaults.ps1",
-        "$Env:SystemRoot\Setup\Scripts\Install-Defaults.psm1",
-        "$Env:SystemRoot\Setup\Scripts\Remove-AppxApps.ps1",
-        "$Env:SystemRoot\Setup\Scripts\*.json")
-    foreach ($File in $FilePath) {
-        Remove-Item -Path $File -Force -ErrorAction "SilentlyContinue"
+    if (Test-Path -Path $FeatureUpdatePath) {
+        Remove-Item -Path $FeatureUpdatePath -Recurse -Force -ErrorAction "Continue"
     }
 }
 catch {
     throw $_
-    exit 1
 }
-exit 0
+return 0
