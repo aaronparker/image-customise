@@ -38,6 +38,8 @@ Thumbs.db:encryptable
 
 # Exclude the releases folder
 releases/**
+CodeCoverage.xml
+TestResults.xml
 
 # mkdocs folders
 site
