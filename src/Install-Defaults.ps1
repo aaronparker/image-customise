@@ -94,7 +94,7 @@ Write-Verbose -Message "Execution path: $WorkingPath."
 New-ScriptEventLog -EventLog $Project -Property $Properties
 
 # Start logging
-$PSProcesses = Get-CimInstance -ClassName "Win32_Process" -Include "Name = 'powershell.exe'" | Select-Object -Property "CommandLine"
+$PSProcesses = Get-CimInstance -ClassName "Win32_Process" -Filter "Name = 'powershell.exe'" | Select-Object -Property "CommandLine"
 foreach ($Process in $PSProcesses) {
     $Object = [PSCustomObject]@{Name = "CommandLine"; Value = $Process.CommandLine; Result = 0 }
     Write-ToEventLog -Property "General" -Object $Object
