@@ -214,7 +214,7 @@ begin {
             # Select unique packages
             $uniquePackagesAllUsers = $packagesAllUsers.PackageFamilyName | Sort-Object -Unique
 
-            if ($Null -ne $uniquePackagesAllUsers) {
+            if ($null -ne $uniquePackagesAllUsers) {
                 # Filter out the AllowListed apps
                 Write-Verbose -Message "Filtering AllowListed apps."
                 $packagesWithoutAllowList = Compare-Object -ReferenceObject $uniquePackagesAllUsers -DifferenceObject $PackageFamilyNameAllowList -PassThru
@@ -223,7 +223,7 @@ begin {
                 $packagesToRemove = Edit-ProtectedApp -PackageList $packagesWithoutAllowList
             }
             else {
-                $packagesToRemove = $Null
+                $packagesToRemove = $null
             }
         }
     }

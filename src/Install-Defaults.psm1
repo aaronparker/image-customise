@@ -237,7 +237,7 @@ function Set-Registry {
                 ErrorAction = "Continue"
             }
             if ($PSCmdlet.ShouldProcess("$($Item.path), $($Item.name), $($Item.value)", "Set-ItemProperty")) {
-                Set-ItemProperty @params > $Null
+                Set-ItemProperty @params > $null
             }
             $Msg = "SetValue"; $Result = 0
         }
@@ -269,7 +269,7 @@ function Set-DefaultUserProfile {
                 ErrorAction  = "Continue"
             }
             if ($PSCmdlet.ShouldProcess("reg load $RegPath $RegDefaultUser", "Start-Process")) {
-                $result = Start-Process @params > $Null
+                $result = Start-Process @params > $null
             }
         }
         catch {
@@ -300,7 +300,7 @@ function Set-DefaultUserProfile {
                 }
                 finally {
                     Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = $Item.path; Value = $Msg; Result = $Result })
-                    if ($Null -ne $ItemResult) {
+                    if ($null -ne $ItemResult) {
                         if ("Handle" -in ($ItemResult | Get-Member -ErrorAction "SilentlyContinue" | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
                     }
                 }
@@ -316,7 +316,7 @@ function Set-DefaultUserProfile {
                     ErrorAction = "Continue"
                 }
                 if ($PSCmdlet.ShouldProcess("$RegPath, $($Item.name), $($Item.value)", "Set-ItemProperty")) {
-                    Set-ItemProperty @params > $Null
+                    Set-ItemProperty @params > $null
                 }
                 $Msg = "SetValue"; $Result = 0
             }
@@ -343,7 +343,7 @@ function Set-DefaultUserProfile {
                 ErrorAction  = "Continue"
             }
             if ($PSCmdlet.ShouldProcess("reg unload $($DefaultUserPath -replace ':', '')", "Start-Process")) {
-                Start-Process @params > $Null
+                Start-Process @params > $null
             }
             $Msg = "Success"; $Result = 0
         }
@@ -402,7 +402,7 @@ function New-Directory {
                 ErrorAction = "Continue"
             }
             if ($PSCmdlet.ShouldProcess($Path, "New-Item")) {
-                New-Item @params > $Null
+                New-Item @params > $null
             }
             $Msg = "CreatePath"; $Result = 0
         }

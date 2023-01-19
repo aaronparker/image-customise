@@ -20,17 +20,17 @@ else {
 #region Setup package paths
 $PackagePath = Join-Path -Path $ProjectRoot -ChildPath "src"
 Write-Verbose -Message "Package path: $PackagePath."
-if (!(Test-Path -Path $PackagePath)) { New-Item -Path $PackagePath -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $Null }
+if (!(Test-Path -Path $PackagePath)) { New-Item -Path $PackagePath -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $null }
 
 $PackageOutput = $(Join-Path -Path $ProjectRoot -ChildPath "releases")
 Write-Verbose -Message "Output path: $PackageOutput."
-if (!(Test-Path -Path $PackageOutput)) { New-Item -Path $PackageOutput -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $Null }
+if (!(Test-Path -Path $PackageOutput)) { New-Item -Path $PackageOutput -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $null }
 #endregion
 
 #region Package the app
 try {
     # Download the Intune Win32 wrapper
-    if (!(Test-Path -Path $Path)) { New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $Null }
+    if (!(Test-Path -Path $Path)) { New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $null }
     $Win32Wrapper = "https://raw.githubusercontent.com/microsoft/Microsoft-Win32-Content-Prep-Tool/master/IntuneWinAppUtil.exe"
     $wrapperBin = Join-Path -Path $Path -ChildPath $(Split-Path -Path $Win32Wrapper -Leaf)
     $params = @{

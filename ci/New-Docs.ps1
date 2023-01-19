@@ -5,12 +5,12 @@ $markdown += "`n"
 foreach ($file in (Get-ChildItem -Path "*.json" -Recurse)) {
 
     $json = Get-Content -Path $file.FullName | ConvertFrom-Json
-    if ($Null -ne $json.Registry.Set) {
+    if ($null -ne $json.Registry.Set) {
         $markdown += New-MDHeader -Text $file.Name -Level 2
         $markdown += "`n"
         $markdown += "Minimum build: $($json.MinimumBuild)`n`n"
         $markdown += "Maximum build: $($json.MaximumBuild)`n`n"
-        if ($Null -ne $json.Registry.Type) {
+        if ($null -ne $json.Registry.Type) {
             $markdown += "Type: $($json.Registry.Type)`n"
         }
         $markdown += "`n"

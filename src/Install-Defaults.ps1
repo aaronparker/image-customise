@@ -199,9 +199,9 @@ foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConf
 if ($Platform -eq "Client") {
 
     # Run the script to remove AppX/UWP apps; Get the script location
-    $Script = Get-ChildItem -Path $WorkingPath -Filter "Remove-AppxApps.ps1" -Recurse -ErrorAction "Continue"
-    if ($Null -eq $Script) {
-        $Object = [PSCustomObject]@{Name = "Remove-AppxApps.ps1"; Value = "Script not found"; Result = 1 }
+    $Script = Get-ChildItem -Path $WorkingPath -Include "Remove-AppxApps.ps1" -Recurse -ErrorAction "Continue"
+    if ($null -eq $Script) {
+        $Object = [PSCustomObject]@{Name = "$WorkingPath\Remove-AppxApps.ps1"; Value = "Script not found"; Result = 1 }
         Write-ToEventLog -Property "AppX" -Object $Object
     }
     else {

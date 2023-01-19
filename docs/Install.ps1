@@ -11,7 +11,7 @@ $params = @{
     Uri                = $Uri
 }
 $release = Invoke-RestMethod @params
-If ($Null -ne $release) {
+If ($null -ne $release) {
     ForEach ($item in $release) {
         ForEach ($asset in $item.assets) {
             If ($asset.browser_download_url -match $Filter) {
@@ -20,7 +20,7 @@ If ($Null -ne $release) {
         }
     }
     $TmpDir = $([System.IO.Path]::Combine($Env:Temp, $(New-Guid)))
-    New-Item -Path $TmpDir -ItemType "Directory" > $Null
+    New-Item -Path $TmpDir -ItemType "Directory" > $null
     $OutFile = $([System.IO.Path]::Combine($TmpDir, $(Split-Path -Path $Uri -Leaf)))
     Invoke-WebRequest -Uri $Uri -OutFile $OutFile -UseBasicParsing
     If (Test-Path -Path $OutFile -ErrorAction "SilentlyContinue") {
