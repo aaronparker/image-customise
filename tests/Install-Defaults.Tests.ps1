@@ -14,7 +14,7 @@ BeforeDiscovery {
     }
     else {
         # Local Testing
-        $Parent = ((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName
+        $Parent = ((Get-Item -Path $(Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName
         $ProjectRoot = $([System.IO.Path]::Combine($Parent, "src"))
     }
 }

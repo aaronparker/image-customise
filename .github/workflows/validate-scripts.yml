@@ -68,6 +68,30 @@ jobs:
           $Config.TestResult.OutputPath = "$env:GITHUB_WORKSPACE\tests\TestResults.xml"
           Invoke-Pester -Configuration $Config
 
+      # Upload test results
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results
+          path: "${{ github.workspace }}\\tests\\TestResults.xml"
+
+      # Publish test results
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        if: always()
+        with:
+          nunit_files: "${{ github.workspace }}\\tests\\TestResults.xml"
+
+      - name: Upload to Codecov
+        id: codecov
+        if: always()
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./CodeCoverage.xml
+          verbose: true
+
       - name: Get version
         id: get-version
         shell: powershell
@@ -105,27 +129,3 @@ jobs:
           commit_message: "${{ steps.get-version.outputs.version }}"
           commit_user_name: ${{ secrets.COMMIT_NAME }}
           commit_user_email: ${{ secrets.COMMIT_EMAIL }}
-
-      # Upload test results
-      - name: Upload test results
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: test-results
-          path: "${{ github.workspace }}\\tests\\TestResults.xml"
-
-      # Publish test results
-      - name: Publish test results
-        uses: EnricoMi/publish-unit-test-result-action/composite@v2
-        if: always()
-        with:
-          nunit_files: "${{ github.workspace }}\\tests\\TestResults.xml"
-
-      - name: Upload to Codecov
-        id: codecov
-        if: always()
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./CodeCoverage.xml
-          verbose: true

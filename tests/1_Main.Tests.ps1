@@ -14,7 +14,7 @@ BeforeDiscovery {
     }
     else {
         # Local Testing
-        $Parent = ((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName
+        $Parent = ((Get-Item -Path $(Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName
         $ProjectRoot = $([System.IO.Path]::Combine($Parent, "src"))
     }
 
@@ -24,20 +24,18 @@ BeforeDiscovery {
 }
 
 # All scripts validation
-Describe "General project validation" -ForEach $Scripts {
-    BeforeAll {
-        # Renaming the automatic $_ variable to $application to make it easier to work with
-        $File = $_
-    }
+Describe "General project validation" {
+    Context "Script should validate OK: <File.Name>" -ForEach $TestCases {
+        BeforeAll {
+            # Renaming the automatic $_ variable to $application to make it easier to work with
+            $File = $_
+        }
 
-    Context "Script should validate OK: <File.Name>" {
-        It "Script should exist" {
-            param ($File)
+        It "Script should exist: <File.Name>" {
             $File.FullName | Should -Exist
         }
 
-        It "Script should be valid PowerShell" {
-            param ($File)
+        It "Script should be valid PowerShell: <File.Name>" {
             $contents = Get-Content -Path $File.FullName -ErrorAction "Stop"
             $errors = $null
             $null = [System.Management.Automation.PSParser]::Tokenize($contents, [ref]$errors)
@@ -53,12 +51,10 @@ Describe "Validate module file: Install-Defaults.psm1" {
 
     Context "Module should validate OK" {
         It "Script should exist" {
-            param ($ModuleFile)
             $ModuleFile.FullName | Should -Exist
         }
 
         It "Script should be valid PowerShell" {
-            param ($ModuleFile)
             $contents = Get-Content -Path $ModuleFile.FullName -ErrorAction "Stop"
             $errors = $null
             $null = [System.Management.Automation.PSParser]::Tokenize($contents, [ref]$errors)
