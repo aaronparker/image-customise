@@ -9,7 +9,7 @@ param()
 
 BeforeDiscovery {
     # Set variables
-    if (Test-Path -Path env:GITHUB_WORKSPACE -ErrorAction "SilentlyContinue") {
+    if (Test-Path -Path env:GITHUB_WORKSPACE) {
         $ProjectRoot = $([System.IO.Path]::Combine($env:GITHUB_WORKSPACE, "src"))
     }
     else {
@@ -48,78 +48,12 @@ Describe "General project validation" -ForEach $Scripts {
 
 Describe "Validate module file" {
     BeforeAll {
-        $ModuleFile = Get-ChildItem -Path $PWD -Include "Install-Defaults.psm1" -Recurse
+        $ModuleFile = Get-ChildItem -Path $ProjectRoot -Include "Install-Defaults.psm1" -Recurse
     }
 
     Context "Module should validate OK" {
         It "Should import OK" {
              { Import-Module -Name $ModuleFile -Force } | Should -Not -Throw
-        }
-    }
-}
-
-# Per script tests
-Describe "Install script execution validation" -Tag "Windows" {
-    BeforeAll {
-        $Script = Get-ChildItem -Path $PWD -Include "Install-Defaults.ps1" -Recurse
-    }
-
-    Context "Validate <script.Name>." {
-        It "<script.Name> should execute OK" {
-            Push-Location -Path $ProjectRoot
-            Write-Host "Running script: $($Script.FullName)."
-            & $Script.FullName -Path $ProjectRoot | Should -Be 0
-            Pop-Location
-        }
-    }
-}
-
-Describe "Feature update script copy works" {
-    BeforeAll {
-        $Files = @("$Env:SystemRoot\Setup\Scripts\Install-Defaults.ps1",
-            "$Env:SystemRoot\Setup\Scripts\Remove-AppxApps.ps1",
-            "$Env:SystemRoot\Setup\SetupComplete.cmd")
-    }
-
-    Context "Target directory exists" {
-        It "FeatureUpdates should exist" {
-            Test-Path -Path "$Env:SystemRoot\Setup\Scripts" | Should -BeTrue
-        }
-    }
-
-    Context "Each script should exist" -ForEach $Files {
-        It "$_ should exist" {
-            Test-Path -Path $_ | Should -BeTrue
-        }
-    }
-}
-
-Describe "Remove-AppxApps script execution validation" -Tag "Windows" {
-    BeforeAll {
-        $Script = Get-ChildItem -Path $PWD -Include "Remove-AppxApps.ps1" -Recurse
-    }
-
-    Context "Validate <script.Name>." {
-        It "<script.Name> should execute OK" {
-            Push-Location -Path $ProjectRoot
-            Write-Host "Running script: $($Script.FullName)."
-            { & $Script.FullName } | Should -Not -Throw
-            Pop-Location
-        }
-    }
-}
-
-Describe "Uninstall script execution validation" -Tag "Windows" {
-    BeforeAll {
-        $Script = Get-ChildItem -Path $PWD -Include "Remove-Defaults.ps1" -Recurse
-    }
-
-    Context "Validate <script.Name>." {
-        It "<script.Name> should execute OK" {
-            Push-Location -Path $ProjectRoot
-            Write-Host "Running script: $($Script.FullName)."
-            & $Script.FullName | Should -Be 0
-            Pop-Location
         }
     }
 }

@@ -48,21 +48,6 @@ jobs:
         with:
           ref: main
 
-      # Import GPG key
-      - name: Import GPG key
-        id: import_gpg
-        uses: crazy-max/ghaction-import-gpg@v5
-        with:
-          gpg_private_key: ${{ secrets.GPGKEY }}
-          passphrase: ${{ secrets.GPGPASSPHRASE }}
-          git_user_signingkey: true
-          git_commit_gpgsign: true
-          git_config_global: true
-          git_tag_gpgsign: true
-          git_push_gpgsign: false
-          git_committer_name: ${{ secrets.COMMIT_NAME }}
-          git_committer_email: ${{ secrets.COMMIT_EMAIL }}
-
       - name: Install Pester
         shell: powershell
         run: |
@@ -75,14 +60,16 @@ jobs:
         run: |
           Import-Module -Name "Pester" -Force -ErrorAction "Stop"
 
-          $Config = [PesterConfiguration]::Default
+          $Config = New-PesterConfiguration
           $Config.Run.Path = "$env:GITHUB_WORKSPACE\tests"
-          $Config.Run.PassThru = $True
-          $Config.CodeCoverage.Enabled = $True
+          $Config.Run.PassThru = $true
+          $Config.CodeCoverage.Enabled = $true
+          $Config.CodeCoverage.CoveragePercentTarget = 50
           $Config.CodeCoverage.Path = "$env:GITHUB_WORKSPACE\src"
           $Config.CodeCoverage.OutputFormat = "JaCoCo"
           $Config.CodeCoverage.OutputPath = "$env:GITHUB_WORKSPACE\CodeCoverage.xml"
-          $Config.TestResult.Enabled = $True
+          $Config.TestResult.Enabled = $true
+          $Config.Output.Verbosity = "Detailed"
           $Config.TestResult.OutputFormat = "NUnitXml"
           $Config.TestResult.OutputPath = "$env:GITHUB_WORKSPACE\tests\TestResults.xml"
           Invoke-Pester -Configuration $Config
@@ -100,6 +87,21 @@ jobs:
           "${{ steps.get-version.outputs.version }}" | `
             Out-File -FilePath "${{ github.workspace }}\src\VERSION.txt" -Encoding "ascii" -Force -NoNewline
 
+      # Import GPG key
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.GPGKEY }}
+          passphrase: ${{ secrets.GPGPASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+          git_config_global: true
+          git_tag_gpgsign: true
+          git_push_gpgsign: false
+          git_committer_name: ${{ secrets.COMMIT_NAME }}
+          git_committer_email: ${{ secrets.COMMIT_EMAIL }}
+
       - name: Commit changes
         id: commit
         uses: stefanzweifel/git-auto-commit-action@v4
@@ -107,14 +109,6 @@ jobs:
           commit_message: "${{ steps.get-version.outputs.version }}"
           commit_user_name: ${{ secrets.COMMIT_NAME }}
           commit_user_email: ${{ secrets.COMMIT_EMAIL }}
-
-      - name: "Run if changes have been detected"
-        if: steps.commit.outputs.changes_detected == 'true'
-        run: echo "Changes committed."
-
-      - name: "Run if no changes have been detected"
-        if: steps.commit.outputs.changes_detected == 'false'
-        run: echo "No changes detected."
 
       # Upload test results
       - name: Upload test results
