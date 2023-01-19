@@ -15,11 +15,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  analyze:
-    name: PSScriptAnalyzer
-    runs-on: ubuntu-latest
+  validate:
+    name: "Validate project code"
+    runs-on: windows-latest
+
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: main
 
       - name: Run PSScriptAnalyzer
         uses: microsoft/psscriptanalyzer-action@6b2948b1944407914a58661c49941824d149734f
@@ -38,18 +41,9 @@ jobs:
         with:
           sarif_file: results.sarif
 
-  validate:
-    needs: analyze
-    name: "Validate scripts"
-    runs-on: windows-latest
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: main
-
       - name: Install Pester
         shell: powershell
+        working-directory: "${{ github.workspace }}"
         run: |
           Install-Module -Name "Pester" -SkipPublisherCheck -Force
 
@@ -76,13 +70,15 @@ jobs:
 
       - name: Get version
         id: get-version
-        shell: pwsh
+        shell: powershell
+        working-directory: "${{ github.workspace }}"
         run: |
           echo "::set-output name=version::$(Get-Date -Format "yyMM.dd.$($env:GITHUB_RUN_NUMBER)")"
 
       # Update version number in VERSION.txt
       - name: Update version number
-        shell: pwsh
+        shell: powershell
+        working-directory: "${{ github.workspace }}"
         run: |
           "${{ steps.get-version.outputs.version }}" | `
             Out-File -FilePath "${{ github.workspace }}\src\VERSION.txt" -Encoding "ascii" -Force -NoNewline

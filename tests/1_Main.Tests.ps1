@@ -19,7 +19,7 @@ BeforeDiscovery {
     }
 
     # Get the scripts to test
-    $Scripts = @(Get-ChildItem -Path $ProjectRoot -Include "*.ps*" -Recurse)
+    $Scripts = @(Get-ChildItem -Path $ProjectRoot -Include "*.ps1" -Recurse)
     $TestCases = $Scripts | ForEach-Object { @{File = $_ } }
 }
 
@@ -30,13 +30,13 @@ Describe "General project validation" -ForEach $Scripts {
         $File = $_
     }
 
-    Context "Project should validate OK" {
-        It "Script <file.Name> should exist" -TestCases $TestCases {
+    Context "Script should validate OK: <File.Name>" {
+        It "Script should exist" {
             param ($File)
             $File.FullName | Should -Exist
         }
 
-        It "Script <file.Name> should be valid PowerShell" -TestCases $TestCases {
+        It "Script should be valid PowerShell" {
             param ($File)
             $contents = Get-Content -Path $File.FullName -ErrorAction "Stop"
             $errors = $null
@@ -46,14 +46,27 @@ Describe "General project validation" -ForEach $Scripts {
     }
 }
 
-Describe "Validate module file" {
+Describe "Validate module file: Install-Defaults.psm1" {
     BeforeAll {
         $ModuleFile = Get-ChildItem -Path $ProjectRoot -Include "Install-Defaults.psm1" -Recurse
     }
 
     Context "Module should validate OK" {
-        It "Should import OK" {
-             { Import-Module -Name $ModuleFile -Force } | Should -Not -Throw
+        It "Script should exist" {
+            param ($ModuleFile)
+            $ModuleFile.FullName | Should -Exist
         }
+
+        It "Script should be valid PowerShell" {
+            param ($ModuleFile)
+            $contents = Get-Content -Path $ModuleFile.FullName -ErrorAction "Stop"
+            $errors = $null
+            $null = [System.Management.Automation.PSParser]::Tokenize($contents, [ref]$errors)
+            $errors.Count | Should -Be 0
+        }
+
+        It "Should import OK" {
+            { Import-Module -Name $ModuleFile -Force } | Should -Not -Throw
+       }
     }
 }
