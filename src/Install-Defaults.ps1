@@ -94,7 +94,7 @@ Write-Verbose -Message "Execution path: $WorkingPath."
 New-ScriptEventLog -EventLog $Project -Property $Properties
 
 # Start logging
-$PSProcesses = Get-CimInstance -ClassName "Win32_Process" -Filter "Name = 'powershell.exe'" | Select-Object -Property "CommandLine"
+$PSProcesses = Get-CimInstance -ClassName "Win32_Process" -Include "Name = 'powershell.exe'" | Select-Object -Property "CommandLine"
 foreach ($Process in $PSProcesses) {
     $Object = [PSCustomObject]@{Name = "CommandLine"; Value = $Process.CommandLine; Result = 0 }
     Write-ToEventLog -Property "General" -Object $Object
@@ -118,15 +118,15 @@ $OSName = Get-OSName
 Write-Verbose -Message "OS: $OSName."
 Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "OSName"; Value = $OSName; Result = 0 })
 
-$DisplayVersion = Get-ChildItem -Path $WorkingPath -Filter "VERSION.txt" -Recurse | Get-Content -Raw
+$DisplayVersion = Get-ChildItem -Path $WorkingPath -Include "VERSION.txt" -Recurse | Get-Content -Raw
 Write-Verbose -Message "Customisation scripts version: $DisplayVersion."
 Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Version"; Value = $DisplayVersion; Result = 0 })
 
 #region Gather configs
-$AllConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.All.json" -Recurse -ErrorAction "Continue")
-$ModelConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.$Model.json" -Recurse -ErrorAction "Continue")
-$BuildConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.$Build.json" -Recurse -ErrorAction "Continue")
-$PlatformConfigs = @(Get-ChildItem -Path $WorkingPath -Filter "*.$Platform.json" -Recurse -ErrorAction "Continue")
+$AllConfigs = @(Get-ChildItem -Path $WorkingPath -Include "*.All.json" -Recurse -ErrorAction "Continue")
+$ModelConfigs = @(Get-ChildItem -Path $WorkingPath -Include "*.$Model.json" -Recurse -ErrorAction "Continue")
+$BuildConfigs = @(Get-ChildItem -Path $WorkingPath -Include "*.$Build.json" -Recurse -ErrorAction "Continue")
+$PlatformConfigs = @(Get-ChildItem -Path $WorkingPath -Include "*.$Platform.json" -Recurse -ErrorAction "Continue")
 Write-Verbose -Message "Found: $(($AllConfigs + $ModelConfigs + $BuildConfigs + $PlatformConfigs).Count) configs."
 
 # Implement the settings defined in each config file
