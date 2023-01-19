@@ -8,27 +8,18 @@
 param()
 
 BeforeDiscovery {
-    # Set variables
-    if (Test-Path -Path env:GITHUB_WORKSPACE -ErrorAction "SilentlyContinue") {
-        $ProjectRoot = $([System.IO.Path]::Combine($env:GITHUB_WORKSPACE, "src"))
-    }
-    else {
-        # Local Testing
-        $Parent = ((Get-Item -Path $(Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName
-        $ProjectRoot = $([System.IO.Path]::Combine($Parent, "src"))
-    }
 }
 
 # Per script tests
 Describe "Install script execution validation" {
     BeforeAll {
-        $Script = Get-ChildItem -Path $ProjectRoot -Include "Install-Defaults.ps1" -Recurse
+        $Script = Get-ChildItem -Path $([System.IO.Path]::Combine($env:GITHUB_WORKSPACE, "src")) -Include "Install-Defaults.ps1" -Recurse
     }
 
     Context "Validate <script.Name>." {
         It "<script.Name> should execute OK" {
-            Push-Location -Path $ProjectRoot
-            & $Script.FullName -Path $ProjectRoot | Should -Be 0
+            Push-Location -Path $([System.IO.Path]::Combine($env:GITHUB_WORKSPACE, "src"))
+            & $Script.FullName -Path $([System.IO.Path]::Combine($env:GITHUB_WORKSPACE, "src")) | Should -Be 0
             Pop-Location
         }
     }
