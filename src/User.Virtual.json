@@ -124,6 +124,13 @@
                 "type": "DWord",
                 "note": "Disables suggested content in the Settings app"
             },
+                        {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                "name": "SubscribedContent-310093Enabled",
+                "value": 0,
+                "type": "DWord",
+                "note": "Disables 'Show me the Windows welcome experience after updates and occasionally when I sign in to highlight what's new and suggested'"
+            },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
                 "name": "SystemPaneSuggestionsEnabled",
