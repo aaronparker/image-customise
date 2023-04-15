@@ -195,7 +195,7 @@ foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConf
 }
 #endregion
 
-# If on a client OS..
+#region If on a client OS, remove AppX applications
 if ($Platform -eq "Client") {
 
     # Run the script to remove AppX/UWP apps; Get the script location
@@ -214,16 +214,25 @@ if ($Platform -eq "Client") {
         $Object = [PSCustomObject]@{Name = "Removed AppX apps "; Value = ($RemovedApps.Name | Select-Object -Unique); Result = 0 }
         Write-ToEventLog -Property "AppX" -Object $Object
     }
+}
+#endregion
 
-    if ($Language -eq "Skip") {
-        Write-Verbose -Message "Skip install language support."
-        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language"; Value = "Skipped"; Result = 0 })
-    }
-    else {
+#region Set system language
+if ($Language -eq "Skip") {
+    Write-Verbose -Message "-Language parameter not specified. Skipping install language support."
+    Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language"; Value = "Skipped"; Result = 0 })
+}
+else {
+    if ($Platform -eq "Client") {
         # Set language support by installing the specified language pack
         Install-SystemLanguage -Language $Language
+        Set-SystemLocale
+    }
+    else {
+        Set-SystemLocale
     }
 }
+#endregion
 
 # Copy the source files for use with upgrades
 if ($FeatureUpdatePath -eq $WorkingPath) {

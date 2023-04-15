@@ -633,3 +633,18 @@ function Install-SystemLanguage {
     }
     Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system language: $Language"; Value = $Msg; Result = $Result })
 }
+
+function Set-SystemLocale {
+    try {
+        $Msg = "Success"; $Result = 0
+        Write-Verbose -Message "Set system locale: $Language."
+        $RegionInfo = New-Object -TypeName "System.Globalization.RegionInfo" -ArgumentList $Language
+        Import-Module -Name "International"
+        Set-WinSystemLocale -SystemLocale $Language
+        Set-WinHomeLocation -GeoId $RegionInfo.GeoId
+    }
+    catch {
+        $Msg = $_.Exception.Message; $Result = 1
+    }
+    Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system locale: $Language"; Value = $Msg; Result = $Result })
+}
