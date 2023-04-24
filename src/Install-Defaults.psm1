@@ -5,6 +5,7 @@
 param ()
 
 function New-ScriptEventLog {
+    # Create the custom event log used to record events
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($EventLog, $Property)
     $params = @{
@@ -18,6 +19,7 @@ function New-ScriptEventLog {
 }
 
 function Write-ToEventLog {
+    # Write an entry to the custom event log
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Property, $Object)
     foreach ($Item in $Object) {
@@ -43,6 +45,7 @@ function Write-ToEventLog {
 }
 
 function Get-Platform {
+    # Return platform we are running on - client or server
     switch -Regex ((Get-CimInstance -ClassName "CIM_OperatingSystem").Caption) {
         "Microsoft Windows Server*" {
             $Platform = "Server"; break
@@ -67,6 +70,7 @@ function Get-Platform {
 }
 
 function Get-OSName {
+    # Return the OS name string
     switch -Regex ((Get-CimInstance -ClassName "CIM_OperatingSystem").Caption) {
         "^Microsoft Windows Server 2022.*$" {
             $Caption = "Windows2022"; break
@@ -97,6 +101,7 @@ function Get-OSName {
 }
 
 function Get-Model {
+    # Return details of the hardware model we are running on
     $Hypervisor = "Parallels*|VMware*|Virtual*"
     if ((Get-CimInstance -ClassName "Win32_ComputerSystem").Model -match $Hypervisor) {
         $Model = "Virtual"
@@ -108,6 +113,7 @@ function Get-Model {
 }
 
 function Get-SettingsContent ($Path) {
+    # Return a JSON object from the text/JSON file passed
     try {
         $params = @{
             Path        = $Path
@@ -124,6 +130,7 @@ function Get-SettingsContent ($Path) {
 }
 
 function Set-RegistryOwner {
+    # Change the owner on the specified registry path
     # Links: https://stackoverflow.com/questions/12044432/how-do-i-take-ownership-of-a-registry-key-via-powershell
     # "S-1-5-32-544" - Administrators
     [CmdletBinding(SupportsShouldProcess = $true)]
@@ -200,6 +207,7 @@ function Set-RegistryOwner {
 }
 
 function Set-Registry {
+    # Set a registry value. Create the target key if it doesn't already exist
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Setting)
 
@@ -250,6 +258,7 @@ function Set-Registry {
 }
 
 function Set-DefaultUserProfile {
+    # Add settings into the default profile
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Setting)
     try {
@@ -356,6 +365,7 @@ function Set-DefaultUserProfile {
 }
 
 function Copy-File {
+    # Copy a file from source to destination. Create the destination directory if it doesn't exist
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Path, $Parent)
     foreach ($Item in $Path) {
@@ -389,6 +399,7 @@ function Copy-File {
 }
 
 function New-Directory {
+    # Create a new directory
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Path)
     if (Test-Path -Path $Path -ErrorAction "Continue") {
@@ -414,6 +425,7 @@ function New-Directory {
 }
 
 function Remove-Path {
+    # Recursively remove a specific path
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Path)
     foreach ($Item in $Path) {
@@ -441,6 +453,7 @@ function Remove-Path {
 }
 
 function Remove-Feature {
+    # Remove a Windows feature
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Feature)
 
@@ -470,6 +483,7 @@ function Remove-Feature {
 }
 
 function Remove-Capability {
+    # Remove a Windows capability
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Capability)
 
@@ -497,6 +511,7 @@ function Remove-Capability {
 }
 
 function Remove-Package {
+    # Remove AppX packages
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Package)
 
@@ -527,11 +542,13 @@ function Remove-Package {
 }
 
 function Get-CurrentUserSid {
+    # Set the SID of the current user
     $MyID = New-Object -TypeName System.Security.Principal.NTAccount([Environment]::UserName)
     return $MyID.Translate([System.Security.Principal.SecurityIdentifier]).toString()
 }
 
 function Restart-NamedService {
+    # Restart a specified service
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Service)
 
@@ -550,6 +567,7 @@ function Restart-NamedService {
 }
 
 function Start-NamedService {
+    # Start a specified service
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Service)
 
@@ -568,6 +586,7 @@ function Start-NamedService {
 }
 
 function Stop-NamedService {
+    # Stop a named service
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Service)
 
@@ -586,6 +605,8 @@ function Stop-NamedService {
 }
 
 function Install-SystemLanguage {
+    # Use LanguagePackManagement to install a specific language and set as default
+    # Requires minimum number of Windows 10 or 11
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Language)
 
@@ -635,6 +656,8 @@ function Install-SystemLanguage {
 }
 
 function Set-SystemLocale {
+    # Set system locale and regional settings
+    # Use in place of Install-SystemLanguage, e.g. Windows Server
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Language)
 
@@ -654,6 +677,8 @@ function Set-SystemLocale {
 }
 
 function Set-TimeZoneUsingName {
+    # Set the time zone using a valid time zone name
+    # https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones
     [CmdletBinding()]
     param (
         [System.String] $TimeZone = "AUS Eastern Standard Time"
