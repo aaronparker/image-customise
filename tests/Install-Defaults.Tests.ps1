@@ -8,7 +8,12 @@
 param()
 
 BeforeDiscovery {
-    $Path = $PWD.Path
+    if (Test-Path -Path $env:GITHUB_WORKSPACE) {
+        $Path = $env:GITHUB_WORKSPACE
+    }
+    else {
+        $Path = $PWD.Path
+    }
 }
 
 # Per script tests
