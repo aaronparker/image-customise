@@ -8,22 +8,24 @@
 param()
 
 BeforeDiscovery {
+    $Path = $PWD.Path
 }
 
 # Per script tests
 Describe "Install script execution validation" {
     BeforeAll {
-        $Script = Get-ChildItem -Path $([System.IO.Path]::Combine($env:GITHUB_WORKSPACE, "src")) -Include "Install-Defaults.ps1" -Recurse
+        $Script = Get-ChildItem -Path $([System.IO.Path]::Combine($Path, "src")) -Include "Install-Defaults.ps1" -Recurse
     }
 
     Context "Validate <script.Name>." {
         It "<script.Name> should execute OK" {
-            Push-Location -Path $([System.IO.Path]::Combine($env:GITHUB_WORKSPACE, "src"))
+            Push-Location -Path $([System.IO.Path]::Combine($Path, "src"))
             $params = @{
+                Path     = $([System.IO.Path]::Combine($Path, "src"))
                 Language = "en-AU"
                 TimeZone = "AUS Eastern Standard Time"
             }
-            & $Script.FullName -Path $([System.IO.Path]::Combine($env:GITHUB_WORKSPACE, "src")) @params | Should -Be 0
+            & $Script.FullName @params | Should -Be 0
             Pop-Location
         }
     }
