@@ -39,7 +39,10 @@ param (
     [System.String] $FeatureUpdatePath = "$env:SystemRoot\System32\Update\Run\$Guid",
 
     [Parameter(Mandatory = $False)]
-    [System.String] $Language = "Skip"
+    [System.String] $Language = "Skip",
+
+    [Parameter(Mandatory = $False)]
+    [System.String] $TimeZone = "Skip"
 )
 
 #region Restart if running in a 32-bit session
@@ -217,7 +220,7 @@ if ($Platform -eq "Client") {
 }
 #endregion
 
-#region Set system language
+#region Set system language and regional settings
 if ($Language -eq "Skip") {
     Write-Verbose -Message "-Language parameter not specified. Skipping install language support."
     Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language"; Value = "Skipped"; Result = 0 })
@@ -226,11 +229,19 @@ else {
     if ($Platform -eq "Client") {
         # Set language support by installing the specified language pack
         Install-SystemLanguage -Language $Language
-        Set-SystemLocale
+        Set-SystemLocale -Language $Language
     }
     else {
-        Set-SystemLocale
+        Set-SystemLocale -Language $Language
     }
+}
+
+if ($TimeZone -eq "Skip") {
+    Write-Verbose -Message "-TimeZone parameter not specified. Skipping set time zone."
+    Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Set time zone"; Value = "Skipped"; Result = 0 })
+}
+else {
+    Set-TimeZoneUsingName -TimeZone $TimeZone
 }
 #endregion
 

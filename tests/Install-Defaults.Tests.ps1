@@ -19,7 +19,11 @@ Describe "Install script execution validation" {
     Context "Validate <script.Name>." {
         It "<script.Name> should execute OK" {
             Push-Location -Path $([System.IO.Path]::Combine($env:GITHUB_WORKSPACE, "src"))
-            & $Script.FullName -Path $([System.IO.Path]::Combine($env:GITHUB_WORKSPACE, "src")) | Should -Be 0
+            $params = @{
+                Language = "en-AU"
+                TimeZone = "AUS Eastern Standard Time"
+            }
+            & $Script.FullName -Path $([System.IO.Path]::Combine($env:GITHUB_WORKSPACE, "src")) @params | Should -Be 0
             Pop-Location
         }
     }

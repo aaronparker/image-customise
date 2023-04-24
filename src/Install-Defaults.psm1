@@ -635,16 +635,35 @@ function Install-SystemLanguage {
 }
 
 function Set-SystemLocale {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param ($Language)
+
     try {
         $Msg = "Success"; $Result = 0
         Write-Verbose -Message "Set system locale: $Language."
-        $RegionInfo = New-Object -TypeName "System.Globalization.RegionInfo" -ArgumentList $Language
         Import-Module -Name "International"
         Set-WinSystemLocale -SystemLocale $Language
+        Set-Culture -CultureInfo $Language
+        $RegionInfo = New-Object -TypeName "System.Globalization.RegionInfo" -ArgumentList $Language
         Set-WinHomeLocation -GeoId $RegionInfo.GeoId
     }
     catch {
         $Msg = $_.Exception.Message; $Result = 1
     }
     Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system locale: $Language"; Value = $Msg; Result = $Result })
+}
+
+function Set-TimeZoneUsingName {
+    [CmdletBinding()]
+    param (
+        [System.String] $TimeZone = "AUS Eastern Standard Time"
+    )
+    try {
+        $Msg = "Success"; $Result = 0
+        Set-Timezone -Name $TimeZone
+    }
+    catch {
+        $Msg = $_.Exception.Message; $Result = 1
+    }
+    Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Set timezone: $TimeZone"; Value = $Msg; Result = $Result })
 }
