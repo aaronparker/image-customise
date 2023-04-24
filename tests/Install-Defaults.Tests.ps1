@@ -8,17 +8,17 @@
 param()
 
 BeforeDiscovery {
-    if (Test-Path -Path $env:GITHUB_WORKSPACE) {
-        $Path = $env:GITHUB_WORKSPACE
-    }
-    else {
-        $Path = $PWD.Path
-    }
 }
 
 # Per script tests
 Describe "Install script execution validation" {
     BeforeAll {
+        if (Test-Path -Path $env:GITHUB_WORKSPACE) {
+            $Path = $env:GITHUB_WORKSPACE
+        }
+        else {
+            $Path = $PWD.Path
+        }
         $Script = Get-ChildItem -Path $([System.IO.Path]::Combine($Path, "src")) -Include "Install-Defaults.ps1" -Recurse
     }
 
