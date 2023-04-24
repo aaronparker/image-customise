@@ -11,37 +11,48 @@
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
-    [Parameter(Mandatory = $False)]
+    [Parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
     [System.String] $Path = $PSScriptRoot,
 
-    [Parameter(Mandatory = $False)]
+    [Parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
     [System.String] $Guid = "f38de27b-799e-4c30-8a01-bfdedc622944",
 
-    [Parameter(Mandatory = $False)]
+    [Parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
     [System.String] $Publisher = "stealthpuppy",
 
-    [Parameter(Mandatory = $False)]
+    [Parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
     [System.String] $RunOn = $(Get-Date -Format "yyyy-MM-dd"),
 
-    [Parameter(Mandatory = $False)]
+    [Parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
     [System.String] $Project = "Customised Defaults",
 
-    [Parameter(Mandatory = $False)]
+    [Parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
     [System.String] $Helplink = "https://stealthpuppy.com/image-customise/",
 
-    [Parameter(Mandatory = $False)]
+    [Parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
     [System.String[]] $Properties = @("General", "Registry", "Paths", "StartMenu", "Features", "Capabilities", "Packages", "AppX", "Language", "Services"),
 
-    [Parameter(Mandatory = $False)]
+    [Parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
     [System.String] $AppxMode = "Block",
 
-    [Parameter(Mandatory = $False)]
+    [Parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
     [System.String] $FeatureUpdatePath = "$env:SystemRoot\System32\Update\Run\$Guid",
 
-    [Parameter(Mandatory = $False)]
+    [Parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
     [System.String] $Language = "Skip",
 
-    [Parameter(Mandatory = $False)]
+    [Parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
     [System.String] $TimeZone = "Skip"
 )
 
@@ -64,7 +75,7 @@ if (!([System.Environment]::Is64BitProcess)) {
         $params = @{
             FilePath     = $ProcessPath
             ArgumentList = $Arguments
-            Wait         = $True
+            Wait         = $true
             WindowStyle  = "Hidden"
         }
         Start-Process @params
