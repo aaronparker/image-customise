@@ -53,7 +53,7 @@ jobs:
         with:
           prerelease: true
           fail_on_unmatched_files: true
-          body_path: ${{ github.workspace }}/release/README.md
+          body_path: ${{ github.workspace }}/releases/README.md
           files: |
             releases\Install-Defaults.intunewin
             releases\Win32App.json
