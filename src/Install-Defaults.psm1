@@ -610,16 +610,17 @@ function Install-SystemLanguage {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Language)
 
-    Write-Verbose "Start language pack install: $Language"
-    Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Language pack install"; Value = "Start"; Result = 0 })
     try {
-        $Msg = "Success"; $Result = 0
+        Write-Verbose "Start language pack install: $Language"
+        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Language pack install"; Value = "Start"; Result = 0 })
         Import-Module -Name "LanguagePackManagement"
+        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Import module LanguagePackManagement"; Value = "Success"; Result = 0 })
     }
     catch {
-        $Msg = $_.Exception.Message; $Result = 1
+        $Msg = $_.Exception.Message
+        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Import module LanguagePackManagement"; Value = $Msg; Result = 0 })
     }
-    Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Import module LanguagePackManagement"; Value = $Msg; Result = $Result })
+    
 
     try {
         $params = @{
@@ -647,6 +648,7 @@ function Install-SystemLanguage {
         $Msg = "Success"; $Result = 0
         if ($PSCmdlet.ShouldProcess($Language, "Set-SystemPreferredUILanguage")) {
             Set-SystemPreferredUILanguage @params
+            Set-Culture -CultureInfo $Language
         }
     }
     catch {
@@ -657,25 +659,27 @@ function Install-SystemLanguage {
 
 function Set-SystemLocale {
     # Set system locale and regional settings
-    # Use in place of Install-SystemLanguage, e.g. Windows Server
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Language)
-
     try {
-        $Msg = "Success"; $Result = 0
-        Write-Verbose -Message "Set system locale: $Language."
         if ($PSCmdlet.ShouldProcess($Language, "Set locale")) {
+            Write-Verbose -Message "Set system locale: $Language."
             Import-Module -Name "International"
-            Set-WinSystemLocale -SystemLocale $Language
+            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Import module"; Value = "International"; Result = 0 })
             Set-Culture -CultureInfo $Language
+            Set-WinSystemLocale -SystemLocale $Language
+            Set-WinUILanguageOverride -Language $Language
+            Set-WinUserLanguageList -LanguageList $Language -Force
             $RegionInfo = New-Object -TypeName "System.Globalization.RegionInfo" -ArgumentList $Language
             Set-WinHomeLocation -GeoId $RegionInfo.GeoId
+            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set Windows home location"; Value = $RegionInfo.GeoId; Result = 0 })
+            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system locale: $Language"; Value = "Success"; Result = 0 })
         }
     }
     catch {
-        $Msg = $_.Exception.Message; $Result = 1
+        $Msg = $_.Exception.Message
+        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system locale: $Language"; Value = $Msg; Result = 1 })
     }
-    Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system locale: $Language"; Value = $Msg; Result = $Result })
 }
 
 function Set-TimeZoneUsingName {
