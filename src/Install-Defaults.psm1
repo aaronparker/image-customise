@@ -664,11 +664,13 @@ function Set-SystemLocale {
     try {
         $Msg = "Success"; $Result = 0
         Write-Verbose -Message "Set system locale: $Language."
-        Import-Module -Name "International"
-        Set-WinSystemLocale -SystemLocale $Language
-        Set-Culture -CultureInfo $Language
-        $RegionInfo = New-Object -TypeName "System.Globalization.RegionInfo" -ArgumentList $Language
-        Set-WinHomeLocation -GeoId $RegionInfo.GeoId
+        if ($PSCmdlet.ShouldProcess($Language, "Set locale")) {
+            Import-Module -Name "International"
+            Set-WinSystemLocale -SystemLocale $Language
+            Set-Culture -CultureInfo $Language
+            $RegionInfo = New-Object -TypeName "System.Globalization.RegionInfo" -ArgumentList $Language
+            Set-WinHomeLocation -GeoId $RegionInfo.GeoId
+        }
     }
     catch {
         $Msg = $_.Exception.Message; $Result = 1
@@ -679,13 +681,15 @@ function Set-SystemLocale {
 function Set-TimeZoneUsingName {
     # Set the time zone using a valid time zone name
     # https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param (
         [System.String] $TimeZone = "AUS Eastern Standard Time"
     )
     try {
         $Msg = "Success"; $Result = 0
-        Set-Timezone -Name $TimeZone
+        if ($PSCmdlet.ShouldProcess($TimeZone, "Set-Timezone")) {
+            Set-Timezone -Name $TimeZone
+        }
     }
     catch {
         $Msg = $_.Exception.Message; $Result = 1
