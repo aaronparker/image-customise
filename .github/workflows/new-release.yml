@@ -43,14 +43,18 @@ jobs:
       # Package the scripts into an Intunewin file and zip
       - name: New release package
         shell: powershell
+        working-directory: "${{ github.workspace }}"
         run: |
           . .\ci\New-Package.ps1 -Verbose
-        
+
       - name: Upload release
         uses: softprops/action-gh-release@v0.1.13
         if: startsWith(github.ref, 'refs/tags/')
         with:
           prerelease: true
+          fail_on_unmatched_files: true
+          body_path: ${{ github.workspace }}/release/README.md
           files: |
             releases\Install-Defaults.intunewin
+            releases\Win32App.json
             releases\image-customise.zip

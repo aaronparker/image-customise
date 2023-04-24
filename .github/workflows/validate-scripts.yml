@@ -27,12 +27,8 @@ jobs:
       - name: Run PSScriptAnalyzer
         uses: microsoft/psscriptanalyzer-action@6b2948b1944407914a58661c49941824d149734f
         with:
-          # Check https://github.com/microsoft/action-psscriptanalyzer for more info about the options.
-          # The below set up runs PSScriptAnalyzer to your entire repository and runs some basic security rules.
-          path: ./
+          path: ./src
           recurse: true 
-          # Include your own basic security rules. Removing this option will run all the rules 
-          # includeRule: '"PSAvoidGlobalAliases", "PSAvoidUsingConvertToSecureStringWithPlainText"'
           output: results.sarif
       
       # Upload the SARIF file generated in the previous step
@@ -97,7 +93,7 @@ jobs:
         shell: powershell
         working-directory: "${{ github.workspace }}"
         run: |
-          echo "::set-output name=version::$(Get-Date -Format "yyMM.dd.$($env:GITHUB_RUN_NUMBER)")"
+          echo "version=$(Get-Date -Format "yyMM.dd.$($env:GITHUB_RUN_NUMBER)")" >> $GITHUB_OUTPUT
 
       # Update version number in VERSION.txt
       - name: Update version number

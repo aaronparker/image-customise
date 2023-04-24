@@ -5,87 +5,72 @@
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "")]
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $False)]
-    [System.String] $Path = "$Env:Temp\Intune"
+    [Parameter(Mandatory = $false)]
+    [System.String] $Path = $PWD,
+
+    [Parameter(Mandatory = $false)]
+    [System.String] $TempPath = "$Env:Temp\Intune",
+
+    [Parameter(Mandatory = $false)]
+    [System.String] $PackagePath = $(Join-Path -Path $Path -ChildPath "src"),
+
+    [Parameter(Mandatory = $false)]
+    [System.String] $PackageOutput = $(Join-Path -Path $Path -ChildPath "releases")
 )
 
-if (Test-Path -Path env:GITHUB_WORKSPACE -ErrorAction "SilentlyContinue") {
-    $ProjectRoot = Resolve-Path -Path $env:GITHUB_WORKSPACE
-}
-else {
-    # Local Testing
-    $ProjectRoot = Resolve-Path -Path (((Get-Item (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition)).Parent).FullName)
-}
-
 #region Setup package paths
-$PackagePath = Join-Path -Path $ProjectRoot -ChildPath "src"
-Write-Verbose -Message "Package path: $PackagePath."
+Write-Information -InformationAction "Continue" -MessageData "Package path: $PackagePath."
 if (!(Test-Path -Path $PackagePath)) { New-Item -Path $PackagePath -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $null }
 
-$PackageOutput = $(Join-Path -Path $ProjectRoot -ChildPath "releases")
-Write-Verbose -Message "Output path: $PackageOutput."
+Write-Information -InformationAction "Continue" -MessageData "Output path: $PackageOutput."
 if (!(Test-Path -Path $PackageOutput)) { New-Item -Path $PackageOutput -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $null }
 #endregion
 
 #region Package the app
-try {
-    # Download the Intune Win32 wrapper
-    if (!(Test-Path -Path $Path)) { New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $null }
-    $Win32Wrapper = "https://raw.githubusercontent.com/microsoft/Microsoft-Win32-Content-Prep-Tool/master/IntuneWinAppUtil.exe"
-    $wrapperBin = Join-Path -Path $Path -ChildPath $(Split-Path -Path $Win32Wrapper -Leaf)
-    $params = @{
-        Uri             = $Win32Wrapper
-        OutFile         = $wrapperBin
-        UseBasicParsing = $True
-    }
-    Invoke-WebRequest @params
+# Download the Intune Win32 wrapper
+if (!(Test-Path -Path $TempPath)) { New-Item -Path $TempPath -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" > $null }
+$Win32Wrapper = "https://raw.githubusercontent.com/microsoft/Microsoft-Win32-Content-Prep-Tool/master/IntuneWinAppUtil.exe"
+$wrapperBin = Join-Path -Path $TempPath -ChildPath $(Split-Path -Path $Win32Wrapper -Leaf)
+$params = @{
+    Uri             = $Win32Wrapper
+    OutFile         = $wrapperBin
+    UseBasicParsing = $true
+    ErrorAction     = "Stop"
 }
-catch [System.Exception] {
-    throw "Failed to download IntuneWinAppUtil.exe with: $($_.Exception.Message)"
-}
-
-try {
-    # Create the package
-    $Executable = Join-Path -Path $PackagePath -ChildPath "Install-Defaults.ps1"
-    Write-Verbose -Message "Package path: $($PackagePath)."
-    Write-Verbose -Message "Executable path:  $($Executable)."
-    $params = @{
-        FilePath     = $wrapperBin
-        ArgumentList = "-c $PackagePath -s $Executable -o $PackageOutput -q"
-        Wait         = $True
-        NoNewWindow  = $True
-    }
-    Start-Process @params
-}
-catch [System.Exception] {
-    throw "Failed to convert to an Intunewin package with: $($_.Exception.Message)"
-}
-try {
-    $params = @{
-        Path        = $PackageOutput
-        Filter      = "*.intunewin"
-        ErrorAction = "SilentlyContinue"
-    }
-    $IntuneWinFile = Get-ChildItem
-}
-catch {
-    throw "Failed to find an Intunewin package in $PackageOutput with: $($_.Exception.Message)"
-}
-Write-Verbose -Message "Found package: $($IntuneWinFile.FullName)."
+Invoke-WebRequest @params
 #endregion
 
-try {
-    $params = @{
-        Path            = "$PackagePath\*"
-        DestinationPath = "$PackageOutput\image-customise.zip"
-        ErrorAction     = "SilentlyContinue"
-    }
-    Compress-Archive @params
+#region Create the package
+$Executable = Join-Path -Path $PackagePath -ChildPath "Install-Defaults.ps1"
+Write-Information -InformationAction "Continue" -MessageData "Package path: $($PackagePath)."
+Write-Information -InformationAction "Continue" -MessageData "Executable path:  $($Executable)."
+$params = @{
+    FilePath     = $wrapperBin
+    ArgumentList = "-c $PackagePath -s $Executable -o $PackageOutput -q"
+    Wait         = $true
+    NoNewWindow  = $true
+    ErrorAction  = "Stop"
 }
-catch {
-    throw "Failed to compress scripts with: $($_.Exception.Message)"
+Start-Process @params
+
+$params = @{
+    Path        = $PackageOutput
+    Filter      = "*.intunewin"
+    ErrorAction = "Stop"
 }
+$IntuneWinFile = Get-ChildItem
+Write-Information -InformationAction "Continue" -MessageData "Found package: $($IntuneWinFile.FullName)."
+#endregion
+
+#region Zip the src folder
+$params = @{
+    Path            = "$PackagePath\*"
+    DestinationPath = "$PackageOutput\image-customise.zip"
+    ErrorAction     = "Stop"
+}
+Compress-Archive @params
+#endregion
 
 # Output what's been created in the releases folder
-Write-Host ""
+Write-Information -InformationAction "Continue" -MessageData ""
 Get-ChildItem -Path $PackageOutput
