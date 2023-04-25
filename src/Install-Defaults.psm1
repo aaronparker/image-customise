@@ -225,7 +225,7 @@ function Set-Registry {
                         Force       = $true
                         ErrorAction = "SilentlyContinue"
                     }
-                    New-Item @params | Out-Null
+                    $ItemResult = New-Item @params
                     Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $Item.path; Result = 0 })
                 }
             }
@@ -234,7 +234,7 @@ function Set-Registry {
                 Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "New-Item: $($Item.path)"; Value = $Msg; Result = 1 })
             }
             finally {
-                if ("Handle" -in ($Result | Get-Member | Select-Object -ExpandProperty "Name")) { $Result.Handle.Close() }
+                if ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
             }
         }
 
@@ -302,8 +302,8 @@ function Set-DefaultUserProfile {
                             Force       = $true
                             ErrorAction = "Continue"
                         }
-                        $Result = New-Item @params
-                        Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $RegPath; Result = $Result })
+                        $ItemResult = New-Item @params
+                        Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $RegPath; Result = 0 })
                     }
                 }
                 catch {
@@ -312,7 +312,7 @@ function Set-DefaultUserProfile {
                 }
                 finally {
                     if ($null -ne $Result) {
-                        if ("Handle" -in ($Result | Get-Member -ErrorAction "SilentlyContinue" | Select-Object -ExpandProperty "Name")) { $Result.Handle.Close() }
+                        if ("Handle" -in ($ItemResult | Get-Member -ErrorAction "SilentlyContinue" | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
                     }
                 }
             }
