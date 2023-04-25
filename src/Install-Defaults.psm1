@@ -280,8 +280,8 @@ function Set-DefaultUserProfile {
                     WindowStyle  = "Hidden"
                     ErrorAction  = "Continue"
                 }
-                $Result = Start-Process @params > Out-Null
-                Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Load: $RegDefaultUser"; Value = $RegPath; Result = 0 })
+                $Result = Start-Process @params | Out-Null
+                Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Load: $RegDefaultUser"; Value = $RegPath; Result = $Result })
             }
         }
         catch {
