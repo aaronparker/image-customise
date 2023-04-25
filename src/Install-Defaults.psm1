@@ -27,8 +27,8 @@ function Write-ToEventLog {
         [ValidateNotNullOrEmpty()] $Object
     )
     foreach ($Item in $Object) {
-
         Write-Verbose -Message "$($Item.Name), $($Item.Value), $($Item.Result)"
+
         switch ($Item.Result) {
             0 { $EntryType = "Information" }
             1 { $EntryType = "Warning" }
@@ -225,7 +225,7 @@ function Set-Registry {
                         Force       = $true
                         ErrorAction = "SilentlyContinue"
                     }
-                    $ItemResult = New-Item @params
+                    New-Item @params | Out-Null
                     Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $Item.path; Result = 0 })
                 }
             }
@@ -234,7 +234,7 @@ function Set-Registry {
                 Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "New-Item: $($Item.path)"; Value = $Msg; Result = 1 })
             }
             finally {
-                if ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
+                if ("Handle" -in ($Result | Get-Member | Select-Object -ExpandProperty "Name")) { $Result.Handle.Close() }
             }
         }
 
@@ -248,7 +248,7 @@ function Set-Registry {
                     Force       = $true
                     ErrorAction = "Continue"
                 }
-                Set-ItemProperty @params > $null
+                Set-ItemProperty @params | Out-Null
                 Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "$($Item.path); $($Item.name)"; Value = $Item.value; Result = 0 })
             }
         }
@@ -281,7 +281,7 @@ function Set-DefaultUserProfile {
                     ErrorAction  = "Continue"
                 }
                 $Result = Start-Process @params | Out-Null
-                Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Load: $RegDefaultUser"; Value = $RegPath; Result = $Result })
+                Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Load: $RegDefaultUser"; Value = $RegPath; Result = $Result.ExitCode })
             }
         }
         catch {
@@ -302,8 +302,8 @@ function Set-DefaultUserProfile {
                             Force       = $true
                             ErrorAction = "Continue"
                         }
-                        $ItemResult = New-Item @params
-                        Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $RegPath; Result = 0 })
+                        $Result = New-Item @params
+                        Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $RegPath; Result = $Result })
                     }
                 }
                 catch {
@@ -311,8 +311,8 @@ function Set-DefaultUserProfile {
                     Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "New-Item: $RegPath"; Value = $Msg; Result = 1 })
                 }
                 finally {
-                    if ($null -ne $ItemResult) {
-                        if ("Handle" -in ($ItemResult | Get-Member -ErrorAction "SilentlyContinue" | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
+                    if ($null -ne $Result) {
+                        if ("Handle" -in ($Result | Get-Member -ErrorAction "SilentlyContinue" | Select-Object -ExpandProperty "Name")) { $Result.Handle.Close() }
                     }
                 }
             }
@@ -327,7 +327,7 @@ function Set-DefaultUserProfile {
                         Force       = $true
                         ErrorAction = "Continue"
                     }
-                    Set-ItemProperty @params > $null
+                    Set-ItemProperty @params | Out-Null
                     Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "$RegPath; $($Item.name)"; Value = $Item.value; Result = 0 })
                 }
             }
@@ -353,8 +353,8 @@ function Set-DefaultUserProfile {
                     WindowStyle  = "Hidden"
                     ErrorAction  = "Continue"
                 }
-                Start-Process @params > $null
-                Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Unload"; Value = $RegDefaultUser; Result = 0 })
+                $Result = Start-Process @params | Out-Null
+                Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Unload"; Value = $RegDefaultUser; Result = $Result.ExitCode })
             }
         }
         catch {
@@ -379,7 +379,7 @@ function Copy-File {
                     $params = @{
                         Path        = $Source
                         Destination = $Item.Destination
-                        Confirm     = $false
+                        Confirm      = $false
                         Force       = $true
                         ErrorAction = "Continue"
                     }
@@ -413,7 +413,7 @@ function New-Directory {
                     ItemType    = "Directory"
                     ErrorAction = "Continue"
                 }
-                New-Item @params > $null
+                New-Item @params | Out-Null
                 Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $Path; Result = 0 })
             }
         }
