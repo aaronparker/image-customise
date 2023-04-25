@@ -6,9 +6,9 @@ authors:
 ---
 ## Download the Latest Release
 
-To use the scripts in an operating system deployment pipeline, download the zip file (`image-customise.zip`) attached to the [latest release](https://github.com/aaronparker/image-customise/releases/latest) and import the extracted files into your OS deployment solution (e.g., the Microsoft Deployment Toolkit, Microsoft Endpoint Configuration Manager, etc.).
+To use the scripts in an operating system deployment pipeline, download the zip file (`image-customise.zip`) attached to the [latest release](https://github.com/aaronparker/image-customise/releases/latest) and import the extracted files into your OS deployment solution (e.g., the Microsoft Deployment Toolkit, Microsoft Intune, Microsoft Configuration Manager, etc.).
 
-![Windows Custom Defaults release hosted on GitHub](assets/img/githubrelease.png)
+![Windows Custom Defaults release hosted on GitHub](assets/img/githubrelease.jpeg)
 
 ## Install
 
@@ -18,17 +18,47 @@ Installation of the Windows Customised Defaults is handled by `Install-Defaults.
 C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy RemoteSigned -File .\Install-Defaults.ps1
 ```
 
-### Enable Language Support
+### Localising Windows
 
-`Install-Defaults.ps1` can install language packs and configure system-wide language settings on Windows 10 and Windows 11, for example:
+`Install-Defaults.ps1` can install language packs and configure system-wide language / locale settings on Windows 10 and Windows 11, for example:
 
 ```powershell
-C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy RemoteSigned -File .\Install-Defaults.ps1 -Language "en-AU"
+.\Install-Defaults.ps1 -Language "en-AU"
 ```
 
-Use `Install-Defaults.ps1 -Language "<language code>"` to install language support for a specified language. Supports the **bcp47** tag of the language to install; however, `Skip` is the default value which will skip the install of language settings.
+Use `Install-Defaults.ps1 -Language "<language code>"` to install a language pack and set local settings for a specified language. This parameter supports the **bcp47** tag of the language to install (e.g., `en-AU`, `en-GB`, `fr-FR`). No locale, regional settings or language packs will be installed unless this parameter is specified.
 
-This uses the [Install-Language](https://learn.microsoft.com/en-au/powershell/module/languagepackmanagement/install-language) and [Set-SystemPreferredUILanguage](https://learn.microsoft.com/en-au/powershell/module/languagepackmanagement/set-systempreferreduilanguage) commands to install language packs and configure the default system language but requires minimum version Windows 10 and 11 - ensure the Windows instance is update to date for this feature to work.
+This uses the [Install-Language](https://learn.microsoft.com/en-au/powershell/module/languagepackmanagement/install-language) module to install the appropriate language pack. This module is only available on current version of Windows 10 and Windows 11 - installation of a language pack on Windows Server is not yet supported.
+
+!!! note
+
+    Installation of a language pack on Windows 10 requires a reboot.
+
+Additional locale settings can be configured for any version of Windows 10, Windows 11 and Windows Server 2016+ with the `International` PowerShell module. `Install-Defaults.ps1` will also configure culture, locale, and language settings using the language value specified in `-Language`.
+
+Below is a summary of the commands used to configure these settings:
+
+```powershell
+[System.Globalization.CultureInfo] $Language = "en-AU"
+Import-Module -Name "International"
+Set-Culture -CultureInfo $Language
+Set-WinSystemLocale -SystemLocale $Language
+Set-WinUILanguageOverride -Language $Language
+Set-WinUserLanguageList -LanguageList $Language.Name -Force
+$RegionInfo = New-Object -TypeName "System.Globalization.RegionInfo" -ArgumentList $Language
+Set-WinHomeLocation -GeoId $RegionInfo.GeoId
+Set-SystemPreferredUILanguage -Language $Language
+```
+
+### Set a Time Zone
+
+For Windows 10 and Windows 11, the solution will enable location settings for physical PCs that will automatically se the time zone in most scenarios. However, `Install-Defaults.ps1` can directly set a time zone when specified on the `-TimeZone` parameter. Use `Install-Defaults.ps1 -TimeZone "Time zone name"` to set the required time zone.
+
+To view the list of valid time zone names to pass to this parameter, use `Get-TimeZone -ListAvailable`, and use the time zone name on the `Id` property. Localising Windows and setting the appropriate time zone would look like this:
+
+```powershell
+.\Install-Defaults.ps1 -Language "en-AU" -TimeZone "AUS Eastern Standard Time"
+```
 
 ## Detection
 
