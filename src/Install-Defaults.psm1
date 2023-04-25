@@ -638,37 +638,39 @@ function Install-SystemLanguage {
 function Set-SystemLocale {
     # Set system locale and regional settings
     [CmdletBinding(SupportsShouldProcess = $true)]
-    param ($Language)
+    param ([System.Globalization.CultureInfo] $Language)
     try {
         if ($PSCmdlet.ShouldProcess($Language, "Set locale")) {
             Import-Module -Name "International"
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Import module"; Value = "International"; Result = 0 })
 
             Set-Culture -CultureInfo $Language
-            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-Culture"; Value = $Language; Result = 0 })
+            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-Culture"; Value = $Language.Name; Result = 0 })
 
             Set-WinSystemLocale -SystemLocale $Language
-            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinSystemLocale"; Value = $Language; Result = 0 })
+            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinSystemLocale"; Value = $Language.Name; Result = 0 })
 
             Set-WinUILanguageOverride -Language $Language
-            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinUILanguageOverride"; Value = $Language; Result = 0 })
+            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinUILanguageOverride"; Value = $Language.Name; Result = 0 })
 
-            Set-WinUserLanguageList -LanguageList $Language -Force
-            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinUserLanguageList"; Value = $Language; Result = 0 })
+            Set-WinUserLanguageList -LanguageList $Language.Name -Force
+            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinUserLanguageList"; Value = $Language.Name; Result = 0 })
 
             $RegionInfo = New-Object -TypeName "System.Globalization.RegionInfo" -ArgumentList $Language
             Set-WinHomeLocation -GeoId $RegionInfo.GeoId
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinHomeLocation"; Value = $RegionInfo.GeoId; Result = 0 })
 
-            Set-SystemPreferredUILanguage @params
-            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-SystemPreferredUILanguage: $Language"; Value = $Msg; Result = 0 })
-
-            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system locale: $Language"; Value = "Success"; Result = 0 })
+            if (Get-Command -Name "Set-SystemPreferredUILanguage" -ErrorAction "SilentlyContinue") {
+                # Cmdlet not available on Windows Server
+                Set-SystemPreferredUILanguage -Language $Language
+                Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-SystemPreferredUILanguage: $Language.Name"; Value = $Msg; Result = 0 })
+            }
+            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system locale: $($Language.Name)"; Value = "Success"; Result = 0 })
         }
     }
     catch {
         $Msg = $_.Exception.Message
-        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system locale: $Language"; Value = $Msg; Result = 1 })
+        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system locale: $($Language.Name)"; Value = $Msg; Result = 1 })
     }
 }
 
@@ -676,9 +678,7 @@ function Set-TimeZoneUsingName {
     # Set the time zone using a valid time zone name
     # https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones
     [CmdletBinding(SupportsShouldProcess = $true)]
-    param (
-        [System.String] $TimeZone = "AUS Eastern Standard Time"
-    )
+    param ([System.String] $TimeZone = "AUS Eastern Standard Time")
     try {
         if ($PSCmdlet.ShouldProcess($TimeZone, "Set-TimeZone")) {
             Set-TimeZone -Name $TimeZone

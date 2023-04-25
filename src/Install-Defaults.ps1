@@ -2,10 +2,46 @@
 #Requires -PSEdition Desktop
 <#
     .SYNOPSIS
-    Configuration changes to a default install of Windows during provisioning.
+    Implements Configuration changes to a default install of Windows to enable an enterprise ready installation.
+
+    .PARAMETER Path
+    Path to where the scripts and configuration files are located.
+
+    .PARAMETER Guid
+    A GUID string that identifies the solution installation for detection via the Uninstall key in the Windows registry.
+
+    .PARAMETER Publisher
+    String that represents the publisher information that will be stored in the Uninstall key in the Windows registry.
+
+    .PARAMETER RunOn
+    Date time stamp that will be stored in the Uninstall key in the Windows registry.
+
+    .PARAMETER Project
+    A string that defines the name for the solution. This string will be used for the custom event log to track the installation and stored in the Windows registry.
+
+    .PARAMETER Helplink
+    A string that defines a URL for the solution. This string will be written to the Uninstall key in the Windows registry.
+
+    .PARAMETER Properties
+    An array of string values used for source categories in the Windows event log.
+
+    .PARAMETER AppxMode
+    A string that defines the mode to remove AppX packages from Windows. Accepts 'Block' or 'Allow' - Block removes a defined list of packages. Allow removes all packages except for a defined list.
+
+    .PARAMETER FeatureUpdatePath
+    A directory path in which the solution will be copied into to enable running during Windows feature updates.
+
+    .PARAMETER Language
+    A CultureInfo value that defines the locale / language configuration to install and configure for Windows.
+
+    .PARAMETER TimeZone
+    A string that is the StandardName or DaylightName properties of the TimeZoneInfo object. Use 'Get-TimeZone -ListAvailable' to list available time zones.
+
+    .EXAMPLE
+    PS C:\image-defaults> .\Install-Defaults.ps1 -Language "en-AU" -TimeZone "AUS Eastern Standard Time" -Verbose
 
     .NOTES
-    NAME: Invoke-Defaults.ps1
+    NAME: Install-Defaults.ps1
     AUTHOR: Aaron Parker
     TWITTER: @stealthpuppy
 #>
@@ -49,11 +85,11 @@ param (
 
     [Parameter(Mandatory = $false)]
     [ValidateNotNullOrEmpty()]
-    [System.String] $Language = "Skip",
+    [System.Globalization.CultureInfo] $Language,
 
     [Parameter(Mandatory = $false)]
     [ValidateNotNullOrEmpty()]
-    [System.String] $TimeZone = "Skip"
+    [System.String] $TimeZone
 )
 
 #region Restart if running in a 32-bit session
@@ -84,14 +120,8 @@ if (!([System.Environment]::Is64BitProcess)) {
 }
 #endregion
 
-#region Functions
-try {
-    Import-Module -Name $(Join-Path -Path $PSScriptRoot -ChildPath "Install-Defaults.psm1") -Force
-}
-catch {
-    throw $_
-}
-#endregion
+# Get start time of the script
+$StartTime = Get-Date
 
 # Splat WhatIf and Verbose preferences to pass to functions
 $prefs = @{
@@ -103,6 +133,17 @@ $prefs = @{
 if ($Path.Length -eq 0) { $WorkingPath = $PWD.Path } else { $WorkingPath = $Path }
 Push-Location -Path $WorkingPath
 Write-Verbose -Message "Execution path: $WorkingPath."
+
+#region Import functions
+try {
+    $ModuleFile = $(Join-Path -Path $PSScriptRoot -ChildPath "Install-Defaults.psm1")
+    Test-Path -Path $ModuleFile -PathType "Leaf" -ErrorAction "Stop" | Out-Null
+    Import-Module -Name $ModuleFile -Force -ErrorAction "Stop"
+}
+catch {
+    throw $_
+}
+#endregion
 
 # Setup logging
 New-ScriptEventLog -EventLog $Project -Property $Properties
@@ -133,8 +174,7 @@ Write-Verbose -Message "OS: $OSName."
 Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "OSName"; Value = $OSName; Result = 0 })
 
 $DisplayVersion = Get-ChildItem -Path $WorkingPath -Include "VERSION.txt" -Recurse | Get-Content -Raw
-Write-Verbose -Message "Customisation scripts version: $DisplayVersion."
-Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Version"; Value = $DisplayVersion; Result = 0 })
+Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Script version"; Value = $DisplayVersion; Result = 0 })
 
 #region Gather configs
 $AllConfigs = @(Get-ChildItem -Path $WorkingPath -Include "*.All.json" -Recurse -ErrorAction "Continue")
@@ -155,7 +195,7 @@ foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConf
     if ([System.Version]$OSVersion -ge [System.Version]$Settings.MinimumBuild) {
         if ([System.Version]$OSVersion -le [System.Version]$Settings.MaximumBuild) {
 
-            # Implement each setting in the JSON
+            #region Implement each setting in the JSON
             if ($Settings.Registry.ChangeOwner.Length -gt 0) {
                 foreach ($Item in $Settings.Registry.ChangeOwner) {
                     Set-RegistryOwner -RootKey $Item.Root -Key $Item.Key -Sid $Item.Sid @prefs
@@ -169,7 +209,6 @@ foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConf
                     Set-Registry -Setting $Settings.Registry.Set @prefs; break
                 }
                 default {
-                    Write-Verbose -Message "Skip registry: $($Config.FullName)."
                     Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Registry"; Value = "Skipped"; Result = 0 })
                 }
             }
@@ -196,14 +235,13 @@ foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConf
             Stop-NamedService -Service $Settings.Services.Stop @prefs
             Start-NamedService -Service $Settings.Services.Start @prefs
             Restart-NamedService -Service $Settings.Services.Restart @prefs
+            #endregion
         }
         else {
-            Write-Verbose -Message "Skip maximum version config: $($Config.FullName)."
             Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = $Config.FullName; Value = "Skipped maximum version"; Result = 0 })
         }
     }
     else {
-        Write-Verbose -Message "Skip minimum version config: $($Config.FullName)."
         Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = $Config.FullName; Value = "Skipped minimum version"; Result = 0 })
     }
 }
@@ -231,12 +269,8 @@ if ($Platform -eq "Client") {
 }
 #endregion
 
-#region Set system language and regional settings
-if ($Language -eq "Skip") {
-    Write-Verbose -Message "-Language parameter not specified. Skipping install language support."
-    Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language"; Value = "Skipped"; Result = 0 })
-}
-else {
+#region Set system language, locale and regional settings
+if ($PSBoundParameters.ContainsKey('Language')) {
     if ($Platform -eq "Client") {
         # Set language support by installing the specified language pack
         Install-SystemLanguage -Language $Language
@@ -246,13 +280,17 @@ else {
         Set-SystemLocale -Language $Language
     }
 }
+else {
+    Write-Verbose -Message "-Language parameter not specified. Skipping install language support."
+    Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language"; Value = "Skipped"; Result = 0 })
+}
 
-if ($TimeZone -eq "Skip") {
-    Write-Verbose -Message "-TimeZone parameter not specified. Skipping set time zone."
-    Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Set time zone"; Value = "Skipped"; Result = 0 })
+if ($PSBoundParameters.ContainsKey('TimeZone')) {
+    Set-TimeZoneUsingName -TimeZone $TimeZone
 }
 else {
-    Set-TimeZoneUsingName -TimeZone $TimeZone
+    Write-Verbose -Message "-TimeZone parameter not specified. Skipping set time zone."
+    Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Set time zone"; Value = "Skipped"; Result = 0 })
 }
 #endregion
 
@@ -264,14 +302,14 @@ if ($FeatureUpdatePath -eq $WorkingPath) {
 else {
     try {
         New-Item -Path $FeatureUpdatePath -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
+        Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $FeatureUpdatePath; Result = 0 })
         Copy-Item -Path "$WorkingPath\*.*" -Destination $FeatureUpdatePath -Recurse -ErrorAction "SilentlyContinue"
-        $Msg = "Success"; $Result = 0
+        Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "Copy-Item $WorkingPath\*.*"; Value = $FeatureUpdatePath; Result = 0 })
     }
     catch {
-        $Msg = $_.Exception.Message; $Result = 1
+        $Msg = $_.Exception.Message
+        Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "Copy to $FeatureUpdatePath"; Value = $Msg; Result = 1 })
     }
-    $Object = [PSCustomObject]@{Name = "Copy to $FeatureUpdatePath"; Value = $Msg; Result = $Result }
-    Write-ToEventLog -Property "General" -Object $Object
 }
 
 # Set uninstall registry value for detecting as an installed application
@@ -286,7 +324,17 @@ if ($PSCmdlet.ShouldProcess("Set uninstall key values")) {
     Set-ItemProperty -Path "$Key\{$Guid}" -Name "HelpLink" -Value $HelpLink -Type "String" -Force -ErrorAction "Continue" | Out-Null
 }
 
-# Write last entry to the event log and output success
-$Object = [PSCustomObject]@{Name = "Install-Defaults.ps1"; Value = "Complete"; Result = $Result }
-Write-ToEventLog -Property "General" -Object $Object
-if ($Result -eq 1) { return 1 } else { return 0 }
+#region Write last entry to the event log and output success or failure event
+$EndTime = $StartTime - (Get-Date)
+$WarningEntries = Get-EventLog -LogName $Project | `
+    Where-Object { $_.EntryType -eq "Warning" -and $_.TimeGenerated -ge $StartTime.AddMinutes( - ($EndTime.Minutes)) }
+if ($WarningEntries.Count -gt 0) {
+    Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Install-Defaults.ps1 complete"; Value = "Error"; Result = 1 })
+    Write-Output -InputObject $WarningEntries.Message
+    return 1
+}
+else {
+    Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Install-Defaults.ps1 complete"; Value = "Success"; Result = 0 })
+    return 0
+}
+#endregion
