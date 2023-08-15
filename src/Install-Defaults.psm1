@@ -106,7 +106,7 @@ function Get-OSName {
 
 function Get-Model {
     # Return details of the hardware model we are running on
-    $Hypervisor = "Parallels*|VMware*|Virtual*"
+    $Hypervisor = "Parallels*|VMware*|Virtual*|HVM*"
     if ((Get-CimInstance -ClassName "Win32_ComputerSystem").Model -match $Hypervisor) {
         $Model = "Virtual"
     }
