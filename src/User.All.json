@@ -105,14 +105,14 @@
             {
                 "path": "HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\location\\NonPackaged",
                 "name": "Value",
-                "value": "ALlow",
+                "value": "Allow",
                 "type": "String",
                 "note": "Enables location services for Win32 applications"
             },
             {
                 "path": "HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\location",
                 "name": "Value",
-                "value": "ALlow",
+                "value": "Allow",
                 "type": "String",
                 "note": "Enables location services for Universal Windows Platform Apps"
             }
