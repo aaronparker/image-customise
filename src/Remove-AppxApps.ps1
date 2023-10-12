@@ -158,6 +158,7 @@ begin {
         <# Filter out a set of apps that we'll never try to remove #>
         param (
             [System.Collections.ArrayList] $ProtectList = (
+                "Microsoft.AAD.BrokerPlugin_cw5n1h2txyewy",
                 "Microsoft.WindowsStore_8wekyb3d8bbwe",
                 "Microsoft.MicrosoftEdge_8wekyb3d8bbwe",
                 "Microsoft.Windows.Cortana_cw5n1h2txyewy",
