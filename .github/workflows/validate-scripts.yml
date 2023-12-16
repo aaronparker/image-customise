@@ -11,7 +11,6 @@ on:
       - 'src/**'
       - 'tests/*.ps1'
       - '!src/VERSION.txt'
-      - '.github/workflows/validate-scripts.yml'
   workflow_dispatch:
 
 jobs:
@@ -82,7 +81,7 @@ jobs:
       - name: Upload to Codecov
         id: codecov
         if: always()
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./CodeCoverage.xml
