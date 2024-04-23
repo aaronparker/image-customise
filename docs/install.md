@@ -64,7 +64,7 @@ To view the list of valid time zone names to pass to this parameter, use `Get-Ti
 
 Once installed, the following registry information can be used to detect that the package is installed:
 
-* Key - `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\f38de27b-799e-4c30-8a01-bfdedc622944`
+* Key - `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{f38de27b-799e-4c30-8a01-bfdedc622944}`
 * Value - `DisplayVersion`
 * Data - `2211.29.129` (the version number of the current release)
 
