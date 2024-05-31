@@ -23,7 +23,7 @@ Function Invoke-Process {
         [ValidateNotNullOrEmpty()]
         [string] $FilePath,
 
-        [Parameter(Mandatory=$False)]
+        [Parameter(Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
         [string] $ArgumentList
     )

@@ -179,6 +179,13 @@
                 "value": 1,
                 "type": "DWord",
                 "note": "Prevents the Your Phone app from running in the background"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+                "name": "BingSearchEnabled",
+                "value": 0,
+                "type": "DWord",
+                "note": "Disables web search in the Start menu for better responsiveness"
             }
         ],
         "Others": [

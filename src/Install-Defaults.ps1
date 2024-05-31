@@ -135,14 +135,10 @@ Push-Location -Path $WorkingPath
 Write-Verbose -Message "Execution path: $WorkingPath."
 
 #region Import functions
-try {
-    $ModuleFile = $(Join-Path -Path $PSScriptRoot -ChildPath "Install-Defaults.psm1")
-    Test-Path -Path $ModuleFile -PathType "Leaf" -ErrorAction "Stop" | Out-Null
-    Import-Module -Name $ModuleFile -Force -ErrorAction "Stop"
-}
-catch {
-    throw $_
-}
+
+$ModuleFile = $(Join-Path -Path $PSScriptRoot -ChildPath "Install-Defaults.psm1")
+Test-Path -Path $ModuleFile -PathType "Leaf" -ErrorAction "Stop" | Out-Null
+Import-Module -Name $ModuleFile -Force -ErrorAction "Stop"
 #endregion
 
 # Setup logging

@@ -9,10 +9,10 @@
 #>
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $False)]
+    [Parameter(Mandatory = $false)]
     [System.String] $Guid = "f38de27b-799e-4c30-8a01-bfdedc622944",
 
-    [Parameter(Mandatory = $False)]
+    [Parameter(Mandatory = $false)]
     [System.String] $FeatureUpdatePath = "$env:SystemRoot\System32\Update\Run\$Guid"
 )
 try {

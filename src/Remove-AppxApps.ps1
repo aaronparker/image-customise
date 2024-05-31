@@ -49,14 +49,14 @@
         .LINK
             https://stealthpuppy.com
 #>
-[CmdletBinding(SupportsShouldProcess = $True, DefaultParameterSetName = "BlockList")]
+[CmdletBinding(SupportsShouldProcess = $true, DefaultParameterSetName = "BlockList")]
 param (
-    [Parameter(Mandatory = $False, ParameterSetName = "BlockList", HelpMessage = "Specify whether the operation is a BlockList or AllowList.")]
-    [Parameter(Mandatory = $False, ParameterSetName = "AllowList", HelpMessage = "Specify whether the operation is a BlockList or AllowList.")]
+    [Parameter(Mandatory = $false, ParameterSetName = "BlockList", HelpMessage = "Specify whether the operation is a BlockList or AllowList.")]
+    [Parameter(Mandatory = $false, ParameterSetName = "AllowList", HelpMessage = "Specify whether the operation is a BlockList or AllowList.")]
     [ValidateSet('BlockList', 'AllowList')]
     [System.String] $Operation = "BlockList",
 
-    [Parameter(Mandatory = $False, ParameterSetName = "BlockList", HelpMessage = "Specify an AppX package or packages to remove.")]
+    [Parameter(Mandatory = $false, ParameterSetName = "BlockList", HelpMessage = "Specify an AppX package or packages to remove.")]
     [Alias("BlockList")]
     [System.Collections.ArrayList] $PackageFamilyNameBlockList = (
         "7EE7776C.LinkedInforWindows_w1wdnht996qgy",
@@ -70,7 +70,10 @@ param (
         "Microsoft.BingNews_8wekyb3d8bbwe",
         "Microsoft.BingSports_8wekyb3d8bbwe",
         "Microsoft.BingWeather_8wekyb3d8bbwe",
+        # "MicrosoftWindows.Client.CoPilot_cw5n1h2txyewy",
+        "MicrosoftWindows.CrossDevice_cw5n1h2txyewy",
         "Microsoft.Windows.DevHome_8wekyb3d8bbwe",
+        "Microsoft.Windows.DevHomeGitHubExtension_8wekyb3d8bbwe",
         "Microsoft.GamingApp_8wekyb3d8bbwe",
         "Microsoft.GetHelp_8wekyb3d8bbwe",
         # "Microsoft.Getstarted_8wekyb3d8bbwe",
@@ -83,7 +86,6 @@ param (
         "Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe",
         "Microsoft.MicrosoftSolitaireCollection_8wekyb3d8bbwe",
         # "Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe",
-        "Microsoft.MSPaint_8wekyb3d8bbwe",
         "Microsoft.MixedReality.Portal_8wekyb3d8bbwe",
         "Microsoft.Office.Desktop_8wekyb3d8bbwe",
         "Microsoft.Office.Desktop.Access_8wekyb3d8bbwe",
@@ -96,6 +98,7 @@ param (
         "Microsoft.OneConnect_8wekyb3d8bbwe",
         # "Microsoft.OneDriveSync_8wekyb3d8bbwe",
         # "Microsoft.Paint_8wekyb3d8bbwe",
+        "Microsoft.MSPaint_8wekyb3d8bbwe",
         "Microsoft.People_8wekyb3d8bbwe",
         # "Microsoft.PPIProjection_cw5n1h2txyewy",
         # "Microsoft.PowerAutomateDesktop_8wekyb3d8bbwe",
@@ -129,7 +132,7 @@ param (
         "SpotifyAB.SpotifyMusic_zpdnekdrzrea0"
     ),
 
-    [Parameter(Mandatory = $False, parameterSetName = "AllowList", HelpMessage = "Specify an AppX package or packages to keep, removing all others.")]
+    [Parameter(Mandatory = $false, parameterSetName = "AllowList", HelpMessage = "Specify an AppX package or packages to keep, removing all others.")]
     [Alias("AllowList")]
     [System.Collections.ArrayList] $PackageFamilyNameAllowList = (
         "Microsoft.549981C3F5F10_8wekyb3d8bbwe",
@@ -142,6 +145,7 @@ param (
         "Microsoft.HEifImageExtension_8wekyb3d8bbwe",
         "Microsoft.ScreenSketch_8wekyb3d8bbwe",
         "Microsoft.StorePurchaseApp_8wekyb3d8bbwe",
+        "Microsoft.WindowsTerminal_8wekyb3d8bbwe",
         "Microsoft.WebpImageExtension_8wekyb3d8bbwe",
         "Microsoft.WindowsStore_8wekyb3d8bbwe",
         "Microsoft.WindowsNotepad_8wekyb3d8bbwe",
@@ -164,7 +168,8 @@ begin {
                 "Microsoft.AAD.BrokerPlugin_cw5n1h2txyewy",
                 "Microsoft.WindowsStore_8wekyb3d8bbwe",
                 "Microsoft.MicrosoftEdge_8wekyb3d8bbwe",
-                "Microsoft.Windows.Cortana_cw5n1h2txyewy",
+                "Microsoft.WindowsNotepad_8wekyb3d8bbwe",
+                "Microsoft.WindowsTerminal_8wekyb3d8bbwe",
                 "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe",
                 "Microsoft.StorePurchaseApp_8wekyb3d8bbwe",
                 "Microsoft.Wallet_8wekyb3d8bbwe",
@@ -179,14 +184,14 @@ begin {
         )
         [System.Array] $FilteredList = @()
         foreach ($package in $PackageList) {
-            $appMatch = $False
+            $appMatch = $false
             foreach ($app in $ProtectList) {
                 if ($package -match $app) {
                     Write-Verbose -Message "Excluding package from removal: [$package]"
-                    $appMatch = $True
+                    $appMatch = $true
                 }
             }
-            if ($appMatch -eq $False) { $FilteredList += $package }
+            if ($appMatch -eq $false) { $FilteredList += $package }
         }
         Write-Output -InputObject $FilteredList
     }
@@ -207,13 +212,17 @@ begin {
                 # Get packages from the current system for all users
                 Write-Verbose -Message "Enumerating all users apps."
                 $packagesAllUsers = Get-AppxPackage -AllUsers -PackageTypeFilter "Main", "Resource" | `
-                    Where-Object { $_.NonRemovable -eq $False } | Select-Object -Property "PackageFamilyName"
+                    Where-Object { $_.NonRemovable -eq $false } | `
+                    Where-Object { $_.IsFramework -eq $false } | `
+                    Select-Object -Property "PackageFamilyName"
             }
             else {
                 # Get packages for the current user
                 Write-Verbose -Message "Enumerating current user apps only."
                 $packagesAllUsers = Get-AppxPackage -PackageTypeFilter "Main", "Resource" | `
-                    Where-Object { $_.NonRemovable -eq $False } | Select-Object -Property "PackageFamilyName"
+                    Where-Object { $_.NonRemovable -eq $false } | `
+                    Where-Object { $_.IsFramework -eq $false } | `
+                    Select-Object -Property "PackageFamilyName"
             }
             # Select unique packages
             $uniquePackagesAllUsers = $packagesAllUsers.PackageFamilyName | Sort-Object -Unique
@@ -260,7 +269,7 @@ process {
         Write-Output -InputObject $output
 
         # Remove the provisioned package completely from the system
-        if ($Elevated -eq $True) {
+        if ($Elevated -eq $true) {
             try {
                 Write-Verbose -Message "Get provisioned package: [$Name]."
                 $Value = "Removed"; $Status = 0; $Msg = "None"
