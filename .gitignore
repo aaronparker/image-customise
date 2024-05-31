@@ -45,3 +45,6 @@ TestResults.xml
 # mkdocs folders
 site
 .cache
+
+# Actions folders
+enricomi-publish-action-venv
