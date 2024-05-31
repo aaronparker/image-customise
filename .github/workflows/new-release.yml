@@ -55,6 +55,6 @@ jobs:
           fail_on_unmatched_files: true
           body_path: ${{ github.workspace }}/releases/README.md
           files: |
-            ${{ github.workspace }}/releases/Install-Defaults.intunewin
-            ${{ github.workspace }}/releases/Win32App.json
-            ${{ github.workspace }}/releases/image-customise.zip
+            releases/Install-Defaults.intunewin
+            releases/Win32App.json
+            releases/image-customise.zip
