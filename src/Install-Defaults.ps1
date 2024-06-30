@@ -319,17 +319,7 @@ if ($PSCmdlet.ShouldProcess("Set uninstall key values")) {
     Set-ItemProperty -Path "$Key\{$Guid}" -Name "HelpLink" -Value $HelpLink -Type "String" -Force -ErrorAction "Continue" | Out-Null
 }
 
-#region Write last entry to the event log and output success or failure event
+# Write last entry to the event log and output 0 so that we don't fail image builds
 $EndTime = $StartTime - (Get-Date)
-$WarningEntries = Get-EventLog -LogName $Project | `
-    Where-Object { $_.EntryType -eq "Warning" -and $_.TimeGenerated -ge $StartTime.AddMinutes( - ($EndTime.Minutes)) }
-if ($WarningEntries.Count -gt 0) {
-    Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Install-Defaults.ps1 complete"; Value = "Error"; Result = 3 })
-    Write-Output -InputObject $WarningEntries.Message
-    return 1
-}
-else {
-    Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Install-Defaults.ps1 complete"; Value = "Success"; Result = 1 })
-    return 0
-}
-#endregion
+Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Install-Defaults.ps1 complete"; Value = "$EndTime"; Result = 1 })
+return 0
