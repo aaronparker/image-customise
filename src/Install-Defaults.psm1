@@ -1,8 +1,38 @@
+using namespace System.Management.Automation
 <#
     Functions used by Install-Defaults.ps1
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param ()
+
+function Write-Msg {
+    [CmdletBinding()]
+    param(
+        [System.String[]] $Msg
+    )
+    process {
+        foreach ($String in $Msg) {
+            $Message = [HostInformationMessage]@{
+                Message         = "[$(Get-Date -Format 'dd.MM.yyyy HH:mm:ss')]"
+                ForegroundColor = "Black"
+                BackgroundColor = "DarkCyan"
+                NoNewline       = $true
+            }
+            $params = @{
+                MessageData       = $Message
+                InformationAction = "Continue"
+                Tags              = "Microsoft365"
+            }
+            Write-Information @params
+            $params = @{
+                MessageData       = " $String"
+                InformationAction = "Continue"
+                Tags              = "Microsoft365"
+            }
+            Write-Information @params
+        }
+    }
+}
 
 function New-ScriptEventLog {
     # Create the custom event log used to record events
@@ -23,27 +53,42 @@ function Write-ToEventLog {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (
         [Parameter()]$Property,
-        [Parameter()]
-        [ValidateNotNullOrEmpty()] $Object
-    )
-    foreach ($Item in $Object) {
-        Write-Verbose -Message "$($Item.Name), $($Item.Value), $($Item.Result)"
 
-        switch ($Item.Result) {
-            0 { $EntryType = "Information" }
-            1 { $EntryType = "Warning" }
-            default { $EntryType = "Information" }
+        [Parameter()]
+        [ValidateNotNullOrEmpty()] $Object,
+
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [System.String] $LogPath = "$Env:ProgramData\image-customise\CustomisedDefaults.log"
+    )
+    begin {
+        if (-not(Test-Path -Path $(Split-Path -Path $LogPath -Parent))) {
+            New-Item -Path $(Split-Path -Path $LogPath -Parent) -ItemType "Directory" -Force | Out-Null
         }
-        $params = @{
-            LogName     = "Customised Defaults"
-            Source      = $Property
-            EventID     = (100 + [System.Int16]$Item.Result)
-            EntryType   = $EntryType
-            Message     = "$($Item.Name), $($Item.Value), $($Item.Result)"
-            ErrorAction = "Continue"
-        }
-        if ($PSCmdlet.ShouldProcess("Customised Defaults", "Write-EventLog")) {
-            Write-EventLog @params
+    }
+    process {
+        foreach ($Item in $Object) {
+            #Write-Msg -Msg "$($Item.Name), $($Item.Value), $($Item.Result)"
+            switch ($Item.Result) {
+                "Info" { [System.Int32]$Type = 1 }
+                "Warning" { [System.Int32]$Type = 2 }
+                "Error" { [System.Int32]$Type = 3 }
+                default { [System.Int32]$Type = 1 }
+            }
+
+            # Create a log entry
+            $Message = "$Property; $($Item.Name), $($Item.Value), $($Item.Result)"
+            $Content = "<![LOG[$Message]LOG]!>" +`
+                "<time=`"$(Get-Date -Format "HH:mm:ss.ffffff")`" " +`
+                "date=`"$(Get-Date -Format "M-d-yyyy")`" " +`
+                "component=`"Customised defaults`" " +`
+                "context=`"$([System.Security.Principal.WindowsIdentity]::GetCurrent().Name)`" " +`
+                "type=`"$($Item.Result)`" " +`
+                "thread=`"$([Threading.Thread]::CurrentThread.ManagedThreadId)`" " +`
+                "file=`"`">"
+        
+            # Write the line to the log file
+            Add-Content -Path $LogPath -Value $Content
         }
     }
 }
@@ -70,6 +115,7 @@ function Get-Platform {
             $Platform = "Client"
         }
     }
+    Write-Msg -Msg "Platform: $Platform."
     Write-Output -InputObject $Platform
 }
 
@@ -101,6 +147,7 @@ function Get-OSName {
             $Caption = "Unknown"
         }
     }
+    Write-Msg -Msg "OS Name: $Caption."
     Write-Output -InputObject $Caption
 }
 
@@ -113,6 +160,7 @@ function Get-Model {
     else {
         $Model = "Physical"
     }
+    Write-Msg -Msg "Model: $Model."
     Write-Output -InputObject $Model
 }
 
@@ -123,7 +171,7 @@ function Get-SettingsContent ($Path) {
             Path        = $Path
             ErrorAction = "Continue"
         }
-        Write-Verbose -Message "Importing: $Path."
+        Write-Msg -Msg "Importing: $Path."
         $Settings = Get-Content @params | ConvertFrom-Json -ErrorAction "Continue"
     }
     catch {
@@ -202,6 +250,7 @@ function Set-RegistryOwner {
         }
 
         Set-RegistryKeyOwner -RootKey $RootKey -Key $Key -Sid $Sid -Recurse $Recurse
+        Write-Msg -Msg "Set-RegistryOwner: $RootKey, $Key"
         Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Set-RegistryOwner: $RootKey, $Key"; Value = $Sid; Result = 0 })
     }
     catch {
@@ -226,6 +275,7 @@ function Set-Registry {
                         ErrorAction = "SilentlyContinue"
                     }
                     $ItemResult = New-Item @params
+                    Write-Msg -Msg "New registry path: $($Item.path)"
                     Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $Item.path; Result = 0 })
                 }
             }
@@ -249,6 +299,7 @@ function Set-Registry {
                     ErrorAction = "Continue"
                 }
                 Set-ItemProperty @params | Out-Null
+                Write-Msg -Msg "Set registry property: $($Item.path); $($Item.name) $($Item.value)"
                 Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "$($Item.path); $($Item.name)"; Value = $Item.value; Result = 0 })
             }
         }
@@ -281,6 +332,7 @@ function Set-DefaultUserProfile {
                     ErrorAction  = "Continue"
                 }
                 $Result = Start-Process @params
+                Write-Msg -Msg "Load default user: $RegPath"
                 Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Load: $RegDefaultUser"; Value = $RegPath; Result = $Result.ExitCode })
             }
         }
@@ -303,6 +355,7 @@ function Set-DefaultUserProfile {
                             ErrorAction = "Continue"
                         }
                         $ItemResult = New-Item @params
+                        Write-Msg -Msg "New registry path: $($Item.path)"
                         Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $RegPath; Result = 0 })
                     }
                 }
@@ -328,6 +381,7 @@ function Set-DefaultUserProfile {
                         ErrorAction = "Continue"
                     }
                     Set-ItemProperty @params | Out-Null
+                    Write-Msg -Msg "Set registry property: $($Item.path); $($Item.name) $($Item.value)"
                     Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "$RegPath; $($Item.name)"; Value = $Item.value; Result = 0 })
                 }
             }
@@ -354,6 +408,7 @@ function Set-DefaultUserProfile {
                     ErrorAction  = "Continue"
                 }
                 $Result = Start-Process @params
+                Write-Msg -Msg "Unload default user: $RegPath"
                 Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Unload"; Value = $RegDefaultUser; Result = $Result.ExitCode })
             }
         }
@@ -370,8 +425,8 @@ function Copy-File {
     param ($Path, $Parent)
     foreach ($Item in $Path) {
         $Source = $(Join-Path -Path $Parent -ChildPath $Item.Source)
-        Write-Verbose -Message "Source: $Source."
-        Write-Verbose -Message "Destination: $($Item.Destination)."
+        Write-Msg -Msg "Source: $Source."
+        Write-Msg -Msg "Destination: $($Item.Destination)."
         if (Test-Path -Path $Source -ErrorAction "Continue") {
             New-Directory -Path $(Split-Path -Path $Item.Destination -Parent)
             try {
@@ -379,7 +434,7 @@ function Copy-File {
                     $params = @{
                         Path        = $Source
                         Destination = $Item.Destination
-                        Confirm      = $false
+                        Confirm     = $false
                         Force       = $true
                         ErrorAction = "Continue"
                     }
@@ -414,6 +469,7 @@ function New-Directory {
                     ErrorAction = "Continue"
                 }
                 New-Item @params | Out-Null
+                Write-Msg -Msg "New path: $Path"
                 Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $Path; Result = 0 })
             }
         }
@@ -440,6 +496,7 @@ function Remove-Path {
                         ErrorAction = "Continue"
                     }
                     Remove-Item @params
+                    Write-Msg -Msg "Remove path: $Path"
                     Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "Remove-Item"; Value = $Path; Result = 0 })
                 }
             }
@@ -457,7 +514,6 @@ function Remove-Feature {
     param ($Feature)
 
     if ($Feature.Count -ge 1) {
-        Write-Verbose -Message "Remove features."
         $Feature | ForEach-Object { Get-WindowsOptionalFeature -Online -FeatureName $_ -ErrorAction "Continue" } | `
             ForEach-Object {
             try {
@@ -469,6 +525,7 @@ function Remove-Feature {
                         ErrorAction = "Continue"
                     }
                     Disable-WindowsOptionalFeature @params | Out-Null
+                    Write-Msg -Msg "Remove feature: $($_.FeatureName)"
                     Write-ToEventLog -Property "Features" -Object ([PSCustomObject]@{Name = "Disable-WindowsOptionalFeature"; Value = $_.FeatureName; Result = 0 })
                 }
             }
@@ -486,7 +543,6 @@ function Remove-Capability {
     param ($Capability)
 
     if ($Capability.Count -ge 1) {
-        Write-Verbose -Message "Remove capabilities."
         foreach ($Item in $Capability) {
             try {
                 if ($PSCmdlet.ShouldProcess($Item, "Remove-WindowsCapability")) {
@@ -496,6 +552,7 @@ function Remove-Capability {
                         ErrorAction = "Continue"
                     }
                     Remove-WindowsCapability @params | Out-Null
+                    Write-Msg -Msg "Remove capability: $($Item)"
                     Write-ToEventLog -Property "Capabilities" -Object ([PSCustomObject]@{Name = "Remove-WindowsCapability"; Value = $Item; Result = 0 })
                 }
             }
@@ -513,7 +570,7 @@ function Remove-Package {
     param ($Package)
 
     if ($Package.Count -ge 1) {
-        Write-Verbose -Message "Remove packages."
+        Write-Msg -Msg "Remove packages."
         foreach ($Item in $Package) {
             Get-WindowsPackage -Online -ErrorAction "Continue" | Where-Object { $_.PackageName -match $Item } | `
                 ForEach-Object {
@@ -525,6 +582,7 @@ function Remove-Package {
                             ErrorAction = "Continue"
                         }
                         Remove-WindowsPackage @params | Out-Null
+                        Write-Msg -Msg "Remove package: $($_.PackageName)"
                         Write-ToEventLog -Property "Packages" -Object ([PSCustomObject]@{Name = "Remove-WindowsPackage"; Value = $Item; Result = 0 })
                     }
                 }
@@ -552,6 +610,7 @@ function Restart-NamedService {
         try {
             if ($PSCmdlet.ShouldProcess($Item, "Restart-Service")) {
                 Get-Service -Name $Item -ErrorAction "Ignore" | Restart-Service -Force
+                Write-Msg -Msg "Restart service: $Item"
                 Write-ToEventLog -Property "Services" -Object ([PSCustomObject]@{Name = "Restart-Service"; Value = $Item; Result = 0 })
             }
         }
@@ -571,6 +630,7 @@ function Start-NamedService {
         try {
             if ($PSCmdlet.ShouldProcess($Item, "Start-Service")) {
                 Get-Service -Name $Item -ErrorAction "Ignore" | Start-Service
+                Write-Msg -Msg "Start service: $Item"
                 Write-ToEventLog -Property "Services" -Object ([PSCustomObject]@{Name = "Start-Service"; Value = $Item; Result = 0 })
             }
         }
@@ -590,6 +650,7 @@ function Stop-NamedService {
         try {
             if ($PSCmdlet.ShouldProcess($Item, "Stop-Service")) {
                 Get-Service -Name $Item -ErrorAction "Ignore" | Stop-Service -Force
+                Write-Msg -Msg "Stop service: $Item"
                 Write-ToEventLog -Property "Services" -Object ([PSCustomObject]@{Name = "Stop-Service"; Value = $Item; Result = 0 })
             }
         }
@@ -609,6 +670,7 @@ function Install-SystemLanguage {
     try {
         if ($PSCmdlet.ShouldProcess("LanguagePackManagement", "Import-Module")) {
             Import-Module -Name "LanguagePackManagement"
+            Write-Msg -Msg "Import module: LanguagePackManagement"
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Import module LanguagePackManagement"; Value = "Success"; Result = 0 })
         }
     }
@@ -626,6 +688,7 @@ function Install-SystemLanguage {
                 ExcludeFeatures = $false
             }
             Install-Language @params | Out-Null
+            Write-Msg -Msg "Install language: $Language"
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language pack: $Language"; Value = $Msg; Result = 0 })
         }
     }
@@ -642,28 +705,35 @@ function Set-SystemLocale {
     try {
         if ($PSCmdlet.ShouldProcess($Language, "Set locale")) {
             Import-Module -Name "International"
+            Write-Msg -Msg "Import module: International"
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Import module"; Value = "International"; Result = 0 })
 
             Set-Culture -CultureInfo $Language
+            Write-Msg -Msg "Set-Culture: $($Language.Name)"
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-Culture"; Value = $Language.Name; Result = 0 })
 
             Set-WinSystemLocale -SystemLocale $Language
+            Write-Msg -Msg "Set-WinSystemLocale: $($Language.Name)"
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinSystemLocale"; Value = $Language.Name; Result = 0 })
 
             Set-WinUILanguageOverride -Language $Language
+            Write-Msg -Msg "Set-WinUILanguageOverride: $($Language.Name)"
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinUILanguageOverride"; Value = $Language.Name; Result = 0 })
 
             Set-WinUserLanguageList -LanguageList $Language.Name -Force
+            Write-Msg -Msg "Set-WinUserLanguageList: $($Language.Name)"
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinUserLanguageList"; Value = $Language.Name; Result = 0 })
 
             $RegionInfo = New-Object -TypeName "System.Globalization.RegionInfo" -ArgumentList $Language
             Set-WinHomeLocation -GeoId $RegionInfo.GeoId
+            Write-Msg -Msg "Set-WinHomeLocation: $($RegionInfo.GeoId)"
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinHomeLocation"; Value = $RegionInfo.GeoId; Result = 0 })
 
             if (Get-Command -Name "Set-SystemPreferredUILanguage" -ErrorAction "SilentlyContinue") {
                 # Cmdlet not available on Windows Server
                 Set-SystemPreferredUILanguage -Language $Language
-                Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-SystemPreferredUILanguage: $Language.Name"; Value = $Msg; Result = 0 })
+                Write-Msg -Msg "Set-SystemPreferredUILanguage: $($Language.Name)"
+                Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-SystemPreferredUILanguage: $($Language.Name)"; Value = $Msg; Result = 0 })
             }
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system locale: $($Language.Name)"; Value = "Success"; Result = 0 })
         }
@@ -682,6 +752,7 @@ function Set-TimeZoneUsingName {
     try {
         if ($PSCmdlet.ShouldProcess($TimeZone, "Set-TimeZone")) {
             Set-TimeZone -Name $TimeZone
+            Write-Msg -Msg "Set-TimeZone: $($TimeZone)"
             Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Set time zone"; Value = $TimeZone; Result = 0 })
         }
     }

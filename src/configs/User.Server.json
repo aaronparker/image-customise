@@ -25,13 +25,13 @@
         "Feature": "RDS-RD-Server",
         "Exists": [
             {
-                "Source": "WindowsRDSStartMenuLayout.xml",
+                "Source": "start\\WindowsRDSStartMenuLayout.xml",
                 "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.xml"
             }
         ],
         "NotExists": [
             {
-                "Source": "WindowsServerStartMenuLayout.xml",
+                "Source": "start\\WindowsServerStartMenuLayout.xml",
                 "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.xml"
             }
         ]

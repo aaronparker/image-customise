@@ -29,7 +29,7 @@
         "Copy": [],
         "OtherFiles": [
             {
-                "Source": "desktop-config.json",
+                "Source": "apps\\desktop-config.json",
                 "Destination": "C:\\Users\\Default\\AppData\\Roaming\\Microsoft\\Teams\\desktop-config.json"
             }
         ]

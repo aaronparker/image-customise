@@ -105,9 +105,6 @@ if (!([System.Environment]::Is64BitProcess)) {
         # Execute the script in a 64-bit process with the passed parameters
         $Arguments = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$($MyInvocation.MyCommand.Definition)`"$ParameterString"
         $ProcessPath = $(Join-Path -Path $Env:SystemRoot -ChildPath "\Sysnative\WindowsPowerShell\v1.0\powershell.exe")
-        Write-Verbose -Message "Restarting in 64-bit PowerShell."
-        Write-Verbose -Message "File path: $ProcessPath."
-        Write-Verbose -Message "Arguments: $Arguments."
         $params = @{
             FilePath     = $ProcessPath
             ArgumentList = $Arguments
@@ -132,60 +129,56 @@ $prefs = @{
 # Configure working path
 if ($Path.Length -eq 0) { $WorkingPath = $PWD.Path } else { $WorkingPath = $Path }
 Push-Location -Path $WorkingPath
-Write-Verbose -Message "Execution path: $WorkingPath."
 
 #region Import functions
-
 $ModuleFile = $(Join-Path -Path $PSScriptRoot -ChildPath "Install-Defaults.psm1")
 Test-Path -Path $ModuleFile -PathType "Leaf" -ErrorAction "Stop" | Out-Null
 Import-Module -Name $ModuleFile -Force -ErrorAction "Stop"
+Write-Msg -Msg "Execution path: $WorkingPath."
 #endregion
 
 # Setup logging
-New-ScriptEventLog -EventLog $Project -Property $Properties
+#New-ScriptEventLog -EventLog $Project -Property $Properties
 
 # Start logging
 $PSProcesses = Get-CimInstance -ClassName "Win32_Process" -Filter "Name = 'powershell.exe'" | Select-Object -Property "CommandLine"
 foreach ($Process in $PSProcesses) {
-    $Object = [PSCustomObject]@{Name = "CommandLine"; Value = $Process.CommandLine; Result = 0 }
+    $Object = [PSCustomObject]@{Name = "CommandLine"; Value = $Process.CommandLine; Result = 1 }
     Write-ToEventLog -Property "General" -Object $Object
 }
 
 # Get system properties
 $Platform = Get-Platform
-Write-Verbose -Message "Platform: $Platform."
-Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Platform"; Value = $Platform; Result = 0 })
+Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Platform"; Value = $Platform; Result = 1 })
 
 $Build = ([System.Environment]::OSVersion.Version).Build
 $OSVersion = [System.Environment]::OSVersion.Version
-Write-Verbose -Message "Build: $Build."
-Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Build/version"; Value = $OSVersion; Result = 0 })
+Write-Msg -Msg "Build: $Build."
+Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Build/version"; Value = $OSVersion; Result = 1 })
 
 $Model = Get-Model
-Write-Verbose -Message "Model: $Model."
-Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Model"; Value = $Model; Result = 0 })
+Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Model"; Value = $Model; Result = 1 })
 
 $OSName = Get-OSName
-Write-Verbose -Message "OS: $OSName."
-Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "OSName"; Value = $OSName; Result = 0 })
+Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "OSName"; Value = $OSName; Result = 1 })
 
 $DisplayVersion = Get-ChildItem -Path $WorkingPath -Include "VERSION.txt" -Recurse | Get-Content -Raw
-Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Script version"; Value = $DisplayVersion; Result = 0 })
+Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Script version"; Value = $DisplayVersion; Result = 1 })
 
 #region Gather configs
-$AllConfigs = @(Get-ChildItem -Path $WorkingPath -Include "*.All.json" -Recurse -ErrorAction "Continue")
-$ModelConfigs = @(Get-ChildItem -Path $WorkingPath -Include "*.$Model.json" -Recurse -ErrorAction "Continue")
-$BuildConfigs = @(Get-ChildItem -Path $WorkingPath -Include "*.$Build.json" -Recurse -ErrorAction "Continue")
-$PlatformConfigs = @(Get-ChildItem -Path $WorkingPath -Include "*.$Platform.json" -Recurse -ErrorAction "Continue")
-Write-Verbose -Message "Found: $(($AllConfigs + $ModelConfigs + $BuildConfigs + $PlatformConfigs).Count) configs."
+$AllConfigs = @(Get-ChildItem -Path "$WorkingPath\configs" -Include "*.All.json" -Recurse -ErrorAction "Continue")
+$ModelConfigs = @(Get-ChildItem -Path "$WorkingPath\configs" -Include "*.$Model.json" -Recurse -ErrorAction "Continue")
+$BuildConfigs = @(Get-ChildItem -Path "$WorkingPath\configs" -Include "*.$Build.json" -Recurse -ErrorAction "Continue")
+$PlatformConfigs = @(Get-ChildItem -Path "$WorkingPath\configs" -Include "*.$Platform.json" -Recurse -ErrorAction "Continue")
+Write-Msg -Msg "Found: $(($AllConfigs + $ModelConfigs + $BuildConfigs + $PlatformConfigs).Count) configs."
 
 # Implement the settings defined in each config file
 foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs)) {
 
     # Read the settings JSON
-    Write-Verbose "Running config: $($Config.FullName)"
+    Write-Msg -Msg "Running config: $($Config.FullName)"
     $Settings = Get-SettingsContent -Path $Config.FullName @prefs
-    Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Config file"; Value = $Config.Name; Result = 0 })
+    Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Config file"; Value = $Config.Name; Result = 1 })
 
     # Implement the settings only if the local build is greater or equal that what's specified in the JSON
     if ([System.Version]$OSVersion -ge [System.Version]$Settings.MinimumBuild) {
@@ -205,7 +198,7 @@ foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConf
                     Set-Registry -Setting $Settings.Registry.Set @prefs; break
                 }
                 default {
-                    Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Registry"; Value = "Skipped"; Result = 0 })
+                    Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Registry"; Value = "Skipped"; Result = 1 })
                 }
             }
 
@@ -234,11 +227,13 @@ foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConf
             #endregion
         }
         else {
-            Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = $Config.FullName; Value = "Skipped maximum version"; Result = 0 })
+            Write-Msg -Msg "Skipped maximum version: $($Config.FullName)"
+            Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = $Config.FullName; Value = "Skipped maximum version"; Result = 1 })
         }
     }
     else {
-        Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = $Config.FullName; Value = "Skipped minimum version"; Result = 0 })
+        Write-Msg -Msg "Skipped minimum version: $($Config.FullName)"
+        Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = $Config.FullName; Value = "Skipped minimum version"; Result = 1 })
     }
 }
 #endregion
@@ -249,17 +244,19 @@ if ($Platform -eq "Client") {
     # Run the script to remove AppX/UWP apps; Get the script location
     $Script = Get-ChildItem -Path $WorkingPath -Include "Remove-AppxApps.ps1" -Recurse -ErrorAction "Continue"
     if ($null -eq $Script) {
-        $Object = [PSCustomObject]@{Name = "$WorkingPath\Remove-AppxApps.ps1"; Value = "Script not found"; Result = 1 }
+        $Object = [PSCustomObject]@{Name = "$WorkingPath\Remove-AppxApps.ps1"; Value = "Script not found"; Result = 3 }
+        Write-Msg -Msg "Script not found: $WorkingPath\Remove-AppxApps.ps1"
         Write-ToEventLog -Property "AppX" -Object $Object
     }
     else {
-        Write-ToEventLog -Property "AppX" -Object ([PSCustomObject]@{Name = "Run script"; Value = $Script.FullName; Result = 0 })
+        Write-ToEventLog -Property "AppX" -Object ([PSCustomObject]@{Name = "Run script"; Value = $Script.FullName; Result = 1 })
         switch ($AppxMode) {
             "Block" { $Apps = & $Script.FullName -Operation "BlockList" @prefs; break }
             "Allow" { $Apps = & $Script.FullName -Operation "AllowList" @prefs; break }
         }
         $RemovedApps = $Apps | Where-Object { $_.State -eq "Removed" }
-        $Object = [PSCustomObject]@{Name = "Removed AppX apps "; Value = ($RemovedApps.Name | Select-Object -Unique); Result = 0 }
+        $Object = [PSCustomObject]@{Name = "Removed AppX apps "; Value = ($RemovedApps.Name | Select-Object -Unique); Result = 1 }
+        Write-Msg -Msg "Run script: $WorkingPath\Remove-AppxApps.ps1"
         Write-ToEventLog -Property "AppX" -Object $Object
     }
 }
@@ -277,34 +274,36 @@ if ($PSBoundParameters.ContainsKey('Language')) {
     }
 }
 else {
-    Write-Verbose -Message "-Language parameter not specified. Skipping install language support."
-    Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language"; Value = "Skipped"; Result = 0 })
+    Write-Msg -Msg "-Language parameter not specified. Skipping install language support."
+    Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language"; Value = "Skipped"; Result = 1 })
 }
 
 if ($PSBoundParameters.ContainsKey('TimeZone')) {
     Set-TimeZoneUsingName -TimeZone $TimeZone
 }
 else {
-    Write-Verbose -Message "-TimeZone parameter not specified. Skipping set time zone."
-    Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Set time zone"; Value = "Skipped"; Result = 0 })
+    Write-Msg -Msg "-TimeZone parameter not specified. Skipping set time zone."
+    Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Set time zone"; Value = "Skipped"; Result = 1 })
 }
 #endregion
 
 # Copy the source files for use with upgrades
 if ($FeatureUpdatePath -eq $WorkingPath) {
-    $Object = [PSCustomObject]@{Name = "Copy to $FeatureUpdatePath"; Value = "Skipping file copy"; Result = 1 }
+    $Object = [PSCustomObject]@{Name = "Copy to $FeatureUpdatePath"; Value = "Skipping file copy"; Result = 3 }
+    Write-Msg -Msg "Skipping copy to $FeatureUpdatePath."
     Write-ToEventLog -Property "General" -Object $Object
 }
 else {
     try {
         New-Item -Path $FeatureUpdatePath -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
-        Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $FeatureUpdatePath; Result = 0 })
+        Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $FeatureUpdatePath; Result = 1 })
         Copy-Item -Path "$WorkingPath\*.*" -Destination $FeatureUpdatePath -Recurse -ErrorAction "SilentlyContinue"
-        Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "Copy-Item $WorkingPath\*.*"; Value = $FeatureUpdatePath; Result = 0 })
+        Write-Msg -Msg "Copied $WorkingPath\*.* to $FeatureUpdatePath."
+        Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "Copy-Item $WorkingPath\*.*"; Value = $FeatureUpdatePath; Result = 1 })
     }
     catch {
         $Msg = $_.Exception.Message
-        Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "Copy to $FeatureUpdatePath"; Value = $Msg; Result = 1 })
+        Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "Copy to $FeatureUpdatePath"; Value = $Msg; Result = 3 })
     }
 }
 
@@ -325,12 +324,12 @@ $EndTime = $StartTime - (Get-Date)
 $WarningEntries = Get-EventLog -LogName $Project | `
     Where-Object { $_.EntryType -eq "Warning" -and $_.TimeGenerated -ge $StartTime.AddMinutes( - ($EndTime.Minutes)) }
 if ($WarningEntries.Count -gt 0) {
-    Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Install-Defaults.ps1 complete"; Value = "Error"; Result = 1 })
+    Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Install-Defaults.ps1 complete"; Value = "Error"; Result = 3 })
     Write-Output -InputObject $WarningEntries.Message
     return 1
 }
 else {
-    Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Install-Defaults.ps1 complete"; Value = "Success"; Result = 0 })
+    Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Install-Defaults.ps1 complete"; Value = "Success"; Result = 1 })
     return 0
 }
 #endregion

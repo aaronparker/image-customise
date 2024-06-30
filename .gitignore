@@ -41,6 +41,7 @@ releases/Install-Defaults.intunewin
 releases/image-customise.zip
 CodeCoverage.xml
 TestResults.xml
+results.sarif
 
 # mkdocs folders
 site
