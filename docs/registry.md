@@ -25,6 +25,7 @@ Type: Direct
 | HKLM: \SOFTWARE \Microsoft \Windows \CurrentVersion \Explorer | DisableEdgeDesktopShortcutCreation | 1 | Prevents the Microsoft Edge short added to the public desktop |
 | HKLM: \SOFTWARE \Microsoft \Windows NT \CurrentVersion \FontSubstitutes | MS Shell Dlg | Tahoma | Replaces the `MS Shell Dlg` font with `Tahoma` for UI consistency |
 | HKLM: \SOFTWARE \Microsoft \Windows NT \CurrentVersion \FontSubstitutes | MS Shell Dlg 2 | Tahoma | Replaces the `MS Shell Dlg 2` font with `Tahoma` for UI consistency |
+| HKLM: \SOFTWARE \Microsoft \Windows \CurrentVersion \CapabilityAccessManager \ConsentStore \location | Value | Allow | Enables location services |
 
 ## Machine.Client.json
 
@@ -37,6 +38,18 @@ Type: Direct
 | path | name | value | note |
 | ---- | ---- | ----- | ---- |
 | HKLM: \Software \Microsoft \Windows \CurrentVersion \Explorer | DisableEdgeDesktopShortcutCreation | 1 | Prevents the Microsoft Edge short added to the public desktop |
+
+## Services.Client.json
+
+Minimum build: 10.0.14393
+
+Maximum build: 10.0.99999
+
+Type: Direct
+
+| path | name | value | note |
+| ---- | ---- | ----- | ---- |
+| HKLM: \SYSTEM \CurrentControlSet \Services \tzautoupdate | Start | 3 | Enable Set time zone automatically |
 
 ## User-Windows10.All.json
 
@@ -92,6 +105,8 @@ Type: DefaultProfile
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \Search | SearchboxTaskbarMode | 1 | Collapses the Search box into an icon on the Taskbar |
 | HKCU: \Software \Adobe \Acrobat Reader \DC \AVAlert \cCheckbox | iAppDoNotTakePDFOwnershipAtLaunchWin10 | 1 | Prevents the default file type dialog box at Adobe Acrobat Reader DC first launch |
 | HKCU: \Software \Adobe \Adobe Acrobat \DC \AVAlert \cCheckbox | iAppDoNotTakePDFOwnershipAtLaunchWin10 | 1 | Prevents the default file type dialog box at Adobe Acrobat Pro/Standard DC first launch |
+| HKCU: \SOFTWARE \Microsoft \Windows \CurrentVersion \CapabilityAccessManager \ConsentStore \location \NonPackaged | Value | Allow | Enables location services for Win32 applications |
+| HKCU: \SOFTWARE \Microsoft \Windows \CurrentVersion \CapabilityAccessManager \ConsentStore \location | Value | Allow | Enables location services for Universal Windows Platform Apps |
 
 ## User.Server.json
 
@@ -133,6 +148,7 @@ Type: DefaultProfile
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \ContentDeliveryManager | SubscribedContent-353696Enabled | 0 | Disables suggested content in the Settings app |
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \ContentDeliveryManager | SubscribedContent-338388Enabled | 0 | Disables suggested content in the Settings app |
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \ContentDeliveryManager | SubscribedContent-338389Enabled | 0 | Disables suggested content in the Settings app |
+| HKCU: \Software \Microsoft \Windows \CurrentVersion \ContentDeliveryManager | SubscribedContent-310093Enabled | 0 | Disables 'Show me the Windows welcome experience after updates and occasionally when I sign in to highlight what's new and suggested' |
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \ContentDeliveryManager | SystemPaneSuggestionsEnabled | 0 | Disables suggestions in the Start menu |
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \BackgroundAccessApplications \Microsoft.Windows.Photos_8wekyb3d8bbwe | Disabled | 1 | Prevents the Photos app from running in the background |
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \BackgroundAccessApplications \Microsoft.Windows.Photos_8wekyb3d8bbwe | DisabledByUser | 1 | Prevents the Photos app from running in the background |
@@ -140,3 +156,4 @@ Type: DefaultProfile
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \BackgroundAccessApplications \Microsoft.SkypeApp_kzf8qxf38zg5c | DisabledByUser | 1 | Prevents the Skype app from running in the background |
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \BackgroundAccessApplications \Microsoft.YourPhone_8wekyb3d8bbwe | Disabled | 1 | Prevents the Your Phone app from running in the background |
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \BackgroundAccessApplications \Microsoft.YourPhone_8wekyb3d8bbwe | DisabledByUser | 1 | Prevents the Your Phone app from running in the background |
+| HKCU: \Software \Microsoft \Windows \CurrentVersion \Search | BingSearchEnabled | 0 | Disables web search in the Start menu for better responsiveness |

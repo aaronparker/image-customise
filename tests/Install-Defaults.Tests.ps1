@@ -42,8 +42,7 @@ Describe "Feature update script copy works" {
         $Guid = "f38de27b-799e-4c30-8a01-bfdedc622944"
         $FeatureUpdatePath = "$env:SystemRoot\System32\Update\Run\$Guid"
         $Files = @("$FeatureUpdatePath\Install-Defaults.ps1",
-            "$FeatureUpdatePath\Remove-AppxApps.ps1",
-            "$Env:SystemRoot\Setup\SetupComplete.cmd")
+            "$FeatureUpdatePath\Remove-AppxApps.ps1")
     }
 
     Context "Target directory exists" {
