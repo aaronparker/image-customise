@@ -22,7 +22,7 @@ Describe "Install script execution validation" {
         $Script = Get-ChildItem -Path $([System.IO.Path]::Combine($Path, "src")) -Include "Install-Defaults.ps1" -Recurse
     }
 
-    Context "Validate <script.Name>." {
+    Context "Validate <script.Name>" {
         It "<script.Name> should execute OK" {
             Push-Location -Path $([System.IO.Path]::Combine($Path, "src"))
             $params = @{
@@ -32,6 +32,12 @@ Describe "Install script execution validation" {
             }
             & $Script.FullName @params | Should -Be 0
             Pop-Location
+        }
+    }
+
+    Context "Validate log file" {
+        It "Log file should exist" {
+            Test-Path -Path "$Env:ProgramData\image-customise\CustomisedDefaults.log" | Should -BeTrue
         }
     }
 }

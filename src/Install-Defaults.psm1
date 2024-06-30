@@ -55,15 +55,19 @@ function Write-ToEventLog {
         [Parameter()]$Property,
 
         [Parameter()]
-        [ValidateNotNullOrEmpty()] $Object,
-
-        [Parameter()]
-        [ValidateNotNullOrEmpty()]
-        [System.String] $LogPath = "$Env:ProgramData\image-customise\CustomisedDefaults.log"
+        [ValidateNotNullOrEmpty()] $Object
     )
     begin {
-        if (-not(Test-Path -Path $(Split-Path -Path $LogPath -Parent))) {
-            New-Item -Path $(Split-Path -Path $LogPath -Parent) -ItemType "Directory" -Force | Out-Null
+        if (Test-Path -Path "$Env:ProgramData\Microsoft\IntuneManagementExtension\Logs") {
+            # If we're running under Intune, put the log file in the IntuneManagementExtension folder
+            $LogPath = "$Env:ProgramData\Microsoft\IntuneManagementExtension\Logs\CustomisedDefaults.log"
+        }
+        else {
+            # Otherwise, put the log file in the ProgramData\image-customise folder
+            $LogPath = "$Env:ProgramData\image-customise\CustomisedDefaults.log"
+            if (-not(Test-Path -Path "$Env:ProgramData\image-customise")) {
+                New-Item -Path "$Env:ProgramData\image-customise" -ItemType "Directory" -Force | Out-Null
+            }
         }
     }
     process {
@@ -78,15 +82,15 @@ function Write-ToEventLog {
 
             # Create a log entry
             $Message = "$Property; $($Item.Name), $($Item.Value), $($Item.Result)"
-            $Content = "<![LOG[$Message]LOG]!>" +`
-                "<time=`"$(Get-Date -Format "HH:mm:ss.ffffff")`" " +`
-                "date=`"$(Get-Date -Format "M-d-yyyy")`" " +`
-                "component=`"Customised defaults`" " +`
-                "context=`"$([System.Security.Principal.WindowsIdentity]::GetCurrent().Name)`" " +`
-                "type=`"$($Item.Result)`" " +`
-                "thread=`"$([Threading.Thread]::CurrentThread.ManagedThreadId)`" " +`
+            $Content = "<![LOG[$Message]LOG]!>" + `
+                "<time=`"$(Get-Date -Format "HH:mm:ss.ffffff")`" " + `
+                "date=`"$(Get-Date -Format "M-d-yyyy")`" " + `
+                "component=`"Customised defaults`" " + `
+                "context=`"$([System.Security.Principal.WindowsIdentity]::GetCurrent().Name)`" " + `
+                "type=`"$($Item.Result)`" " + `
+                "thread=`"$([Threading.Thread]::CurrentThread.ManagedThreadId)`" " + `
                 "file=`"`">"
-        
+
             # Write the line to the log file
             Add-Content -Path $LogPath -Value $Content
         }
