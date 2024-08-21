@@ -314,6 +314,31 @@ function Set-Registry {
     }
 }
 
+function Remove-RegistryPath {
+    # Set a registry value. Create the target key if it doesn't already exist
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param ($Path)
+
+    foreach ($Item in $Path) {
+        try {
+            if ($PSCmdlet.ShouldProcess($Item.path, "Remove-Item")) {
+                $params = @{
+                    Path        = $Item.path
+                    Force       = $true
+                    ErrorAction = "Continue"
+                }
+                Remove-Item @params | Out-Null
+                Write-Msg -Msg "Remove registry path: $($Item.path)"
+                Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = $Item.path; Value = "Remove"; Result = 0 })
+            }
+        }
+        catch {
+            $Msg = $_.Exception.Message
+            Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = $Item.path; Value = $Msg; Result = 1 })
+        }
+    }
+}
+
 function Set-DefaultUserProfile {
     # Add settings into the default profile
     [CmdletBinding(SupportsShouldProcess = $true)]
