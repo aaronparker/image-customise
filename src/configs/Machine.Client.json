@@ -11,6 +11,16 @@
                 "type": "DWord",
                 "note": "Prevents the Microsoft Edge short added to the public desktop"
             }
+        ],
+        "Remove": [
+            {
+                "path": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Orchestrator\\UScheduler_Oobe\\DevHomeUpdate",
+                "note": "Removes the Dev Home from the Windows Update Orchestrator"
+            },
+            {
+                "path": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Orchestrator\\UScheduler_Oobe\\OutlookUpdate",
+                "note": "Removes the Outlook (new) from the Windows Update Orchestrator"
+            }
         ]
     },
     "Files": {

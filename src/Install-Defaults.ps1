@@ -196,6 +196,7 @@ foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConf
                 }
                 "Direct" {
                     Set-Registry -Setting $Settings.Registry.Set @prefs; break
+                    Remove-RegistryPath -Path $Settings.Registry.Remove @prefs; break
                 }
                 default {
                     Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Registry"; Value = "Skipped"; Result = 1 })
