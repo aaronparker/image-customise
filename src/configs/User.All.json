@@ -40,6 +40,13 @@
                 "note": "Disables app suggestions in the Start menu"
             },
             {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                "name": "SilentInstalledAppsEnabled",
+                "value": 0,
+                "type": "DWord",
+                "note": "Disables app suggestions in the Start menu"
+            },
+            {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
                 "name": "LaunchTo",
                 "value": 1,
