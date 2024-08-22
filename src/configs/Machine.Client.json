@@ -10,6 +10,13 @@
                 "value": 1,
                 "type": "DWord",
                 "note": "Prevents the Microsoft Edge short added to the public desktop"
+            },
+            {
+                "path": "HKLM:\\Software\\Policies\\Microsoft\\Windows\\CloudContent",
+                "name": "DisableWindowsConsumerFeatures",
+                "value": 1,
+                "type": "DWord",
+                "note": "Disables the Microsoft Windows consumer features"
             }
         ],
         "Remove": [
