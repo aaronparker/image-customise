@@ -17,6 +17,20 @@
                 "value": 1,
                 "Type": "DWord",
                 "note": "Disable blur for the Start menu, Taskbar and windows"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+                "name": "SearchboxTaskbarMode",
+                "value": 0,
+                "type": "DWord",
+                "note": "Hides the Search icon on the Taskbar"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "ShowTaskViewButton",
+                "value": 0,
+                "type": "DWord",
+                "note": "Removes the Task View button on the Taskbar"
             }
         ]
     },
