@@ -32,7 +32,7 @@
                 "name": "ShowTaskViewButton",
                 "value": 0,
                 "type": "DWord",
-                "note": "Removes the Windows 11 Task View button on the Taskbar"
+                "note": "Removes the Task View button on the Taskbar"
             }
         ]
     }

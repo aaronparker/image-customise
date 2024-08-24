@@ -50,7 +50,7 @@ function New-ScriptEventLog {
 
 function Write-ToEventLog {
     # Write an entry to the custom event log
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding(SupportsShouldProcess = $false)]
     param (
         [Parameter()]$Property,
 
@@ -126,6 +126,9 @@ function Get-Platform {
 function Get-OSName {
     # Return the OS name string
     switch -Regex ((Get-CimInstance -ClassName "CIM_OperatingSystem").Caption) {
+        "^Microsoft Windows Server 2025.*$" {
+            $Caption = "Windows2025"; break
+        }
         "^Microsoft Windows Server 2022.*$" {
             $Caption = "Windows2022"; break
         }
