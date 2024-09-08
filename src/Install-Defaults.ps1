@@ -275,14 +275,22 @@ if ($PSBoundParameters.ContainsKey('Language')) {
 
         # Set the WindowsOverride registry key to get the desired display language
         $WindowsOverride = @"
-{
-    "path": "HKCU:\\Control Panel\\International\\User Profile",
-    "name": "WindowsOverride",
-    "value": $Language,
-    "type": "String"
-}
+[
+    {
+        "path": "HKCU:\\Control Panel\\International\\User Profile",
+        "name": "WindowsOverride",
+        "value": "$Language",
+        "type": "String"
+    },
+    {
+        "path": "HKCU:\\Control Panel\\International\\User Profile",
+        "name": "Languages",
+        "value": "$Language",
+        "type": "MultiStringProperty"
+    }
+]
 "@
-        Set-DefaultUserProfile -Setting $WindowsOverride @prefs
+        Set-DefaultUserProfile -Setting ($WindowsOverride | ConvertFrom-Json) @prefs
     }
 }
 else {

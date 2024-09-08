@@ -440,7 +440,7 @@ function Set-DefaultUserProfile {
                     ErrorAction  = "Continue"
                 }
                 $Result = Start-Process @params
-                Write-Msg -Msg "Unload default user: $RegPath"
+                Write-Msg -Msg "Unload default user: $DefaultUserPath"
                 Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Unload"; Value = $RegDefaultUser; Result = $Result.ExitCode })
             }
         }
