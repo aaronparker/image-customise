@@ -55,6 +55,13 @@
             },
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "HideFileExt",
+                "value": 0,
+                "type": "DWord",
+                "note": "Enables the display of file extensions in File Explorer"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
                 "name": "SeparateProcess",
                 "value": 1,
                 "type": "DWord",
