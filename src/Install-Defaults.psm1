@@ -701,8 +701,8 @@ function Install-SystemLanguage {
 
     try {
         if ($PSCmdlet.ShouldProcess("LanguagePackManagement", "Import-Module")) {
-            Import-Module -Name "LanguagePackManagement"
             Write-Msg -Msg "Import module: LanguagePackManagement"
+            Import-Module -Name "LanguagePackManagement"
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Import module LanguagePackManagement"; Value = "Success"; Result = 0 })
         }
     }
@@ -713,6 +713,7 @@ function Install-SystemLanguage {
 
     try {
         if ($PSCmdlet.ShouldProcess($Language, "Install-Language")) {
+            Write-Msg -Msg "Language pack install: $Language"
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Language pack install"; Value = "Start"; Result = 0 })
             $params = @{
                 Language        = $Language
@@ -720,7 +721,6 @@ function Install-SystemLanguage {
                 ExcludeFeatures = $false
             }
             Install-Language @params | Out-Null
-            Write-Msg -Msg "Install language: $Language"
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language pack: $Language"; Value = $Msg; Result = 0 })
         }
     }

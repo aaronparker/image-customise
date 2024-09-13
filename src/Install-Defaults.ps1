@@ -279,19 +279,39 @@ if ($PSBoundParameters.ContainsKey('Language')) {
     {
         "path": "HKCU:\\Control Panel\\International\\User Profile",
         "name": "WindowsOverride",
-        "value": "$Language",
+        "value": "$($Language)",
         "type": "String"
     },
     {
         "path": "HKCU:\\Control Panel\\International\\User Profile",
         "name": "Languages",
-        "value": "$Language",
+        "value": "$($Language)",
         "type": "MultiStringProperty"
     }
 ]
 "@
         Set-DefaultUserProfile -Setting ($WindowsOverride | ConvertFrom-Json) @prefs
     }
+
+    # Set the default Region
+    $RegionInfo = New-Object -TypeName "System.Globalization.RegionInfo" -ArgumentList $Language
+    $WindowsOverride = @"
+    [
+        {
+            "path": "HKCU:\\Control Panel\\International\\Geo",
+            "name": "Name",
+            "value": "$($RegionInfo.Name)",
+            "type": "String"
+        },
+        {
+            "path": "HKCU:\\Control Panel\\International\\Geo",
+            "name": "Nation",
+            "value": "$($RegionInfo.Nation)",
+            "type": "String"
+        }
+    ]
+"@
+    Set-DefaultUserProfile -Setting ($WindowsOverride | ConvertFrom-Json) @prefs
 }
 else {
     Write-Msg -Msg "-Language parameter not specified. Skipping install language support."
@@ -317,8 +337,8 @@ else {
     try {
         New-Item -Path $FeatureUpdatePath -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
         Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $FeatureUpdatePath; Result = 1 })
-        Copy-Item -Path "$WorkingPath\*.*" -Destination $FeatureUpdatePath -Recurse -ErrorAction "SilentlyContinue"
-        Write-Msg -Msg "Copied $WorkingPath\*.* to $FeatureUpdatePath."
+        Copy-Item -Path "$WorkingPath\*" -Destination $FeatureUpdatePath -Recurse -ErrorAction "SilentlyContinue"
+        Write-Msg -Msg "Copied $WorkingPath\* to $FeatureUpdatePath."
         Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "Copy-Item $WorkingPath\*.*"; Value = $FeatureUpdatePath; Result = 1 })
     }
     catch {
