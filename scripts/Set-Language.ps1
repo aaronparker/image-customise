@@ -57,3 +57,39 @@ catch {
     # Exit 0 so that we don't hold up Autopilot
     exit 0
 }
+
+
+$Language = "en-AU"
+$RegionInfo = New-Object -TypeName "System.Globalization.RegionInfo" -ArgumentList $Language
+
+$WindowsOverride = @"
+[
+    {
+        "path": "HKCU:\\Control Panel\\International\\User Profile",
+        "name": "WindowsOverride",
+        "value": "$($Language)",
+        "type": "String"
+    },
+    {
+        "path": "HKCU:\\Control Panel\\International\\User Profile",
+        "name": "Languages",
+        "value": "$($Language)",
+        "type": "MultiStringProperty"
+    },
+    {
+        "path": "HKCU:\\Control Panel\\International\\Geo",
+        "name": "Name",
+        "value": "$($RegionInfo.TwoLetterISORegionName)",
+        "type": "String"
+    },
+    {
+        "path": "HKCU:\\Control Panel\\International\\Geo",
+        "name": "Nation",
+        "value": "$($RegionInfo.GeoId)",
+        "type": "String"
+    }
+]
+"@
+
+# Set the default Region
+Set-DefaultUserProfile -Setting ($WindowsOverride | ConvertFrom-Json) @prefs
