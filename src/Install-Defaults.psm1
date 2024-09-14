@@ -736,37 +736,44 @@ function Set-SystemLocale {
     param ([System.Globalization.CultureInfo] $Language)
     try {
         if ($PSCmdlet.ShouldProcess($Language, "Set locale")) {
-            Import-Module -Name "International"
             Write-Msg -Msg "Import module: International"
+            Import-Module -Name "International"
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Import module"; Value = "International"; Result = 0 })
 
-            Set-Culture -CultureInfo $Language
             Write-Msg -Msg "Set-Culture: $($Language.Name)"
+            Set-Culture -CultureInfo $Language
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-Culture"; Value = $Language.Name; Result = 0 })
 
-            Set-WinSystemLocale -SystemLocale $Language
             Write-Msg -Msg "Set-WinSystemLocale: $($Language.Name)"
+            Set-WinSystemLocale -SystemLocale $Language
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinSystemLocale"; Value = $Language.Name; Result = 0 })
 
-            Set-WinUILanguageOverride -Language $Language
             Write-Msg -Msg "Set-WinUILanguageOverride: $($Language.Name)"
+            Set-WinUILanguageOverride -Language $Language
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinUILanguageOverride"; Value = $Language.Name; Result = 0 })
 
-            Set-WinUserLanguageList -LanguageList $Language.Name -Force
             Write-Msg -Msg "Set-WinUserLanguageList: $($Language.Name)"
+            Set-WinUserLanguageList -LanguageList $Language.Name -Force
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinUserLanguageList"; Value = $Language.Name; Result = 0 })
 
             $RegionInfo = New-Object -TypeName "System.Globalization.RegionInfo" -ArgumentList $Language
-            Set-WinHomeLocation -GeoId $RegionInfo.GeoId
             Write-Msg -Msg "Set-WinHomeLocation: $($RegionInfo.GeoId)"
+            Set-WinHomeLocation -GeoId $RegionInfo.GeoId
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinHomeLocation"; Value = $RegionInfo.GeoId; Result = 0 })
 
+            # Cmdlet not available on Windows Server 2022 or below
             if (Get-Command -Name "Set-SystemPreferredUILanguage" -ErrorAction "SilentlyContinue") {
-                # Cmdlet not available on Windows Server
-                Set-SystemPreferredUILanguage -Language $Language
                 Write-Msg -Msg "Set-SystemPreferredUILanguage: $($Language.Name)"
+                Set-SystemPreferredUILanguage -Language $Language
                 Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-SystemPreferredUILanguage: $($Language.Name)"; Value = $Msg; Result = 0 })
             }
+
+            # Cmdlet not available on Windows Server 2022 or below
+            if (Get-Command -Name "Copy-UserInternationalSettingsToSystem" -ErrorAction "SilentlyContinue") {
+                Write-Msg -Msg "Copy locale settings to system: $($Language.Name)"
+                Copy-UserInternationalSettingsToSystem -WelcomeScreen $true -NewUser $true
+            }
+
             Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system locale: $($Language.Name)"; Value = "Success"; Result = 0 })
         }
     }
