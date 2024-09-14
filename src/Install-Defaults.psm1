@@ -8,91 +8,99 @@ param ()
 function Write-Msg {
     [CmdletBinding()]
     param(
-        [System.String[]] $Msg
+        [System.String] $Message
     )
     process {
-        foreach ($String in $Msg) {
-            $Message = [HostInformationMessage]@{
-                Message         = "[$(Get-Date -Format 'dd.MM.yyyy HH:mm:ss')]"
-                ForegroundColor = "Black"
-                BackgroundColor = "DarkCyan"
-                NoNewline       = $true
-            }
-            $params = @{
-                MessageData       = $Message
-                InformationAction = "Continue"
-                Tags              = "Microsoft365"
-            }
-            Write-Information @params
-            $params = @{
-                MessageData       = " $String"
-                InformationAction = "Continue"
-                Tags              = "Microsoft365"
-            }
-            Write-Information @params
+        $Msg = [HostInformationMessage]@{
+            Message         = "[$(Get-Date -Format 'dd.MM.yyyy HH:mm:ss')]"
+            ForegroundColor = "Black"
+            BackgroundColor = "DarkCyan"
+            NoNewline       = $true
         }
+        $params = @{
+            MessageData       = $Msg
+            InformationAction = "Continue"
+            Tags              = "Microsoft365"
+        }
+        Write-Information @params
+        $params = @{
+            MessageData       = " $Message"
+            InformationAction = "Continue"
+            Tags              = "Microsoft365"
+        }
+        Write-Information @params
     }
 }
 
-function New-ScriptEventLog {
-    # Create the custom event log used to record events
-    [CmdletBinding(SupportsShouldProcess = $true)]
-    param ($EventLog, $Property)
-    $params = @{
-        LogName     = $EventLog
-        Source      = $Property
-        ErrorAction = "SilentlyContinue"
-    }
-    if ($PSCmdlet.ShouldProcess($EventLog, "New-EventLog")) {
-        New-EventLog @params
-    }
-}
+function Write-LogFile {
+    <#
+        .SYNOPSIS
+            This function creates or appends a line to a log file
 
-function Write-ToEventLog {
-    # Write an entry to the custom event log
+        .DESCRIPTION
+            This function writes a log line to a log file in the form synonymous with
+            ConfigMgr logs so that tools such as CMtrace and SMStrace can easily parse
+            the log file.  It uses the ConfigMgr client log format's file section
+            to add the line of the script in which it was called.
+
+        .PARAMETER  Message
+            The message parameter is the log message you'd like to record to the log file
+
+        .PARAMETER  LogLevel
+            The logging level is the severity rating for the message you're recording. Like ConfigMgr
+            clients, you have 3 severity levels available; 1, 2 and 3 from informational messages
+            for FYI to critical messages that stop the install. This defaults to 1.
+
+        .EXAMPLE
+            PS C:\> Write-LogFile -Message 'Value1' -LogLevel 'Value2'
+            This example shows how to call the Write-LogFile function with named parameters.
+
+        .NOTES
+            Constantin Lotz;
+            Adam Bertram, https://github.com/adbertram/PowerShellTipsToWriteBy/blob/f865c4212284dc25fe613ca70d9a4bafb6c7e0fe/chapter_7.ps1#L5
+    #>
     [CmdletBinding(SupportsShouldProcess = $false)]
     param (
-        [Parameter()]$Property,
+        [Parameter(Position = 0, ValueFromPipeline = $true, Mandatory = $true)]
+        [System.String[]] $Message,
 
-        [Parameter()]
-        [ValidateNotNullOrEmpty()] $Object
+        [Parameter(Position = 1, Mandatory = $false)]
+        [ValidateSet(1, 2, 3)]
+        [System.Int16] $LogLevel = 1
     )
+
     begin {
         if (Test-Path -Path "$Env:ProgramData\Microsoft\IntuneManagementExtension\Logs") {
             # If we're running under Intune, put the log file in the IntuneManagementExtension folder
-            $LogPath = "$Env:ProgramData\Microsoft\IntuneManagementExtension\Logs\CustomisedDefaults.log"
+            $LogFile = "$Env:ProgramData\Microsoft\IntuneManagementExtension\Logs\CustomisedDefaults.log"
         }
         else {
-            # Otherwise, put the log file in the ProgramData\image-customise folder
-            $LogPath = "$Env:ProgramData\image-customise\CustomisedDefaults.log"
-            if (-not(Test-Path -Path "$Env:ProgramData\image-customise")) {
-                New-Item -Path "$Env:ProgramData\image-customise" -ItemType "Directory" -Force | Out-Null
+            # Otherwise, put the log file in the $Env:SystemRoot\Logs\image-customise folder
+            $Path = "$Env:SystemRoot\Logs\image-customise"
+            $LogFile = "$Path\CustomisedDefaults.log"
+            if (-not(Test-Path -Path $Path)) {
+                New-Item -Path $Path -ItemType "Directory" -Force | Out-Null
             }
         }
     }
+
     process {
-        foreach ($Item in $Object) {
-            #Write-Msg -Msg "$($Item.Name), $($Item.Value), $($Item.Result)"
-            switch ($Item.Result) {
-                "Info" { [System.Int32]$Type = 1 }
-                "Warning" { [System.Int32]$Type = 2 }
-                "Error" { [System.Int32]$Type = 3 }
-                default { [System.Int32]$Type = 1 }
+        foreach ($Msg in $Message) {
+            # Build the line which will be recorded to the log file
+            $TimeGenerated = $(Get-Date -Format "HH:mm:ss.ffffff")
+            $Context = $([System.Security.Principal.WindowsIdentity]::GetCurrent().Name)
+            $Thread = $([Threading.Thread]::CurrentThread.ManagedThreadId)
+            $LineFormat = $Msg, $TimeGenerated, (Get-Date -Format "yyyy-MM-dd"), "$($MyInvocation.ScriptName | Split-Path -Leaf -ErrorAction "SilentlyContinue"):$($MyInvocation.ScriptLineNumber)", $Context, $LogLevel, $Thread
+            $Line = '<![LOG[{0}]LOG]!><time="{1}" date="{2}" component="{3}" context="{4}" type="{5}" thread="{6}" file="">' -f $LineFormat
+
+            # Add content to the log file and output to the console
+            Add-Content -Value $Line -Path $LogFile
+            Write-Msg -Message $Msg
+
+            # Write-Warning for log level 2 or 3
+            if ($LogLevel -eq 3 -or $LogLevel -eq 2) {
+                Write-Warning -Message "[$TimeGenerated] $Msg"
             }
-
-            # Create a log entry
-            $Message = "$Property; $($Item.Name), $($Item.Value), $($Item.Result)"
-            $Content = "<![LOG[$Message]LOG]!>" + `
-                "<time=`"$(Get-Date -Format "HH:mm:ss.ffffff")`" " + `
-                "date=`"$(Get-Date -Format "M-d-yyyy")`" " + `
-                "component=`"Customised defaults`" " + `
-                "context=`"$([System.Security.Principal.WindowsIdentity]::GetCurrent().Name)`" " + `
-                "type=`"$($Item.Result)`" " + `
-                "thread=`"$([Threading.Thread]::CurrentThread.ManagedThreadId)`" " + `
-                "file=`"`">"
-
-            # Write the line to the log file
-            Add-Content -Path $LogPath -Value $Content
         }
     }
 }
@@ -119,7 +127,7 @@ function Get-Platform {
             $Platform = "Client"
         }
     }
-    Write-Msg -Msg "Platform: $Platform."
+    Write-LogFile -Message "Platform: $Platform."
     Write-Output -InputObject $Platform
 }
 
@@ -154,7 +162,7 @@ function Get-OSName {
             $Caption = "Unknown"
         }
     }
-    Write-Msg -Msg "OS Name: $Caption."
+    Write-LogFile -Message "OS Name: $Caption."
     Write-Output -InputObject $Caption
 }
 
@@ -167,7 +175,7 @@ function Get-Model {
     else {
         $Model = "Physical"
     }
-    Write-Msg -Msg "Model: $Model."
+    Write-LogFile -Message "Model: $Model."
     Write-Output -InputObject $Model
 }
 
@@ -178,11 +186,12 @@ function Get-SettingsContent ($Path) {
             Path        = $Path
             ErrorAction = "Continue"
         }
-        Write-Msg -Msg "Importing: $Path."
-        $Settings = Get-Content @params | ConvertFrom-Json -ErrorAction "Continue"
+        Write-LogFile -Message "Importing: $Path."
+        $Settings = Get-Content @params | ConvertFrom-Json -ErrorAction "Stop"
     }
     catch {
         # If we have an error we won't get usable data
+        Write-LogFile -Message $_.Exception.Message -LogLevel 3
         throw $_
     }
     Write-Output -InputObject $Settings
@@ -257,12 +266,10 @@ function Set-RegistryOwner {
         }
 
         Set-RegistryKeyOwner -RootKey $RootKey -Key $Key -Sid $Sid -Recurse $Recurse
-        Write-Msg -Msg "Set-RegistryOwner: $RootKey, $Key"
-        Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Set-RegistryOwner: $RootKey, $Key"; Value = $Sid; Result = 0 })
+        Write-LogFile -Message "Set-RegistryOwner: $RootKey, $Key"
     }
     catch {
-        $Msg = $_.Exception.Message
-        Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Set-RegistryOwner: $RootKey, $Key, $Sid"; Value = $Msg; Result = 1 })
+        Write-LogFile -Message $_.Exception.Message -LogLevel 3
     }
 }
 
@@ -282,13 +289,11 @@ function Set-Registry {
                         ErrorAction = "SilentlyContinue"
                     }
                     $ItemResult = New-Item @params
-                    Write-Msg -Msg "New registry path: $($Item.path)"
-                    Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $Item.path; Result = 0 })
+                    Write-LogFile -Message "New registry path: $($Item.path)"
                 }
             }
             catch {
-                $Msg = $_.Exception.Message
-                Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "New-Item: $($Item.path)"; Value = $Msg; Result = 1 })
+                Write-LogFile -Message $_.Exception.Message -LogLevel 3
             }
             finally {
                 if ("Handle" -in ($ItemResult | Get-Member | Select-Object -ExpandProperty "Name")) { $ItemResult.Handle.Close() }
@@ -306,13 +311,11 @@ function Set-Registry {
                     ErrorAction = "Continue"
                 }
                 Set-ItemProperty @params | Out-Null
-                Write-Msg -Msg "Set registry property: $($Item.path); $($Item.name) $($Item.value)"
-                Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "$($Item.path); $($Item.name)"; Value = $Item.value; Result = 0 })
+                Write-LogFile -Message "Set registry property: $($Item.path); $($Item.name), $($Item.value)"
             }
         }
         catch {
-            $Msg = $_.Exception.Message
-            Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "$($Item.path); $($Item.name); $($Item.value)"; Value = $Msg; Result = 1 })
+            Write-LogFile -Message $_.Exception.Message -LogLevel 3
         }
     }
 }
@@ -331,13 +334,11 @@ function Remove-RegistryPath {
                     ErrorAction = "Continue"
                 }
                 Remove-Item @params | Out-Null
-                Write-Msg -Msg "Remove registry path: $($Item.path)"
-                Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = $Item.path; Value = "Remove"; Result = 0 })
+                Write-LogFile -Message "Remove registry path: $($Item.path)"
             }
         }
         catch {
-            $Msg = $_.Exception.Message
-            Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = $Item.path; Value = $Msg; Result = 1 })
+            Write-LogFile -Message $_.Exception.Message -LogLevel 3
         }
     }
 }
@@ -364,13 +365,11 @@ function Set-DefaultUserProfile {
                     ErrorAction  = "Continue"
                 }
                 $Result = Start-Process @params
-                Write-Msg -Msg "Load default user: $RegPath"
-                Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Load: $RegDefaultUser"; Value = $RegPath; Result = $Result.ExitCode })
+                Write-LogFile -Message "Load default user: $RegPath"
             }
         }
         catch {
-            $Msg = $_.Exception.Message
-            Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Load: $RegDefaultUser, $RegPath"; Value = $MSg; Result = 1 })
+            Write-LogFile -Message $_.Exception.Message -LogLevel 3
             throw $_
         }
 
@@ -387,13 +386,11 @@ function Set-DefaultUserProfile {
                             ErrorAction = "Continue"
                         }
                         $ItemResult = New-Item @params
-                        Write-Msg -Msg "New registry path: $($Item.path)"
-                        Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $RegPath; Result = 0 })
+                        Write-LogFile -Message "New registry path: $($Item.path)"
                     }
                 }
                 catch {
-                    $Msg = $_.Exception.Message
-                    Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "New-Item: $RegPath"; Value = $Msg; Result = 1 })
+                    Write-LogFile -Message $_.Exception.Message -LogLevel 3
                 }
                 finally {
                     if ($null -ne $Result) {
@@ -413,19 +410,16 @@ function Set-DefaultUserProfile {
                         ErrorAction = "Continue"
                     }
                     Set-ItemProperty @params | Out-Null
-                    Write-Msg -Msg "Set registry property: $($Item.path); $($Item.name) $($Item.value)"
-                    Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "$RegPath; $($Item.name)"; Value = $Item.value; Result = 0 })
+                    Write-LogFile -Message "Set registry property: $($Item.path); $($Item.name) $($Item.value)"
                 }
             }
             catch {
-                $Msg = $_.Exception.Message
-                Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "$RegPath; $($Item.name); $($Item.value)"; Value = $Msg; Result = 1 })
+                Write-LogFile -Message $_.Exception.Message -LogLevel 3
             }
         }
     }
     catch {
-        $Msg = $_.Exception.Message
-        Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "General"; Value = $Msg; Result = 1 })
+        Write-LogFile -Message $_.Exception.Message -LogLevel 3
     }
     finally {
         try {
@@ -440,13 +434,11 @@ function Set-DefaultUserProfile {
                     ErrorAction  = "Continue"
                 }
                 $Result = Start-Process @params
-                Write-Msg -Msg "Unload default user: $DefaultUserPath"
-                Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Unload"; Value = $RegDefaultUser; Result = $Result.ExitCode })
+                Write-LogFile -Message "Unload default user: $DefaultUserPath"
             }
         }
         catch {
-            $Msg = $_.Exception.Message
-            Write-ToEventLog -Property "Registry" -Object ([PSCustomObject]@{Name = "Unload: $RegDefaultUser"; Value = $Msg; Result = 1 })
+            Write-LogFile -Message $_.Exception.Message -LogLevel 3
         }
     }
 }
@@ -457,8 +449,8 @@ function Copy-File {
     param ($Path, $Parent)
     foreach ($Item in $Path) {
         $Source = $(Join-Path -Path $Parent -ChildPath $Item.Source)
-        Write-Msg -Msg "Source: $Source."
-        Write-Msg -Msg "Destination: $($Item.Destination)."
+        Write-LogFile -Message "Source: $Source."
+        Write-LogFile -Message "Destination: $($Item.Destination)."
         if (Test-Path -Path $Source -ErrorAction "Continue") {
             New-Directory -Path $(Split-Path -Path $Item.Destination -Parent)
             try {
@@ -471,16 +463,14 @@ function Copy-File {
                         ErrorAction = "Continue"
                     }
                     Copy-Item @params
-                    Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "Copy: $Source"; Value = $Item.Destination; Result = 0 })
+                    Write-LogFile -Message "Copy-File: $Source to $($Item.Destination)"
                 }
             }
             catch {
-                $Msg = $_.Exception.Message
-                Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = $Item.Destination; Value = $Msg; Result = 1 })
+                Write-LogFile -Message $_.Exception.Message -LogLevel 3
             }
         }
         else {
-            Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = $Source; Value = "Does not exist"; Result = 1 })
         }
     }
 }
@@ -490,7 +480,7 @@ function New-Directory {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Path)
     if (Test-Path -Path $Path -ErrorAction "Continue") {
-        Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = $Path; Value = "Exists"; Result = 0 })
+        Write-LogFile -Message "Path exists: $Path."
     }
     else {
         try {
@@ -501,13 +491,11 @@ function New-Directory {
                     ErrorAction = "Continue"
                 }
                 New-Item @params | Out-Null
-                Write-Msg -Msg "New path: $Path"
-                Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "New-Item"; Value = $Path; Result = 0 })
+                Write-LogFile -Message "New path: $Path"
             }
         }
         catch {
-            $Msg = $_.Exception.Message
-            Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "New-Item: $Path"; Value = $Msg; Result = 1 })
+            Write-LogFile -Message $_.Exception.Message -LogLevel 3
         }
     }
 }
@@ -528,13 +516,11 @@ function Remove-Path {
                         ErrorAction = "Continue"
                     }
                     Remove-Item @params
-                    Write-Msg -Msg "Remove path: $Path"
-                    Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "Remove-Item"; Value = $Path; Result = 0 })
+                    Write-LogFile -Message "Remove path: $Path"
                 }
             }
             catch {
-                $Msg = $_.Exception.Message
-                Write-ToEventLog -Property "Paths" -Object ([PSCustomObject]@{Name = "Remove-Item: $Path"; Value = $Msg; Result = 1 })
+                Write-LogFile -Message $_.Exception.Message -LogLevel 3
             }
         }
     }
@@ -557,13 +543,11 @@ function Remove-Feature {
                         ErrorAction = "Continue"
                     }
                     Disable-WindowsOptionalFeature @params | Out-Null
-                    Write-Msg -Msg "Remove feature: $($_.FeatureName)"
-                    Write-ToEventLog -Property "Features" -Object ([PSCustomObject]@{Name = "Disable-WindowsOptionalFeature"; Value = $_.FeatureName; Result = 0 })
+                    Write-LogFile -Message "Remove feature: $($_.FeatureName)"
                 }
             }
             catch {
-                $Msg = $_.Exception.Message
-                Write-ToEventLog -Property "Features" -Object ([PSCustomObject]@{Name = "Disable-WindowsOptionalFeature; $($_.FeatureName)"; Value = $Msg; Result = 1 })
+                Write-LogFile -Message $_.Exception.Message -LogLevel 3
             }
         }
     }
@@ -584,13 +568,11 @@ function Remove-Capability {
                         ErrorAction = "Continue"
                     }
                     Remove-WindowsCapability @params | Out-Null
-                    Write-Msg -Msg "Remove capability: $($Item)"
-                    Write-ToEventLog -Property "Capabilities" -Object ([PSCustomObject]@{Name = "Remove-WindowsCapability"; Value = $Item; Result = 0 })
+                    Write-LogFile -Message "Remove capability: $($Item)"
                 }
             }
             catch {
-                $Msg = $_.Exception.Message
-                Write-ToEventLog -Property "Capabilities" -Object ([PSCustomObject]@{Name = "Remove-WindowsCapability; $Item"; Value = $Msg; Result = 1 })
+                Write-LogFile -Message $_.Exception.Message -LogLevel 3
             }
         }
     }
@@ -602,7 +584,7 @@ function Remove-Package {
     param ($Package)
 
     if ($Package.Count -ge 1) {
-        Write-Msg -Msg "Remove packages."
+        Write-LogFile -Message "Remove packages."
         foreach ($Item in $Package) {
             Get-WindowsPackage -Online -ErrorAction "Continue" | Where-Object { $_.PackageName -match $Item } | `
                 ForEach-Object {
@@ -614,13 +596,11 @@ function Remove-Package {
                             ErrorAction = "Continue"
                         }
                         Remove-WindowsPackage @params | Out-Null
-                        Write-Msg -Msg "Remove package: $($_.PackageName)"
-                        Write-ToEventLog -Property "Packages" -Object ([PSCustomObject]@{Name = "Remove-WindowsPackage"; Value = $Item; Result = 0 })
+                        Write-LogFile -Message "Remove package: $($_.PackageName)"
                     }
                 }
                 catch {
-                    $Msg = $_.Exception.Message
-                    Write-ToEventLog -Property "Packages" -Object ([PSCustomObject]@{Name = "Remove-WindowsPackage: $Item;"; Value = $Msg; Result = 1 })
+                    Write-LogFile -Message $_.Exception.Message -LogLevel 3
                 }
             }
         }
@@ -642,13 +622,11 @@ function Restart-NamedService {
         try {
             if ($PSCmdlet.ShouldProcess($Item, "Restart-Service")) {
                 Get-Service -Name $Item -ErrorAction "Ignore" | Restart-Service -Force
-                Write-Msg -Msg "Restart service: $Item"
-                Write-ToEventLog -Property "Services" -Object ([PSCustomObject]@{Name = "Restart-Service"; Value = $Item; Result = 0 })
+                Write-LogFile -Message "Restart service: $Item"
             }
         }
         catch {
-            $Msg = $_.Exception.Message
-            Write-ToEventLog -Property "Services" -Object ([PSCustomObject]@{Name = "Restart service: $Item;"; Value = $Msg; Result = 0 })
+            Write-LogFile -Message $_.Exception.Message -LogLevel 3
         }
     }
 }
@@ -662,13 +640,11 @@ function Start-NamedService {
         try {
             if ($PSCmdlet.ShouldProcess($Item, "Start-Service")) {
                 Get-Service -Name $Item -ErrorAction "Ignore" | Start-Service
-                Write-Msg -Msg "Start service: $Item"
-                Write-ToEventLog -Property "Services" -Object ([PSCustomObject]@{Name = "Start-Service"; Value = $Item; Result = 0 })
+                Write-LogFile -Message "Start service: $Item"
             }
         }
         catch {
-            $Msg = $_.Exception.Message
-            Write-ToEventLog -Property "Services" -Object ([PSCustomObject]@{Name = "Start service: $Item"; Value = $Msg; Result = 1 })
+            Write-LogFile -Message $_.Exception.Message -LogLevel 3
         }
     }
 }
@@ -682,13 +658,11 @@ function Stop-NamedService {
         try {
             if ($PSCmdlet.ShouldProcess($Item, "Stop-Service")) {
                 Get-Service -Name $Item -ErrorAction "Ignore" | Stop-Service -Force
-                Write-Msg -Msg "Stop service: $Item"
-                Write-ToEventLog -Property "Services" -Object ([PSCustomObject]@{Name = "Stop-Service"; Value = $Item; Result = 0 })
+                Write-LogFile -Message "Stop service: $Item"
             }
         }
         catch {
-            $Msg = $_.Exception.Message
-            Write-ToEventLog -Property "Services" -Object ([PSCustomObject]@{Name = "Stop service: $Item"; Value = $Msg; Result = 1 })
+            Write-LogFile -Message $_.Exception.Message -LogLevel 3
         }
     }
 }
@@ -701,32 +675,27 @@ function Install-SystemLanguage {
 
     try {
         if ($PSCmdlet.ShouldProcess("LanguagePackManagement", "Import-Module")) {
-            Write-Msg -Msg "Import module: LanguagePackManagement"
+            Write-LogFile -Message "Import module: LanguagePackManagement"
             Import-Module -Name "LanguagePackManagement"
-            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Import module LanguagePackManagement"; Value = "Success"; Result = 0 })
         }
     }
     catch {
-        $Msg = $_.Exception.Message
-        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Import module LanguagePackManagement"; Value = $Msg; Result = 1 })
+        Write-LogFile -Message $_.Exception.Message -LogLevel 3
     }
 
     try {
         if ($PSCmdlet.ShouldProcess($Language, "Install-Language")) {
-            Write-Msg -Msg "Language pack install: $Language"
-            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Language pack install"; Value = "Start"; Result = 0 })
+            Write-LogFile -Message "Language pack install: $Language"
             $params = @{
                 Language        = $Language
                 CopyToSettings  = $true
                 ExcludeFeatures = $false
             }
             Install-Language @params | Out-Null
-            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language pack: $Language"; Value = $Msg; Result = 0 })
         }
     }
     catch {
-        $Msg = $_.Exception.Message
-        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Install language pack: $Language"; Value = $Msg; Result = 1 })
+        Write-LogFile -Message $_.Exception.Message -LogLevel 3
     }
 }
 
@@ -736,50 +705,40 @@ function Set-SystemLocale {
     param ([System.Globalization.CultureInfo] $Language)
     try {
         if ($PSCmdlet.ShouldProcess($Language, "Set locale")) {
-            Write-Msg -Msg "Import module: International"
+            Write-LogFile -Message "Import module: International"
             Import-Module -Name "International"
-            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Import module"; Value = "International"; Result = 0 })
 
-            Write-Msg -Msg "Set-Culture: $($Language.Name)"
+            Write-LogFile -Message "Set-Culture: $($Language.Name)"
             Set-Culture -CultureInfo $Language
-            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-Culture"; Value = $Language.Name; Result = 0 })
 
-            Write-Msg -Msg "Set-WinSystemLocale: $($Language.Name)"
+            Write-LogFile -Message "Set-WinSystemLocale: $($Language.Name)"
             Set-WinSystemLocale -SystemLocale $Language
-            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinSystemLocale"; Value = $Language.Name; Result = 0 })
 
-            Write-Msg -Msg "Set-WinUILanguageOverride: $($Language.Name)"
+            Write-LogFile -Message "Set-WinUILanguageOverride: $($Language.Name)"
             Set-WinUILanguageOverride -Language $Language
-            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinUILanguageOverride"; Value = $Language.Name; Result = 0 })
 
-            Write-Msg -Msg "Set-WinUserLanguageList: $($Language.Name)"
+            Write-LogFile -Message "Set-WinUserLanguageList: $($Language.Name)"
             Set-WinUserLanguageList -LanguageList $Language.Name -Force
-            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinUserLanguageList"; Value = $Language.Name; Result = 0 })
 
             $RegionInfo = New-Object -TypeName "System.Globalization.RegionInfo" -ArgumentList $Language
-            Write-Msg -Msg "Set-WinHomeLocation: $($RegionInfo.GeoId)"
+            Write-LogFile -Message "Set-WinHomeLocation: $($RegionInfo.GeoId)"
             Set-WinHomeLocation -GeoId $RegionInfo.GeoId
-            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-WinHomeLocation"; Value = $RegionInfo.GeoId; Result = 0 })
 
             # Cmdlet not available on Windows Server 2022 or below
             if (Get-Command -Name "Set-SystemPreferredUILanguage" -ErrorAction "SilentlyContinue") {
-                Write-Msg -Msg "Set-SystemPreferredUILanguage: $($Language.Name)"
+                Write-LogFile -Message "Set-SystemPreferredUILanguage: $($Language.Name)"
                 Set-SystemPreferredUILanguage -Language $Language
-                Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set-SystemPreferredUILanguage: $($Language.Name)"; Value = $Msg; Result = 0 })
             }
 
             # Cmdlet not available on Windows Server 2022 or below
             if (Get-Command -Name "Copy-UserInternationalSettingsToSystem" -ErrorAction "SilentlyContinue") {
-                Write-Msg -Msg "Copy locale settings to system: $($Language.Name)"
+                Write-LogFile -Message "Copy locale settings to system: $($Language.Name)"
                 Copy-UserInternationalSettingsToSystem -WelcomeScreen $true -NewUser $true
             }
-
-            Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system locale: $($Language.Name)"; Value = "Success"; Result = 0 })
         }
     }
     catch {
-        $Msg = $_.Exception.Message
-        Write-ToEventLog -Property "Language" -Object ([PSCustomObject]@{Name = "Set system locale: $($Language.Name)"; Value = $Msg; Result = 1 })
+        Write-LogFile -Message $_.Exception.Message -LogLevel 3
     }
 }
 
@@ -791,12 +750,10 @@ function Set-TimeZoneUsingName {
     try {
         if ($PSCmdlet.ShouldProcess($TimeZone, "Set-TimeZone")) {
             Set-TimeZone -Name $TimeZone
-            Write-Msg -Msg "Set-TimeZone: $($TimeZone)"
-            Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Set time zone"; Value = $TimeZone; Result = 0 })
+            Write-LogFile -Message "Set-TimeZone: $($TimeZone)"
         }
     }
     catch {
-        $Msg = $_.Exception.Message
-        Write-ToEventLog -Property "General" -Object ([PSCustomObject]@{Name = "Set time zone: $TimeZone"; Value = $Msg; Result = 1 })
+        Write-LogFile -Message $_.Exception.Message -LogLevel 3
     }
 }
