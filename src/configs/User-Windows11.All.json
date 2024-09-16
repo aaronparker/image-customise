@@ -6,17 +6,10 @@
         "Set": [
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
-                "name": "TaskbarDa",
-                "value": 0,
-                "type": "DWord",
-                "note": "Remove the Widgets icon from the Taskbar"
-            },
-            {
-                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
                 "name": "TaskbarMn",
                 "value": 0,
                 "type": "DWord",
-                "note": "Remove the Chat icon from the Taskbar"
+                "note": "Remove the Chat icon from the Taskbar - note: this value should not be needed on Windows 11 23H2 or higher"
             }
         ],
         "SetOthers": [
@@ -33,6 +26,13 @@
                 "value": 0,
                 "type": "DWord",
                 "note": "Removes the Task View button on the Taskbar"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "TaskbarDa",
+                "value": 0,
+                "type": "DWord",
+                "note": "Remove the Widgets icon from the Taskbar - note: this value is protected by permissions"
             }
         ]
     }
