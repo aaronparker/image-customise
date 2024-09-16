@@ -98,7 +98,7 @@
             {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
                 "name": "SearchboxTaskbarMode",
-                "value": 1,
+                "value": 3,
                 "type": "DWord",
                 "note": "Collapses the Search box into an icon on the Taskbar"
             },
