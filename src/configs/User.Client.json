@@ -6,32 +6,26 @@
         "Feature": "",
         "Windows10": [
             {
-                "Source": "Windows10StartMenuLayout.xml",
+                "Source": "start\\Windows10StartMenuLayout.xml",
                 "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.xml"
             }
         ],
         "Windows11": [
             {
-                "Source": "Windows11StartMenuLayout.json",
+                "Source": "start\\Windows11StartMenuLayout.json",
                 "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.json"
             },
             {
-                "Source": "Windows11TaskbarLayout.xml",
+                "Source": "start\\Windows11TaskbarLayout.xml",
                 "Destination": "C:\\Users\\Default\\AppData\\Local\\Microsoft\\Windows\\Shell\\LayoutModification.xml"
             },
             {
-                "Source": "Windows11Start.bin",
+                "Source": "start\\Windows11Start.bin",
                 "Destination": "C:\\Users\\Default\\AppData\\Local\\Packages\\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\\LocalState\\start.bin"
             }
         ]
     },
     "Files": {
-        "Copy": [],
-        "OtherFiles": [
-            {
-                "Source": "apps\\desktop-config.json",
-                "Destination": "C:\\Users\\Default\\AppData\\Roaming\\Microsoft\\Teams\\desktop-config.json"
-            }
-        ]
+        "Copy": []
     }
 }
