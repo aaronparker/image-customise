@@ -127,7 +127,7 @@ Push-Location -Path $WorkingPath
 $ModuleFile = $(Join-Path -Path $PSScriptRoot -ChildPath "Install-Defaults.psm1")
 Test-Path -Path $ModuleFile -PathType "Leaf" -ErrorAction "Stop" | Out-Null
 Import-Module -Name $ModuleFile -Force -ErrorAction "Stop"
-Write-LogFile -Message "Execution path: $WorkingPath."
+Write-LogFile -Message "Execution path: $WorkingPath"
 #endregion
 
 # Start logging
@@ -141,7 +141,7 @@ $Platform = Get-Platform
 
 $Build = ([System.Environment]::OSVersion.Version).Build
 $OSVersion = [System.Environment]::OSVersion.Version
-Write-LogFile -Message "Build: $Build."
+Write-LogFile -Message "Build: $Build"
 
 $Model = Get-Model
 $OSName = Get-OSName
@@ -154,7 +154,7 @@ $AllConfigs = @(Get-ChildItem -Path "$WorkingPath\configs" -Include "*.All.json"
 $ModelConfigs = @(Get-ChildItem -Path "$WorkingPath\configs" -Include "*.$Model.json" -Recurse -ErrorAction "Continue")
 $BuildConfigs = @(Get-ChildItem -Path "$WorkingPath\configs" -Include "*.$Build.json" -Recurse -ErrorAction "Continue")
 $PlatformConfigs = @(Get-ChildItem -Path "$WorkingPath\configs" -Include "*.$Platform.json" -Recurse -ErrorAction "Continue")
-Write-LogFile -Message "Found: $(($AllConfigs + $ModelConfigs + $BuildConfigs + $PlatformConfigs).Count) configs."
+Write-LogFile -Message "Found: $(($AllConfigs + $ModelConfigs + $BuildConfigs + $PlatformConfigs).Count) configs"
 
 # Implement the settings defined in each config file
 foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConfigs)) {
@@ -182,7 +182,7 @@ foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConf
                     Remove-RegistryPath -Path $Settings.Registry.Remove @prefs; break
                 }
                 default {
-                    Write-LogFile -Message "Skipped registry settings"
+                    Write-LogFile -Message "Skipped registry settings: $($Config.FullName)"
                 }
             }
 
@@ -258,27 +258,27 @@ if ($PSBoundParameters.ContainsKey('Language')) {
     }
 }
 else {
-    Write-LogFile -Message "-Language parameter not specified. Skipping install language support."
+    Write-LogFile -Message "-Language parameter not specified. Skipping install language support"
 }
 
 if ($PSBoundParameters.ContainsKey('TimeZone')) {
     Set-TimeZoneUsingName -TimeZone $TimeZone
 }
 else {
-    Write-LogFile -Message "-TimeZone parameter not specified. Skipping set time zone."
+    Write-LogFile -Message "-TimeZone parameter not specified. Skipping set time zone"
 }
 #endregion
 
 # Copy the source files for use with upgrades
 if ($FeatureUpdatePath -eq $WorkingPath) {
-    Write-LogFile -Message "Skipping copy to $FeatureUpdatePath."
+    Write-LogFile -Message "Skipping copy to $FeatureUpdatePath"
 }
 else {
     try {
-        Write-LogFile -Message "New directory: $FeatureUpdatePath."
+        Write-LogFile -Message "New directory: $FeatureUpdatePath"
         New-Item -Path $FeatureUpdatePath -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
         Copy-Item -Path "$WorkingPath\*" -Destination $FeatureUpdatePath -Recurse -ErrorAction "SilentlyContinue"
-        Write-LogFile -Message "Copied $WorkingPath\* to $FeatureUpdatePath."
+        Write-LogFile -Message "Copied $WorkingPath\* to $FeatureUpdatePath"
     }
     catch {
         Write-LogFile -Message $_.Exception.Message -LogLevel 3
@@ -299,5 +299,5 @@ if ($PSCmdlet.ShouldProcess("Set uninstall key values")) {
 
 # Write last entry to the event log and output 0 so that we don't fail image builds
 $EndTime = $StartTime - (Get-Date)
-Write-LogFile -Message "Install-Defaults.ps1 complete. Elapsed time: $EndTime."
+Write-LogFile -Message "Install-Defaults.ps1 complete. Elapsed time: $EndTime"
 return 0

@@ -20,9 +20,9 @@ if (!([System.Environment]::Is64BitProcess)) {
         # Execute the script in a 64-bit process with the passed parameters
         $Arguments = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$($MyInvocation.MyCommand.Definition)`"$ParameterString"
         $ProcessPath = $(Join-Path -Path $Env:SystemRoot -ChildPath "\Sysnative\WindowsPowerShell\v1.0\powershell.exe")
-        Write-Verbose -Message "Restarting in 64-bit PowerShell."
-        Write-Verbose -Message "File path: $ProcessPath."
-        Write-Verbose -Message "Arguments: $Arguments."
+        Write-Verbose -Message "Restarting in 64-bit PowerShell"
+        Write-Verbose -Message "File path: $ProcessPath"
+        Write-Verbose -Message "Arguments: $Arguments"
         $params = @{
             FilePath     = $ProcessPath
             ArgumentList = $Arguments

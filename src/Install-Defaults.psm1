@@ -127,7 +127,7 @@ function Get-Platform {
             $Platform = "Client"
         }
     }
-    Write-LogFile -Message "Platform: $Platform."
+    Write-LogFile -Message "Platform: $Platform"
     Write-Output -InputObject $Platform
 }
 
@@ -162,7 +162,7 @@ function Get-OSName {
             $Caption = "Unknown"
         }
     }
-    Write-LogFile -Message "OS Name: $Caption."
+    Write-LogFile -Message "OS Name: $Caption"
     Write-Output -InputObject $Caption
 }
 
@@ -175,7 +175,7 @@ function Get-Model {
     else {
         $Model = "Physical"
     }
-    Write-LogFile -Message "Model: $Model."
+    Write-LogFile -Message "Model: $Model"
     Write-Output -InputObject $Model
 }
 
@@ -186,7 +186,7 @@ function Get-SettingsContent ($Path) {
             Path        = $Path
             ErrorAction = "Continue"
         }
-        Write-LogFile -Message "Importing: $Path."
+        Write-LogFile -Message "Importing: $Path"
         $Settings = Get-Content @params | ConvertFrom-Json -ErrorAction "Stop"
     }
     catch {
@@ -449,8 +449,8 @@ function Copy-File {
     param ($Path, $Parent)
     foreach ($Item in $Path) {
         $Source = $(Join-Path -Path $Parent -ChildPath $Item.Source)
-        Write-LogFile -Message "Source: $Source."
-        Write-LogFile -Message "Destination: $($Item.Destination)."
+        Write-LogFile -Message "Source: $Source"
+        Write-LogFile -Message "Destination: $($Item.Destination)"
         if (Test-Path -Path $Source -ErrorAction "Continue") {
             New-Directory -Path $(Split-Path -Path $Item.Destination -Parent)
             try {
@@ -480,7 +480,7 @@ function New-Directory {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ($Path)
     if (Test-Path -Path $Path -ErrorAction "Continue") {
-        Write-LogFile -Message "Path exists: $Path."
+        Write-LogFile -Message "Path exists: $Path"
     }
     else {
         try {
@@ -584,7 +584,7 @@ function Remove-Package {
     param ($Package)
 
     if ($Package.Count -ge 1) {
-        Write-LogFile -Message "Remove packages."
+        Write-LogFile -Message "Remove packages"
         foreach ($Item in $Package) {
             Get-WindowsPackage -Online -ErrorAction "Continue" | Where-Object { $_.PackageName -match $Item } | `
                 ForEach-Object {

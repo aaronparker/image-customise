@@ -51,12 +51,12 @@
 #>
 [CmdletBinding(SupportsShouldProcess = $true, DefaultParameterSetName = "BlockList")]
 param (
-    [Parameter(Mandatory = $false, ParameterSetName = "BlockList", HelpMessage = "Specify whether the operation is a BlockList or AllowList.")]
-    [Parameter(Mandatory = $false, ParameterSetName = "AllowList", HelpMessage = "Specify whether the operation is a BlockList or AllowList.")]
+    [Parameter(Mandatory = $false, ParameterSetName = "BlockList", HelpMessage = "Specify whether the operation is a BlockList or AllowList")]
+    [Parameter(Mandatory = $false, ParameterSetName = "AllowList", HelpMessage = "Specify whether the operation is a BlockList or AllowList")]
     [ValidateSet('BlockList', 'AllowList')]
     [System.String] $Operation = "BlockList",
 
-    [Parameter(Mandatory = $false, ParameterSetName = "BlockList", HelpMessage = "Specify an AppX package or packages to remove.")]
+    [Parameter(Mandatory = $false, ParameterSetName = "BlockList", HelpMessage = "Specify an AppX package or packages to remove")]
     [Alias("BlockList")]
     [System.Collections.ArrayList] $PackageFamilyNameBlockList = (
         "7EE7776C.LinkedInforWindows_w1wdnht996qgy",
@@ -132,7 +132,7 @@ param (
         "SpotifyAB.SpotifyMusic_zpdnekdrzrea0"
     ),
 
-    [Parameter(Mandatory = $false, parameterSetName = "AllowList", HelpMessage = "Specify an AppX package or packages to keep, removing all others.")]
+    [Parameter(Mandatory = $false, parameterSetName = "AllowList", HelpMessage = "Specify an AppX package or packages to keep, removing all others")]
     [Alias("AllowList")]
     [System.Collections.ArrayList] $PackageFamilyNameAllowList = (
         "Microsoft.549981C3F5F10_8wekyb3d8bbwe",
@@ -199,7 +199,7 @@ begin {
 
     # Get elevated status. if elevated we'll remove packages from all users and provisioned packages
     [System.Boolean] $Elevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
-    if ($Elevated) { Write-Verbose -Message "Running with elevated privileges. Removing provisioned packages as well." }
+    if ($Elevated) { Write-Verbose -Message "Running with elevated privileges. Removing provisioned packages as well" }
 
     switch ($Operation) {
         "BlockList" {
@@ -207,10 +207,10 @@ begin {
             $packagesToRemove = Edit-ProtectedApp -PackageList $PackageFamilyNameBlockList
         }
         "AllowList" {
-            Write-Warning -Message "AllowList action may break stuff."
+            Write-Warning -Message "AllowList action may break stuff"
             if ($Elevated) {
                 # Get packages from the current system for all users
-                Write-Verbose -Message "Enumerating all users apps."
+                Write-Verbose -Message "Enumerating all users apps"
                 $packagesAllUsers = Get-AppxPackage -AllUsers -PackageTypeFilter "Main", "Resource" | `
                     Where-Object { $_.NonRemovable -eq $false } | `
                     Where-Object { $_.IsFramework -eq $false } | `
@@ -218,7 +218,7 @@ begin {
             }
             else {
                 # Get packages for the current user
-                Write-Verbose -Message "Enumerating current user apps only."
+                Write-Verbose -Message "Enumerating current user apps only"
                 $packagesAllUsers = Get-AppxPackage -PackageTypeFilter "Main", "Resource" | `
                     Where-Object { $_.NonRemovable -eq $false } | `
                     Where-Object { $_.IsFramework -eq $false } | `
@@ -229,7 +229,7 @@ begin {
 
             if ($null -ne $uniquePackagesAllUsers) {
                 # Filter out the AllowListed apps
-                Write-Verbose -Message "Filtering AllowListed apps."
+                Write-Verbose -Message "Filtering AllowListed apps"
                 $packagesWithoutAllowList = Compare-Object -ReferenceObject $uniquePackagesAllUsers -DifferenceObject $PackageFamilyNameAllowList -PassThru
 
                 # Filter list if it contains apps from the $protectList
@@ -250,7 +250,7 @@ process {
         # Get the AppX package object by passing the string to the left of the underscore
         # to Get-AppxPackage and passing the resulting package object to Remove-AppxPackage
         try {
-            #Write-Verbose -Message "Get user package: [$Name]."
+            #Write-Verbose -Message "Get user package: [$Name]"
             $Value = "Removed"; $Status = 0; $Msg = "None"
             if ($PSCmdlet.ShouldProcess($Name, "Remove User app")) {
                 Get-AppxPackage -Name $Name | Remove-AppxPackage -ErrorAction "SilentlyContinue" | Out-Null
@@ -271,7 +271,7 @@ process {
         # Remove the provisioned package completely from the system
         if ($Elevated -eq $true) {
             try {
-                Write-Verbose -Message "Get provisioned package: [$Name]."
+                Write-Verbose -Message "Get provisioned package: [$Name]"
                 $Value = "Removed"; $Status = 0; $Msg = "None"
                 if ($PSCmdlet.ShouldProcess($Name, "Remove Provisioned app")) {
                     Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -eq $Name } | `
