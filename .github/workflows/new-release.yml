@@ -4,7 +4,7 @@ name: "New release"
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   push:
     tags:

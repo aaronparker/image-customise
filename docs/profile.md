@@ -1,6 +1,6 @@
 ---
 title: Customise the Default Profile
-summary: 
+summary:
 authors:
     - Aaron Parker
 ---

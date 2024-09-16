@@ -1,6 +1,6 @@
 ---
 title: Introduction
-summary: 
+summary:
 authors:
     - Aaron Parker
 ---

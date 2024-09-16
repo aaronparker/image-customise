@@ -1,6 +1,6 @@
 ---
 title: Remove Universal Windows Platform apps
-summary: 
+summary:
 authors:
     - Aaron Parker
 ---
@@ -23,7 +23,7 @@ Specify the AppX removal operation - either BlockList or AllowList.
 ### BlockList
 
 Specify an array of AppX packages to 'BlockList' or remove from the current Windows instance, all other apps will remain installed. The script will use the BlockList by default. The default BlockList is primarily aimed at configuring AppX packages for physical PCs.
-  
+
 ### AllowList
 
 Specify an array of AppX packages to 'AllowList' or keep in the current Windows instance. All apps except this list will be removed from the current Windows instance. The default AllowList is primarily aimed at configuring AppX packages for virtual desktops.

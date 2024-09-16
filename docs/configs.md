@@ -1,6 +1,6 @@
 ---
 title: Configurations
-summary: 
+summary:
 authors:
     - Aaron Parker
 ---

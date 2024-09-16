@@ -1,6 +1,6 @@
 ---
 title: Machine settings
-summary: 
+summary:
 authors:
     - Aaron Parker
 ---

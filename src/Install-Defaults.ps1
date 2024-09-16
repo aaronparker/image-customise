@@ -245,7 +245,7 @@ if ($PSBoundParameters.ContainsKey('Language')) {
     if ($Platform -eq "Client") {
         # Set language support by installing the specified language pack
         Install-SystemLanguage -Language $Language
-        
+
         # Set locale settings
         Set-SystemLocale -Language $Language
     }

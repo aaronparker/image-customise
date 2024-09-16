@@ -27,9 +27,9 @@ jobs:
         uses: microsoft/psscriptanalyzer-action@6b2948b1944407914a58661c49941824d149734f
         with:
           path: ./src
-          recurse: true 
+          recurse: true
           output: results.sarif
-      
+
       # Upload the SARIF file generated in the previous step
       - name: Upload SARIF results file
         uses: github/codeql-action/upload-sarif@v3

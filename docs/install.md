@@ -1,6 +1,6 @@
 ---
 title: Install Defaults
-summary: 
+summary:
 authors:
     - Aaron Parker
 ---
