@@ -71,6 +71,7 @@ param (
         "Microsoft.BingSports_8wekyb3d8bbwe",
         "Microsoft.BingWeather_8wekyb3d8bbwe",
         # "MicrosoftWindows.Client.CoPilot_cw5n1h2txyewy",
+        "Microsoft.Copilot_8wekyb3d8bbwe",
         "MicrosoftWindows.CrossDevice_cw5n1h2txyewy",
         "MicrosoftCorporationII.MicrosoftFamily_8wekyb3d8bbwe",
         "Microsoft.Windows.DevHome_8wekyb3d8bbwe",
