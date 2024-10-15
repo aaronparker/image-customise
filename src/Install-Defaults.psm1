@@ -639,7 +639,7 @@ function Start-NamedService {
     foreach ($Item in $Service) {
         try {
             if ($PSCmdlet.ShouldProcess($Item, "Start-Service")) {
-                Get-Service -Name $Item -ErrorAction "Ignore" | Start-Service
+                Get-Service -Name $Item -ErrorAction "Ignore" | Start-Service -ErrorAction "Ignore"
                 Write-LogFile -Message "Start service: $Item"
             }
         }
@@ -657,7 +657,7 @@ function Stop-NamedService {
     foreach ($Item in $Service) {
         try {
             if ($PSCmdlet.ShouldProcess($Item, "Stop-Service")) {
-                Get-Service -Name $Item -ErrorAction "Ignore" | Stop-Service -Force
+                Get-Service -Name $Item -ErrorAction "Ignore" | Stop-Service -Force -ErrorAction "Ignore"
                 Write-LogFile -Message "Stop service: $Item"
             }
         }
