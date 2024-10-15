@@ -129,6 +129,13 @@
                 "value": "Allow",
                 "type": "String",
                 "note": "Enables location services for Universal Windows Platform Apps"
+            },
+            {
+                "path": "HKCU:\\Control Panel\\Accessibility",
+                "name": "MessageDuration",
+                "value": "30",
+                "type": "DWord",
+                "note": "Increase the timeout for new notifications - Dismiss notifications after this amount of time"
             }
         ]
     }
