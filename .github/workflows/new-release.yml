@@ -48,7 +48,7 @@ jobs:
           . .\ci\New-Package.ps1 -Verbose
 
       - name: Upload release
-        uses: softprops/action-gh-release@v2.0.9
+        uses: softprops/action-gh-release@v2.1.0
         if: startsWith(github.ref, 'refs/tags/')
         with:
           prerelease: true
