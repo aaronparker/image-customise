@@ -5,7 +5,7 @@
 
     .NOTES
     NAME: Remove-Defaults.ps1
-    AUTHOR: Aaron Parker, Insentra
+    AUTHOR: Aaron Parke
 #>
 [CmdletBinding()]
 param (

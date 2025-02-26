@@ -40,7 +40,6 @@
     .NOTES
     NAME: Install-Defaults.ps1
     AUTHOR: Aaron Parker
-    TWITTER: @stealthpuppy
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (

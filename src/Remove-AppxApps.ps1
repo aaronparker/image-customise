@@ -44,7 +44,6 @@
  	        NAME: Remove-AppxApps.ps1
 	        VERSION: 3.5
 	        AUTHOR: Aaron Parker
-	        TWITTER: @stealthpuppy
 
         .LINK
             https://stealthpuppy.com
