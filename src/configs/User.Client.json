@@ -25,6 +25,25 @@
             }
         ]
     },
+    "Registry": {
+        "Type": "DefaultProfile",
+        "Set": [
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Wallpapers",
+                "name": "BackgroundType",
+                "value": 0,
+                "type": "DWord",
+                "note": "Sets the desktop background type to a picture"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\DesktopSpotlight\\Settings",
+                "name": "EnabledState",
+                "value": 0,
+                "type": "DWord",
+                "note": "Disables Windows spotlight"
+            }
+        ]
+    },
     "Files": {
         "Copy": []
     }
