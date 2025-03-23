@@ -49,3 +49,5 @@ site
 
 # Actions folders
 enricomi-publish-action-venv
+codecov.exe.SHA256SUM
+codecov.exe.SHA256SUM.sig
