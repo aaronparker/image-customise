@@ -28,6 +28,7 @@
 param (
     [Parameter(Mandatory = $false)]
     [System.Collections.ArrayList] $SafePackages = @(
+        "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe",
         "Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe",
         "Microsoft.Paint_8wekyb3d8bbwe",
         "Microsoft.PowerAutomateDesktop_8wekyb3d8bbwe",
@@ -42,6 +43,7 @@ param (
         "Microsoft.MicrosoftEdge.Stable_8wekyb3d8bbwe",
         "Microsoft.ApplicationCompatibilityEnhancements_8wekyb3d8bbwe",
         "Microsoft.StorePurchaseApp_8wekyb3d8bbwe",
+        "Microsoft.Wallet_8wekyb3d8bbwe",
         "MicrosoftWindows.CrossDevice_cw5n1h2txyewy",
         "MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy",
         "Microsoft.WidgetsPlatformRuntime_8wekyb3d8bbwe",
@@ -63,12 +65,27 @@ begin {
 }
 process {
     # Remove all AppX packages, except for packages that can't be removed, frameworks, and the safe packages list
-    $AppxPackages = Get-AppxPackage | `
+    $AppxPackages = Get-AppxPackage -AllUsers | `
         Where-Object { $_.NonRemovable -eq $False -and $_.IsFramework -eq $False -and $_.PackageFamilyName -notin $SafePackages }
-    $AppxPackages | ForEach-Object {
-        if ($PSCmdlet.ShouldProcess($_.PackageFullName, "Remove Appx package")) {
-            Remove-AppxPackage -Package $_.PackageFullName -AllUsers:$Elevated
-            $_ | Select-Object -ExpandProperty "PackageFamilyName" | Write-Output
+
+    # Check if we're running on Windows 11
+    if ([System.Environment]::OSVersion.Version -ge [System.Version]"10.022000") {
+        $AppxPackages | ForEach-Object {
+            if ($PSCmdlet.ShouldProcess($_.PackageFullName, "Remove Appx package")) {
+                Remove-AppxPackage -Package $_.PackageFullName -AllUsers:$Elevated
+                $_.PackageFamilyName | Write-Output
+            }
+        }
+    }
+    else {
+        # Windows 10
+        $ProvisionedPackages = Get-AppxProvisionedPackage -Online
+        $PackagesToRemove = $ProvisionedPackages | Where-Object { $_.DisplayName -in $AppxPackages.Name }
+        $PackagesToRemove | ForEach-Object {
+            if ($PSCmdlet.ShouldProcess($_.PackageName, "Remove Appx package")) {    
+                Remove-AppxProvisionedPackage -Package $_.PackageName -Online -AllUsers
+                $_.PackageName | Write-Output
+            }
         }
     }
 
