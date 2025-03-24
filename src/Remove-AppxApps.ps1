@@ -44,6 +44,7 @@ param (
         "Microsoft.StorePurchaseApp_8wekyb3d8bbwe",
         "MicrosoftWindows.CrossDevice_cw5n1h2txyewy",
         "MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy",
+        "Microsoft.WidgetsPlatformRuntime_8wekyb3d8bbwe",
         "Microsoft.MPEG2VideoExtension_8wekyb3d8bbwe",
         "Microsoft.AV1VideoExtension_8wekyb3d8bbwe",
         "Microsoft.AVCEncoderVideoExtension_8wekyb3d8bbwe",
@@ -52,7 +53,8 @@ param (
         "Microsoft.RawImageExtension_8wekyb3d8bbwe",
         "Microsoft.VP9VideoExtensions_8wekyb3d8bbwe",
         "Microsoft.WebMediaExtensions_8wekyb3d8bbwe",
-        "Microsoft.WebpImageExtension_8wekyb3d8bbwe")
+        "Microsoft.WebpImageExtension_8wekyb3d8bbwe",
+        "Microsoft.ZuneMusic_8wekyb3d8bbwe")
 )
 
 begin {
