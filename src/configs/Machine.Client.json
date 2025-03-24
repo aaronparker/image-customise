@@ -17,6 +17,13 @@
                 "value": 1,
                 "type": "DWord",
                 "note": "Disables the Microsoft Windows consumer features"
+            },
+            {
+                "path": "HKLM:\\Software\\Policies\\Microsoft\\Windows\\CloudContent",
+                "name": "DisableCloudOptimizedContent",
+                "value": 1,
+                "type": "DWord",
+                "note": "Disables the customisation of the taskbar with additional shortcuts (e.g. new Outlook)"
             }
         ],
         "Remove": [
