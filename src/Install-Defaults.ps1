@@ -22,9 +22,6 @@
     .PARAMETER Helplink
     A string that defines a URL for the solution. This string will be written to the Uninstall key in the Windows registry.
 
-    .PARAMETER AppxMode
-    A string that defines the mode to remove AppX packages from Windows. Accepts 'Block' or 'Allow' - Block removes a defined list of packages. Allow removes all packages except for a defined list.
-
     .PARAMETER FeatureUpdatePath
     A directory path in which the solution will be copied into to enable running during Windows feature updates.
 
@@ -66,10 +63,6 @@ param (
     [Parameter(Mandatory = $false)]
     [ValidateNotNullOrEmpty()]
     [System.String] $Helplink = "https://stealthpuppy.com/image-customise/",
-
-    [Parameter(Mandatory = $false)]
-    [ValidateNotNullOrEmpty()]
-    [System.String] $AppxMode = "Block",
 
     [Parameter(Mandatory = $false)]
     [ValidateNotNullOrEmpty()]
