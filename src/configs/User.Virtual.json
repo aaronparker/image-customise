@@ -153,20 +153,6 @@
                 "note": "Prevents the Photos app from running in the background"
             },
             {
-                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.SkypeApp_kzf8qxf38zg5c",
-                "name": "Disabled",
-                "value": 1,
-                "type": "DWord",
-                "note": "Prevents the Skype app from running in the background"
-            },
-            {
-                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.SkypeApp_kzf8qxf38zg5c",
-                "name": "DisabledByUser",
-                "value": 1,
-                "type": "DWord",
-                "note": "Prevents the Skype app from running in the background"
-            },
-            {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.YourPhone_8wekyb3d8bbwe",
                 "name": "Disabled",
                 "value": 1,
