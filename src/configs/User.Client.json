@@ -41,6 +41,20 @@
                 "value": 0,
                 "type": "DWord",
                 "note": "Disables Windows spotlight"
+            },
+            {
+                "path": "HKCU:\\Console\\%%Startup",
+                "name": "DelegationConsole",
+                "value": "{2EACA947-7F5F-4CFA-BA87-8F7FBEEFBE69}",
+                "type": "String",
+                "note": "Sets Windows Terminal as the default terminal"
+            },
+            {
+                "path": "HKCU:\\Console\\%%Startup",
+                "name": "DelegationTerminal",
+                "value": "{E12CFF52-A866-4C77-9A90-F570A7AA2C6B}",
+                "type": "String",
+                "note": "Sets Windows Terminal as the default terminal"
             }
         ]
     },
