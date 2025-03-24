@@ -757,3 +757,24 @@ function Set-TimeZoneUsingName {
         Write-LogFile -Message $_.Exception.Message -LogLevel 3
     }
 }
+
+function Get-IsOOBEComplete {
+    # https://oofhours.com/2023/09/15/detecting-when-you-are-in-oobe/
+    $TypeDef = @"
+using System;
+using System.Text;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+namespace Api {
+    public class Kernel32 {
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern int OOBEComplete(ref int bIsOOBEComplete);
+    }
+}
+"@
+
+    Add-Type -TypeDefinition $TypeDef -Language "CSharp"
+    $IsOOBEComplete = $false
+    $hr = [Api.Kernel32]::OOBEComplete([ref] $IsOOBEComplete)
+    return [System.Boolean]$IsOOBEComplete
+}

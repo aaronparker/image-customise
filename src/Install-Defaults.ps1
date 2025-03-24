@@ -221,20 +221,22 @@ foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConf
 
 #region If on a client OS, remove AppX applications
 if ($Platform -eq "Client") {
-
-    # Run the script to remove AppX/UWP apps; Get the script location
-    $Script = Get-ChildItem -Path $WorkingPath -Include "Remove-AppxApps.ps1" -Recurse -ErrorAction "Continue"
-    if ($null -eq $Script) {
-        Write-LogFile -Message "Script not found: $WorkingPath\Remove-AppxApps.ps1" -LogLevel 2
+    if (Get-IsOOBEComplete) {
+        # If OOBE is complete, we should play it safe and not attempt to remove AppX apps
+        # Explicitly call Remove-AppxApps.ps1, e.g. for gold images
+        Write-LogFile -Message "OOBE is complete. To remove AppX apps, explicitly call Remove-AppxApps.ps1"
     }
     else {
-        Write-LogFile -Message "Run script: $WorkingPath\Remove-AppxApps.ps1"
-        switch ($AppxMode) {
-            "Block" { $Apps = & $Script.FullName -Operation "BlockList" @prefs; break }
-            "Allow" { $Apps = & $Script.FullName -Operation "AllowList" @prefs; break }
+        # Run the script to remove AppX/UWP apps; Get the script location
+        $Script = Get-ChildItem -Path $WorkingPath -Include "Remove-AppxApps.ps1" -Recurse -ErrorAction "Continue"
+        if ($null -eq $Script) {
+            Write-LogFile -Message "Script not found: $WorkingPath\Remove-AppxApps.ps1" -LogLevel 2
         }
-        $RemovedApps = $Apps | Where-Object { $_.State -eq "Removed" }
-        foreach ($Name in ($RemovedApps.Name | Select-Object -Unique)) { Write-LogFile -Message "Removed AppX app: $Name" }
+        else {
+            Write-LogFile -Message "Run script: $WorkingPath\Remove-AppxApps.ps1"
+            $Apps = & $Script.FullName @prefs
+            foreach ($App in $Apps) { Write-LogFile -Message "Removed AppX app: $App" }
+        }
     }
 }
 #endregion
