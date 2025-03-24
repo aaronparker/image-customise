@@ -24,7 +24,7 @@
     - The script also uses the `reg delete` command to remove specific registry keys.
     - Ensure you run this script with administrative privileges to allow package removal and registry modifications.
 #>
-[CmdletBinding(SupportsShouldProcess = $false)]
+[CmdletBinding(SupportsShouldProcess = $true)]
 param (
     [Parameter(Mandatory = $false)]
     [System.Collections.ArrayList] $SafePackages = @(
@@ -63,16 +63,20 @@ process {
     # Remove all AppX packages, except for packages that can't be removed, frameworks, and the safe packages list
     $AppxPackages = Get-AppxPackage | `
         Where-Object { $_.NonRemovable -eq $False -and $_.IsFramework -eq $False -and $_.PackageFamilyName -notin $SafePackages }
-    $AppxPackages | Remove-AppxPackage -AllUsers:$Elevated
-    $AppxPackages | Select-Object -ExpandProperty "PackageFamilyName" | Write-Output
+    $AppxPackages | ForEach-Object {
+        if ($PSCmdlet.ShouldProcess($_.PackageFullName, "Remove Appx package")) {
+            Remove-AppxPackage -Package $_.PackageFullName -AllUsers:$Elevated
+            $_ | Select-Object -ExpandProperty "PackageFamilyName" | Write-Output
+        }
+    }
 
     # Delete registry keys that govern the installation of Outlook and DevHome
     if ($Elevated) {
         try {
-            reg delete "HKLM\SOFTWARE\Microsoft\WindowsUpdate\Orchestrator\UScheduler_Oobe\DevHomeUpdate" /f | Out-Null
-            reg delete "HKLM\SOFTWARE\Microsoft\WindowsUpdate\Orchestrator\UScheduler_Oobe\OutlookUpdate" /f | Out-Null
-            reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Orchestrator\UScheduler\DevHomeUpdate" /f | Out-Null
-            reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Orchestrator\UScheduler\OutlookUpdate" /f | Out-Null
+            reg delete "HKLM\SOFTWARE\Microsoft\WindowsUpdate\Orchestrator\UScheduler_Oobe\DevHomeUpdate" /f 2>$null
+            reg delete "HKLM\SOFTWARE\Microsoft\WindowsUpdate\Orchestrator\UScheduler_Oobe\OutlookUpdate" /f 2>$null
+            reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Orchestrator\UScheduler\DevHomeUpdate" /f 2>$null
+            reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Orchestrator\UScheduler\OutlookUpdate" /f 2>$null
         }
         catch {
         }
