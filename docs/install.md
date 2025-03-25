@@ -8,19 +8,33 @@ authors:
 
 To use the scripts in an operating system deployment pipeline, download the zip file (`image-customise.zip`) attached to the [latest release](https://github.com/aaronparker/image-customise/releases/latest) and import the extracted files into your OS deployment solution (e.g., the Microsoft Deployment Toolkit, Microsoft Intune, Microsoft Configuration Manager, etc.).
 
-![Windows Custom Defaults release hosted on GitHub](assets/img/githubrelease.jpeg)
+![Windows Enterprise Defaults release hosted on GitHub](assets/img/githubrelease.jpeg)
 
 ## Install
 
-Installation of the Windows Enterprise Defaults is handled by `Install-Defaults.ps1`. When using a deployment tool such as MDT, ConfigMgr or Intune, use the following command for install:
+Installation of the Windows Enterprise Defaults will depend on where you are running the installation - via the Windows OOBE (with Windows Autopilot or Windows Autopilot device preparation), in an image creation solution, or manually.
+
+Installation is handled with two scripts:
+
+* `Install-Defaults.ps1` - this script installs the solution including configuring Windows optimisations and the default user profile
+* `Remove-AppxApps.ps1` - the script removes AppX or Store apps from Windows. This is only called by `Install-Defaults.ps1` during OOBE, otherwise you will need to run this script directly
+
+If you're deploying the solution via Windows Autopilot, use the following command:
+
+```batch
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy RemoteSigned -File .\Install-Defaults.ps1
+```
+
+If you're deploying the solution via other tools, e.g. ConfigMgr, MDT or in an image pipeline, run both scripts:
 
 ```powershell
-C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy RemoteSigned -File .\Install-Defaults.ps1
+.\Remove-AppxApps.ps1
+.\Install-Defaults.ps1
 ```
 
 ### Localising Windows
 
-`Install-Defaults.ps1` can install language packs and configure system-wide language / locale settings on Windows 10 and Windows 11, for example:
+`Install-Defaults.ps1` can configure system-wide language / locale settings, and on Windows 10/11 and Windows Server 2025 install language packs. Here's an example installing the English Australia locale settings and language support:
 
 ```powershell
 .\Install-Defaults.ps1 -Language "en-AU"
@@ -28,7 +42,7 @@ C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Remot
 
 Use `Install-Defaults.ps1 -Language "<language code>"` to install a language pack and set local settings for a specified language. This parameter supports the **bcp47** tag of the language to install (e.g., `en-AU`, `en-GB`, `fr-FR`). No locale, regional settings or language packs will be installed unless this parameter is specified.
 
-This uses the [Install-Language](https://learn.microsoft.com/en-au/powershell/module/languagepackmanagement/install-language) module to install the appropriate language pack. This module is only available on current version of Windows 10 and Windows 11 - installation of a language pack on Windows Server is not yet supported.
+This uses the [Install-Language](https://learn.microsoft.com/en-au/powershell/module/languagepackmanagement/install-language) module to install the appropriate language pack. This module is only available on current version of Windows 10, Windows 11 and Windows Server 2025.
 
 !!! note
 
@@ -49,6 +63,10 @@ $RegionInfo = New-Object -TypeName "System.Globalization.RegionInfo" -ArgumentLi
 Set-WinHomeLocation -GeoId $RegionInfo.GeoId
 Set-SystemPreferredUILanguage -Language $Language
 ```
+
+!!! warning
+
+    Run `Remove-AppxApps.ps1` before using `Install-Defaults.ps1` to install language packs, otherwise the language pack will be removed.
 
 ### Set a Time Zone
 
@@ -74,7 +92,7 @@ The solution is also provided in `.intunewin` format to enable direct import int
 
 Settings for importing the Windows Enterprise Defaults as a Win32 package into Intune are maintained here: [App.json](https://github.com/aaronparker/image-customise/blob/main/App.json). This can be used with the [IntuneWin32AppPackager](https://github.com/MSEndpointMgr/IntuneWin32AppPackager) to automate import into Intune.
 
-![Windows Custom Defaults as a Win32 application in Microsoft Intune](assets/img/intuneapp.jpeg)
+![Windows Enterprise Defaults as a Win32 application in Microsoft Intune](assets/img/intuneapp.jpeg)
 
 !!! note ""
 
