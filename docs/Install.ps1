@@ -11,22 +11,23 @@ $params = @{
     Uri                = $Uri
 }
 $release = Invoke-RestMethod @params
-If ($null -ne $release) {
-    ForEach ($item in $release) {
-        ForEach ($asset in $item.assets) {
-            If ($asset.browser_download_url -match $Filter) {
+if ($null -ne $release) {
+    foreach ($item in $release) {
+        foreach ($asset in $item.assets) {
+            if ($asset.browser_download_url -match $Filter) {
                 $Uri = $asset.browser_download_url
             }
         }
     }
     $TmpDir = $([System.IO.Path]::Combine($Env:Temp, $(New-Guid)))
-    New-Item -Path $TmpDir -ItemType "Directory" > $null
+    New-Item -Path $TmpDir -ItemType "Directory" | Out-Null
     $OutFile = $([System.IO.Path]::Combine($TmpDir, $(Split-Path -Path $Uri -Leaf)))
     Invoke-WebRequest -Uri $Uri -OutFile $OutFile -UseBasicParsing
-    If (Test-Path -Path $OutFile -ErrorAction "SilentlyContinue") {
+    if (Test-Path -Path $OutFile -ErrorAction "SilentlyContinue") {
         Push-Location -Path $TmpDir
         Expand-Archive -Path $OutFile -DestinationPath $TmpDir -Force
         Get-ChildItem -Path $TmpDir -Recurse | Unblock-File
+        & .\Remove-AppxApps.ps1
         & .\Install-Defaults.ps1
         Pop-Location
         Remove-Item -Path $TmpDir -Recurse -Force -ErrorAction "SilentlyContinue"

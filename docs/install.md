@@ -82,6 +82,10 @@ Settings for importing the Windows Enterprise Defaults as a Win32 package into I
 
 ## Download and Install
 
+!!! warning
+
+    Do not use this method on an existing Windows PC. This script will run `Remove-AppxApps.ps1` which will remove AppX / Store apps except for the list specified in the script.
+
 To simplify download and install during an automated image build pipeline, or to install manually into an image, a [quick install script](https://raw.githubusercontent.com/aaronparker/image-customise/main/Install.ps1) is provided that can be executed with the following PowerShell:
 
 ```powershell
