@@ -132,13 +132,6 @@
                 "note": "Disables 'Show me the Windows welcome experience after updates and occasionally when I sign in to highlight what's new and suggested'"
             },
             {
-                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
-                "name": "SystemPaneSuggestionsEnabled",
-                "value": 0,
-                "type": "DWord",
-                "note": "Disables suggestions in the Start menu"
-            },
-            {
                 "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications\\Microsoft.Windows.Photos_8wekyb3d8bbwe",
                 "name": "Disabled",
                 "value": 1,
@@ -165,13 +158,6 @@
                 "value": 1,
                 "type": "DWord",
                 "note": "Prevents the Your Phone app from running in the background"
-            },
-            {
-                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
-                "name": "BingSearchEnabled",
-                "value": 0,
-                "type": "DWord",
-                "note": "Disables web search in the Start menu for better responsiveness"
             }
         ],
         "Others": [

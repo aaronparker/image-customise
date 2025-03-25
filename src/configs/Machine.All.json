@@ -31,6 +31,13 @@
                 "value": "Allow",
                 "type": "String",
                 "note": "Enables location services"
+            },
+            {
+                "path": "HKLM:\\SOFTWARE\\SOFTWARE\\Policies\\Microsoft\\Edge",
+                "name": "SearchbarAllowed",
+                "value": "0",
+                "type": "Dword",
+                "note": "Prevent the Microsoft Edge search bar from being added to the desktop"
             }
         ]
     },
