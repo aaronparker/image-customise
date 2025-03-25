@@ -33,18 +33,18 @@ param (
     [Parameter(Mandatory = $false)]
     [System.Collections.ArrayList] $SafePackages = @(
         # Common desktop apps
-        "Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe",
-        "Microsoft.Paint_8wekyb3d8bbwe",
-        "Microsoft.PowerAutomateDesktop_8wekyb3d8bbwe",
-        "Microsoft.ScreenSketch_8wekyb3d8bbwe",
-        "Microsoft.Windows.Photos_8wekyb3d8bbwe",
-        "Microsoft.WindowsAlarms_8wekyb3d8bbwe",
-        "Microsoft.WindowsCalculator_8wekyb3d8bbwe",
-        "Microsoft.WindowsNotepad_8wekyb3d8bbwe",
-        "Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe",
-        "Microsoft.WindowsTerminal_8wekyb3d8bbwe",
-        "Microsoft.MicrosoftEdge.Stable_8wekyb3d8bbwe",
-        "Microsoft.ZuneMusic_8wekyb3d8bbwe",
+        "Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe", # Enable basic notes functionality. Supports Microsoft 365 accounts
+        "Microsoft.Paint_8wekyb3d8bbwe", # Provides basic image editing functionality
+        "Microsoft.PowerAutomateDesktop_8wekyb3d8bbwe", # Desktop automation tool
+        "Microsoft.ScreenSketch_8wekyb3d8bbwe", # Capture and annotate screenshots
+        "Microsoft.Windows.Photos_8wekyb3d8bbwe", # Basic image viewing. Supports Microsoft 365 accounts
+        "Microsoft.WindowsAlarms_8wekyb3d8bbwe", # Clock app with timers, alarms, and world clock. Supports Microsoft 365 accounts
+        "Microsoft.WindowsCalculator_8wekyb3d8bbwe", # Calculator app
+        "Microsoft.WindowsNotepad_8wekyb3d8bbwe", # Notepad app
+        "Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe", # Voice recording app
+        "Microsoft.WindowsTerminal_8wekyb3d8bbwe", # Essential terminal app
+        "Microsoft.MicrosoftEdge.Stable_8wekyb3d8bbwe", # Microsoft Edge browser
+        "Microsoft.ZuneMusic_8wekyb3d8bbwe", # Windows Media Player, video and music player
 
         # System applications
         "Microsoft.WindowsStore_8wekyb3d8bbwe",
@@ -92,7 +92,7 @@ process {
             $ProvisionedPackages = Get-AppxProvisionedPackage -Online
             $PackagesToRemove = $ProvisionedPackages | Where-Object { $_.DisplayName -in $AppxPackages.Name }
             $PackagesToRemove | ForEach-Object {
-                if ($PSCmdlet.ShouldProcess($_.PackageName, "Remove Appx package")) {    
+                if ($PSCmdlet.ShouldProcess($_.PackageName, "Remove Appx package")) {
                     Remove-AppxProvisionedPackage -Package $_.PackageName -Online -AllUsers
                     $_.PackageName | Write-Output
                 }
@@ -113,6 +113,7 @@ process {
             reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Orchestrator\UScheduler\MS_Outlook" /f *>$null
         }
         catch {
+            Write-Information -MessageData "Failed to delete registry keys with: $($_.Exception.Message)."
         }
     }
 }

@@ -214,9 +214,9 @@ foreach ($Config in ($AllConfigs + $PlatformConfigs + $BuildConfigs + $ModelConf
 
 #region If on a client OS, remove AppX applications
 if ($Platform -eq "Client") {
-    if (Get-IsOOBEComplete) {
+    if (Get-IsOobeComplete) {
         # If OOBE is complete, we should play it safe and not attempt to remove AppX apps
-        # Explicitly call Remove-AppxApps.ps1, e.g. for gold images
+        # Explicitly call Remove-AppxApps.ps1 instead, e.g. for gold images
         Write-LogFile -Message "OOBE is complete. To remove AppX apps, explicitly call Remove-AppxApps.ps1"
     }
     else {

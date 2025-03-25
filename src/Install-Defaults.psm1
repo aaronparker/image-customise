@@ -758,7 +758,7 @@ function Set-TimeZoneUsingName {
     }
 }
 
-function Get-IsOOBEComplete {
+function Get-IsOobeComplete {
     # https://oofhours.com/2023/09/15/detecting-when-you-are-in-oobe/
     $TypeDef = @"
 using System;
@@ -775,6 +775,6 @@ namespace Api {
 
     Add-Type -TypeDefinition $TypeDef -Language "CSharp"
     $IsOOBEComplete = $false
-    $hr = [Api.Kernel32]::OOBEComplete([ref] $IsOOBEComplete)
+    [Void][Api.Kernel32]::OOBEComplete([ref] $IsOOBEComplete)
     return [System.Boolean]$IsOOBEComplete
 }
