@@ -33,7 +33,7 @@
                 "note": "Enables location services"
             },
             {
-                "path": "HKLM:\\SOFTWARE\\SOFTWARE\\Policies\\Microsoft\\Edge",
+                "path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
                 "name": "SearchbarAllowed",
                 "value": "0",
                 "type": "Dword",
