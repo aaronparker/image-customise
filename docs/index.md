@@ -4,11 +4,11 @@ summary:
 authors:
     - Aaron Parker
 ---
-Windows Customised Defaults is a solution for customising a Windows PC or image to change settings from the Microsoft defaults to make them enterprise ready. Microsoft's defaults suit the lowest common denominator for home, small business and enterprises, but an enterprise-ready Windows desktop requires some adjustments to the default user environment.
+Windows Enterprise Defaults is a solution for customising a Windows PC or image to change settings from the Microsoft defaults to make them enterprise ready. Microsoft's defaults suit the lowest common denominator for home, small business and enterprises, but an enterprise-ready Windows desktop requires some adjustments to the default user environment.
 
-Windows Customised Defaults simplifies making those changes to Windows, including - updating the Windows default profile, including the default Start menu and taskbar, the Windows user environment and Explorer settings, configures Windows feature states and removes in-box application packages.
+Windows Enterprise Defaults simplifies making those changes to Windows, including - updating the Windows default profile, including the default Start menu and taskbar, the Windows user environment and Explorer settings, configures Windows feature states and removes in-box application packages.
 
-Windows Customised Defaults supports Windows 10, Windows 11, Windows Server 2016, Windows Server 2019 and Windows Server 2022, and supports both physical PCs and virtual machine images. Aimed at deployment provisioning physical PCs or virtual desktops gold images, the customisations will also work for Windows Server infrastructure roles.
+Windows Enterprise Defaults supports Windows 10, Windows 11, Windows Server 2016 to Windows Server 2025, and supports both physical PCs and virtual machine images (Azure Virtual Desktop, Windows 365 etc.). Aimed at deployment provisioning physical PCs or virtual desktops gold images, the customisations will also work for Windows Server infrastructure roles.
 
 ## Usage
 

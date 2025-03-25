@@ -58,7 +58,7 @@ param (
 
     [Parameter(Mandatory = $false)]
     [ValidateNotNullOrEmpty()]
-    [System.String] $Project = "Customised Defaults",
+    [System.String] $Project = "Windows Enterprise Defaults",
 
     [Parameter(Mandatory = $false)]
     [ValidateNotNullOrEmpty()]
