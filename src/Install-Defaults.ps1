@@ -292,6 +292,6 @@ if ($PSCmdlet.ShouldProcess("Set uninstall key values")) {
 }
 
 # Write last entry to the event log and output 0 so that we don't fail image builds
-$EndTime = $StartTime - (Get-Date)
+$EndTime = (Get-Date) - $StartTime
 Write-LogFile -Message "Install-Defaults.ps1 complete. Elapsed time: $EndTime"
 return 0
