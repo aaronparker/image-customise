@@ -22,13 +22,13 @@ The customisations are intended for operating system deployment via various meth
 
 ## Results
 
-This package will configure the Windows image ready for the enterprise and the end-user. For Windows 10 (and Windows Server as a virtual desktop), the user should see that their default Start menu, taskbar, and desktop should be similar to the screenshot below:
+This package will configure the Windows image ready for the enterprise and the end-user. Here's the default Windows 11 desktop:
 
-![Default Windows 10 desktop](assets/img/defaultstartmenu.png)
+![Default Windows 11 desktop](assets/img/before1080.png)
 
-For Windows 11, the Start menu, taskbar, and desktop right after first sign-in, should look like this:
+Here's a Windows 11 desktop after customisation:
 
-![Default Windows 11 desktop](assets/img/windows11-defaultstartmenu.png)
+![Customised Windows 11 desktop](assets/img/after1080.png)
 
 ## Supported Platforms
 

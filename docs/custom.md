@@ -159,7 +159,7 @@ For Windows 10 or Windows 11, the Start menu layout to import, is specified with
                 },
                 {
                     "Source": "Windows11Start.bin",
-                    "Destination": "C:\\Users\\Default\\AppData\\Local\\Packages\\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\\LocalState\\start.bin"
+                    "Destination": "C:\\Users\\Default\\AppData\\Local\\Packages\\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\\LocalState\\start2.bin"
                 }
             ]
         }
@@ -211,7 +211,7 @@ The solution includes a persistent state file - `Windows11Start.bin`, in additio
     },
     {
         "Source": "Windows11Start.bin",
-        "Destination": "C:\\Users\\Default\\AppData\\Local\\Packages\\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\\LocalState\\start.bin"
+        "Destination": "C:\\Users\\Default\\AppData\\Local\\Packages\\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\\LocalState\\start2.bin"
     }
 ]
 ```
