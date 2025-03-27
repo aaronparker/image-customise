@@ -38,6 +38,20 @@
                 "value": "0",
                 "type": "Dword",
                 "note": "Prevent the Microsoft Edge search bar from being added to the desktop"
+            },
+            {
+                "path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\EdgeUpdate",
+                "name": "CreateDesktopShortcutDefault",
+                "value": "0",
+                "type": "Dword",
+                "note": "Prevent the Microsoft Edge shortcut from being added to the desktop"
+            },
+            {
+                "path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\EdgeUpdate",
+                "name": "RemoveDesktopShortcutDefault",
+                "value": "1",
+                "type": "Dword",
+                "note": "Prevent the Microsoft Edge shortcut from being added to the desktop"
             }
         ]
     },
