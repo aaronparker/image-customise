@@ -131,4 +131,6 @@ nav:
     - Known issues: issues.md
   - Settings:
     - Registry: registry.md
+    - Capabilities and Features: features.md
+    - Paths: paths.md
   - stealthpuppy.com: https://stealthpuppy.com/
