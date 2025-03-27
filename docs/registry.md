@@ -44,6 +44,23 @@ Type: Direct
 | HKLM: \Software \Policies \Microsoft \Windows \CloudContent | DisableWindowsConsumerFeatures | 1 | Disables the Microsoft Windows consumer features |
 | HKLM: \Software \Policies \Microsoft \Windows \CloudContent | DisableCloudOptimizedContent | 1 | Disables the customisation of the taskbar with additional shortcuts (e.g. new Outlook) |
 
+
+Minimum build: 10.0.14393
+
+Maximum build: 10.0.99999
+
+Type: Direct
+
+| path | note |
+| ---- | ---- |
+| HKLM: \SOFTWARE \Microsoft \Windows \CurrentVersion \WindowsUpdate \Orchestrator \UScheduler_Oobe \DevHomeUpdate | Removes the Dev Home app from the Windows Update Orchestrator to prevent automatic install on Windows 11 |
+| HKLM: \SOFTWARE \Microsoft \Windows \CurrentVersion \WindowsUpdate \Orchestrator \UScheduler \DevHomeUpdate | Removes the Dev Home app from the Windows Update Orchestrator to prevent automatic install on Windows 11 |
+| HKLM: \SOFTWARE \Microsoft \WindowsUpdate \Orchestrator \UScheduler_Oobe \DevHomeUpdate | Removes the Dev Home app from the Windows Update Orchestrator to prevent automatic install on Windows 11 |
+| HKLM: \SOFTWARE \Microsoft \Windows \CurrentVersion \WindowsUpdate \Orchestrator \UScheduler_Oobe \OutlookUpdate | Removes the Outlook (new) app from the Windows Update Orchestrator to prevent automatic install on Windows 11 |
+| HKLM: \SOFTWARE \Microsoft \Windows \CurrentVersion \WindowsUpdate \Orchestrator \UScheduler \OutlookUpdate | Removes the Outlook (new) app from the Windows Update Orchestrator to prevent automatic install on Windows 11 |
+| HKLM: \SOFTWARE \Microsoft \WindowsUpdate \Orchestrator \UScheduler_Oobe \OutlookUpdate | Removes the Outlook (new) app from the Windows Update Orchestrator to prevent automatic install on Windows 11 |
+| HKLM: \SOFTWARE \Microsoft \Windows \CurrentVersion \WindowsUpdate \Orchestrator \UScheduler \MS_Outlook | Removes the Outlook (new) app from the Windows Update Orchestrator to prevent automatic install on Windows 10 |
+
 ## Services.Client.json
 
 Minimum build: 10.0.14393

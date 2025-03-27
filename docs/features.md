@@ -39,3 +39,14 @@ Maximum build: 10.0.99999
 | WindowsMediaPlayer |
 | MicrosoftWindowsPowerShellV2Root |
 | MicrosoftWindowsPowerShellV2 |
+
+
+## Machine.All.json
+
+Minimum build: 10.0.14393
+
+Maximum build: 10.0.99999
+
+| Feature |
+| ------- |
+| Microsoft-Windows-MediaPlayer-Package* |

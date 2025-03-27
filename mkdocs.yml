@@ -133,4 +133,5 @@ nav:
     - Registry: registry.md
     - Capabilities and Features: features.md
     - Paths: paths.md
+    - Services: services.md
   - stealthpuppy.com: https://stealthpuppy.com/
