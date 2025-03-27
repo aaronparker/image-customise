@@ -58,6 +58,11 @@
         ]
     },
     "Files": {
-        "Copy": []
+        "Copy": [
+            {
+                "Source": "apps\\initial_preferences.txt",
+                "Destination": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\initial_preferences"
+            }
+        ]
     }
 }

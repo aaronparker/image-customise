@@ -1,0 +1,100 @@
+{
+	"bookmark_bar": {
+		"show_apps_shortcut": true,
+		"show_managed_bookmarks": true,
+		"show_on_all_tabs": false
+	},
+	"bookmarks": {
+		"editing_enabled": true
+	},
+	"browser": {
+		"clear_data": {
+			"browsing_history": true,
+			"browsing_history_basic": true,
+			"cache": true,
+			"cache_basic": true,
+			"cookies": true,
+			"download_history": true,
+			"form_data": false,
+			"passwords": false
+		},
+		"clear_data_on_exit": {
+			"browsing_history": false,
+			"cache": false,
+			"cookies": false,
+			"download_history": false,
+			"form_data": false,
+			"hosted_apps_data": false,
+			"passwords": false,
+			"site_settings": false
+		},
+		"dark_theme": true,
+		"first_run_tabs": [
+			"https://www.example1.com",
+			"https://www.example2.com"
+		],
+		"show_toolbar_bookmarks_button": true,
+		"show_toolbar_collections_button": true,
+		"show_toolbar_downloads_button": false,
+		"show_home_button": true,
+		"show_prompt_before_closing_tabs": true,
+		"show_toolbar_history_button": true
+	},
+	"default_search_provider": {
+		"enabled": true,
+		"search_url": "www.bing.com"
+	},
+	"fullscreen": {
+		"allowed": true
+	},
+	"homepage": "https://www.microsoft.com/",
+	"homepage_is_newtabpage": true,
+	"history": {
+		"clear_on_exit": false,
+		"deleting_enabled": true
+	},
+	"feedback_allowed": true,
+	"extensions": {
+		"settings": {
+			"hokifickgkhplphjiodbggjmoafhignh": {
+				"location": 1,
+				"manifest": {
+					"key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuG/FYgO1EIcEChq8To/BP6qj4VHuZZDiJm3QdP3nRMB/xuirdFQOCSN893zPUKT6bTUxncp6xiFDzT9hwLf6BqhWZWD92BcEjjHa1+DlecgH8yOx5jZbJhFAVwhJ+ABfTT/+wfvXGK0EKQ1KUP8+RiT9cv3Wg23fc3j+WLjRyKs6DkGUtJdWEmAipuHIUJIoLhOhqxk5RWEXtMZLzl4fMq0blhwdnBNJPU/Jj565P+5pUEmH/zijYPT8CdOC62ndBs7pjORS32UQDUzL5wrZYygWVhBE0rA/q/xtgGnKfhmqRzKpzGLQEwz2X0+n4mPWHmJYmzC1rdAnITm8ksX6LwIDAQAB",
+					"name": "Microsoft Editor",
+					"permissions": ["storage", "\u003Call_urls>"],
+					"update_url": "https://edge.microsoft.com/extensionwebstorebase/v1/crx",
+					"version": "0.0",
+					"manifest_version": 2
+				},
+				"content_scripts": [{
+					"all_frames": true,
+					"js": ["common/browserHandler.js", "content/auth.js"],
+					"match_about_blank": true,
+					"matches": ["https://login.live.com/*", "https://login.microsoftonline.com/*"],
+					"run_at": "document_start"
+				}, {
+					"all_frames": true,
+					"js": ["common/browserHandler.js", "content/postInstallPage.js"],
+					"match_about_blank": false,
+					"matches": ["https://support.microsoft.com/*/office/welcome-to-the-microsoft-editor-browser-extension-9a5ee6c4-f6b7-4b26-bbca-cd38a8b44d6a*"],
+					"run_at": "document_start"
+				}, {
+					"all_frames": true,
+					"exclude_matches": ["https://outlook-sdf.live.com/*", "https://outlook-sdf.office.com/*", "https://outlook-sdf.office365.com/*", "https://outlook.live.com/*", "https://outlook.office.com/*", "https://outlook.office365.com/*", "https://www.office.com/*", "https://onedrive.live.com/*", "https://*.onedrive.live.com/*", "https://*.sharepoint.com/:w:/*", "https://*.sharepoint.com/:p:/*", "https://*.sharepoint.com/:x:/*", "https://*.sharepoint.com/:o:/*", "https://*.officeapps.live.com/*"],
+					"js": ["editor/config.js", "editor/content.js"],
+					"match_about_blank": true,
+					"matches": ["\u003Call_urls>"],
+					"run_at": "document_end"
+				}],
+				"path": "hokifickgkhplphjiodbggjmoafhignh\\0.0",
+				"state": 1
+			}
+		}
+	},
+	"session": {
+		"restore_on_startup": 4,
+		"startup_urls": [
+			"https://www.microsoft.com/en-us/edge"
+		]
+	}
+}
