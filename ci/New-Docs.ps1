@@ -142,3 +142,23 @@ foreach ($file in $Configs) {
     }
 }
 ($markdown.TrimEnd("`n")) | Out-File -FilePath $OutFile -Force -Encoding "Utf8"
+
+<#
+    Files
+#>
+$OutFile = [System.IO.Path]::Combine("docs/files.md")
+$markdown = New-MDHeader -Text "Files" -Level 1
+$markdown += "`n"
+foreach ($file in $Configs) {
+
+    $json = Get-Content -Path $file.FullName | ConvertFrom-Json
+    if ($null -ne $json.Files.Copy) {
+        $markdown += New-MDHeader -Text $file.Name -Level 2
+        $markdown += "`n"
+        $markdown += "Minimum build: $($json.MinimumBuild)`n`n"
+        $markdown += "Maximum build: $($json.MaximumBuild)`n`n"
+        $markdown += $json.Files.Copy | New-MDTable -Shrink
+        $markdown += "`n"
+    }
+}
+($markdown.TrimEnd("`n")) | Out-File -FilePath $OutFile -Force -Encoding "Utf8"
