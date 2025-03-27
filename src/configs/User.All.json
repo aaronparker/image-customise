@@ -143,6 +143,13 @@
                 "value": 1,
                 "type": "DWord",
                 "note": "Prevents the default file type dialog box at Adobe Acrobat Pro/Standard DC first launch"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\DWM",
+                "name": "ColorPrevalence",
+                "value": 1,
+                "type": "DWord",
+                "note": "Enables 'Show accent colour on title bars and window borders'"
             }
         ]
     }

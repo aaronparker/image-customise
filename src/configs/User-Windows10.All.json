@@ -38,13 +38,6 @@
                 "value": 3288359857,
                 "type": "DWord",
                 "note": "Sets the accent colour on window title bars and borders"
-            },
-            {
-                "path": "HKCU:\\Software\\Microsoft\\Windows\\DWM",
-                "name": "ColorPrevalence",
-                "value": 1,
-                "type": "DWord",
-                "note": "Sets the accent colour on window title bars and borders"
             }
         ]
     }
