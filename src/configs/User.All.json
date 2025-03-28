@@ -110,6 +110,13 @@
                 "note": "Collapses the Search box into an icon on the Taskbar"
             },
             {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+                "name": "SearchboxTaskbarModeCache",
+                "value": 3,
+                "type": "DWord",
+                "note": "Required to support the setting selected for SearchboxTaskbarMode"
+            },
+            {
                 "path": "HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\location\\NonPackaged",
                 "name": "Value",
                 "value": "Allow",
