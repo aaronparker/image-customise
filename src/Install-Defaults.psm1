@@ -463,7 +463,7 @@ function Copy-File {
                         ErrorAction = "Continue"
                     }
                     Copy-Item @params
-                    Write-LogFile -Message "Copy-File: $Source to $($Item.Destination)"
+                    Write-LogFile -Message "Copy file: $Source to $($Item.Destination)"
                 }
             }
             catch {
