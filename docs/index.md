@@ -26,7 +26,7 @@ This package will configure the Windows image ready for the enterprise and the e
 
 ![Default Windows 11 desktop](assets/img/before1080.png)
 
-And here's a Windows 11 desktop after customisation:
+And here's a Windows 11 desktop after customisation - note that regional settings are configured, there's default Start menu, the search box in the taskbar has been reduced in size, many of the in-box applications have been uninstalled, and the default wallpaper has been set back to the Windows 11 bloom wallpaper (instead of Windows spotlight).
 
 ![Customised Windows 11 desktop](assets/img/after1080.png)
 

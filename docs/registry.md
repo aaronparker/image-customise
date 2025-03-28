@@ -127,6 +127,7 @@ Type: DefaultProfile
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \Explorer \Advanced \People | PeopleBand | 0 | Removes the People icon from the Taskbar on Windows 10 |
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \UserProfileEngagement | ScoobeSystemSettingEnabled | 0 | Disable 'Suggest ways to get the most out of Windows and finish setting up this device' Screen in Settings / System / Notifications |
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \Search | SearchboxTaskbarMode | 3 | Collapses the Search box into an icon on the Taskbar |
+| HKCU: \Software \Microsoft \Windows \CurrentVersion \Search | SearchboxTaskbarModeCache | 3 | Required to support the setting selected for SearchboxTaskbarMode |
 | HKCU: \SOFTWARE \Microsoft \Windows \CurrentVersion \CapabilityAccessManager \ConsentStore \location \NonPackaged | Value | Allow | Enables location services for Win32 applications |
 | HKCU: \SOFTWARE \Microsoft \Windows \CurrentVersion \CapabilityAccessManager \ConsentStore \location | Value | Allow | Enables location services for Universal Windows Platform Apps |
 | HKCU: \Control Panel \Accessibility | MessageDuration | 30 | Increase the timeout for new notifications - Dismiss notifications after this amount of time |
