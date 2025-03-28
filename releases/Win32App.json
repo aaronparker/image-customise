@@ -2,14 +2,14 @@
   "PackageInformation": {
     "SetupType": "EXE",
     "SetupFile": "Install-Defaults.ps1",
-    "Version": "2406.01.173",
+    "Version": "2503.28.209",
     "SourceFolder": "Source",
     "OutputFolder": "Package",
     "IconFile": "https://github.com/aaronparker/icons/raw/main/icons/Package.png"
   },
   "Information": {
-    "DisplayName": "Windows Enterprise Defaults 2406.01.173 x86",
-    "Description": "Default user and system settings (including default Start menu layout) for Windows 10/11 PCs provisioned via Windows Autopilot. Ensure this package is assigned in the Enrolment Status Page to enable install before user sign-in.",
+    "DisplayName": "Windows Enterprise Defaults 2503.28.209 x86",
+    "Description": "Customisations to **make Windows 10 & Windows 11 enterprise-ready** by configuring a clean OS default state, uninstalling unnecessary in-box AppX apps, and improving the end-user experience by updating the default user profile and default Start menu. Includes support for localising Windows and setting a time zone.",
     "Publisher": "stealthpuppy",
     "InformationURL": "https://stealthpuppy.com/image-customise/",
     "PrivacyURL": "https://stealthpuppy.com/image-customise/",
@@ -35,7 +35,7 @@
       "KeyPath": "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{f38de27b-799e-4c30-8a01-bfdedc622944}",
       "ValueName": "DisplayVersion",
       "Operator": "greaterThanOrEqual",
-      "Value": "2406.01.173",
+      "Value": "2503.28.209",
       "Check32BitOn64System": "false"
     }
   ],

@@ -86,7 +86,7 @@ Once installed, the following registry information can be used to detect that th
 * Value - `DisplayVersion`
 * Data - `2211.29.129` (the version number of the current release)
 
-### Microsoft Intune
+## Microsoft Intune
 
 The solution is also provided in `.intunewin` format to enable direct import into Microsoft Intune without re-packaging.
 
@@ -97,6 +97,12 @@ Settings for importing the Windows Enterprise Defaults as a Win32 package into I
 !!! note ""
 
     To enable support for multiple languages, create multiple Win32 applications with different command lines - one for each required language.
+
+### Enrollment Status Page
+
+To ensure the solution applies to a target machine during Windows Autopilot, add the application package to the list of Blocking Apps in the [Enrollment Status Page](https://learn.microsoft.com/en-us/autopilot/enrollment-status).
+
+![Adding the Windows Enterprise Defaults to an Enrollment Status Page](assets/img/enrollmentstatuspage.jpeg)
 
 ## Download and Install
 
