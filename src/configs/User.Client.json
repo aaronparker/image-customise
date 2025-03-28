@@ -56,6 +56,15 @@
                 "type": "String",
                 "note": "Sets Windows Terminal as the default terminal"
             }
+        ],
+        "Others": [
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes",
+                "name": "CurrentTheme",
+                "value": "C:\\WINDOWS\\resources\\themes\\themeC.theme",
+                "type": "String",
+                "note": "Sets set default Windows theme to change the default colours and wallpaper"
+            }
         ]
     },
     "Files": {
