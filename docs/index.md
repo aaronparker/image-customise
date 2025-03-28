@@ -30,6 +30,10 @@ And here's a Windows 11 desktop after customisation - note that regional setting
 
 ![Customised Windows 11 desktop](assets/img/after1080.png)
 
+When used in provisioning devices with Windows Autopilot, other deployment tools, or with a VDI solution or Windows 365, and combined with Intune policies or Group Policy settings, the default user desktop should then be similar to the following screenshot:
+
+![Customised Windows 11 enterprise desktop with policies and applications](assets/img/after-corporate.png)
+
 ## Supported Platforms
 
 The solution has been tested on Windows 10 (1809 and above), Windows 11, Windows Server 2016-2025. All scripts should work on any future versions of Windows; however, you should test thoroughly before deployment in production.
