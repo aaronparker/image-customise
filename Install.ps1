@@ -23,13 +23,13 @@ if ($null -ne $release) {
     New-Item -Path $TmpDir -ItemType "Directory" | Out-Null
     $OutFile = $([System.IO.Path]::Combine($TmpDir, $(Split-Path -Path $Uri -Leaf)))
     Invoke-WebRequest -Uri $Uri -OutFile $OutFile -UseBasicParsing
-    if (Test-Path -Path $OutFile -ErrorAction "SilentlyContinue") {
+    if (Test-Path -Path $OutFile) {
         Push-Location -Path $TmpDir
         Expand-Archive -Path $OutFile -DestinationPath $TmpDir -Force
         Get-ChildItem -Path $TmpDir -Recurse | Unblock-File
         & .\Remove-AppxApps.ps1
         & .\Install-Defaults.ps1
         Pop-Location
-        Remove-Item -Path $TmpDir -Recurse -Force -ErrorAction "SilentlyContinue"
+        Remove-Item -Path $TmpDir -Recurse -Force
     }
 }
