@@ -1,4 +1,5 @@
 {
+    "Description": "Default user profile settings for Windows 10.",
     "MinimumBuild": "10.0.14393",
     "MaximumBuild": "10.0.20999",
     "Registry": {

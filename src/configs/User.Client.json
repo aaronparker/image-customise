@@ -1,4 +1,5 @@
 {
+    "Description": "Default user profile settings for all Windows client editions",
     "MinimumBuild": "10.0.14393",
     "MaximumBuild": "10.0.99999",
     "StartMenu": {

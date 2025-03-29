@@ -1,4 +1,5 @@
 {
+    "Description": "Windows capabilities to remove on all Windows versions.",
     "MinimumBuild": "10.0.19041",
     "MaximumBuild": "10.0.99999",
     "Capabilities": {

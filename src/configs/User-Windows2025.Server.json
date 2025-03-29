@@ -1,4 +1,5 @@
 {
+    "Description": "Default user profile settings for Windows Server 2025 and above.",
     "MinimumBuild": "10.0.26100",
     "MaximumBuild": "10.0.99999",
     "Registry": {

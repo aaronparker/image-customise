@@ -1,4 +1,5 @@
 {
+    "Description": "Computer level settings for Windows 11 and above.",
     "MinimumBuild": "10.0.22000",
     "MaximumBuild": "10.0.29999",
     "Registry": {
