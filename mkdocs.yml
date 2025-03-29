@@ -67,6 +67,10 @@ plugins:
         text: "#FFFFFF"
       cards_font: Roboto
 
+extra_javascript:
+  - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
+  - javascripts/tablesort.js
+
 # Extensions
 markdown_extensions:
   - admonition
