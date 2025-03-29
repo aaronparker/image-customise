@@ -195,7 +195,7 @@ Importing a customised default Start menu for Windows 10 and current versions of
 
 For example, you won't be able to remove the Microsoft Store shortcut from the Windows 11 Start menu. Therefore, if you want a full customised default Start menu, another approach is required.
 
-The use of `LayoutModification.json` and `LayoutModification.xml` to customise the Start menu and the Taskbar respectively can be used; however, to fully customise all shortcuts pinned to the Windows 11 Start menu, the StartMenuExperienceHost persistent state (`start.bin`) must be copied from a source machine. The file is found in `%LocalAppData%\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState`.
+The use of `LayoutModification.json` and `LayoutModification.xml` to customise the Start menu and the Taskbar respectively can be used; however, to fully customise all shortcuts pinned to the Windows 11 Start menu, the StartMenuExperienceHost persistent state (`start2.bin`) must be copied from a source machine. The file is found in `%LocalAppData%\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState`.
 
 The solution includes a persistent state file - `Windows11Start.bin`, in addition to `LayoutModification.json` and `LayoutModification.xml`. These will all be copied into the appropriate destination as specified in the JSON:
 

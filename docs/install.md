@@ -12,7 +12,10 @@ To use the solution in an operating system deployment pipeline, download the zip
 
 ## Install
 
-Installation of the Windows Enterprise Defaults will depend on where you are running the installation - via the Windows OOBE (with Windows Autopilot or Windows Autopilot device preparation), in an image creation solution, or manually.
+Installation of the Windows Enterprise Defaults will depend on where you are running the installation - via the Windows OOBE (1) (with Windows Autopilot or Windows Autopilot device preparation), in an image creation solution, or manually.
+{ .annotate }
+
+1.  Windows OOBE stands for Windows Out-of-Box Experience. It's the setup process that occurs when you turn on a new Windows device for the first time or after resetting it to its factory settings. During OOBE, you're guided through various steps to personalize and configure your device, such as: connecting to a Wi-Fi network, setting up device preferences like region, keyboard layout, and privacy settings, and signing in with a Microsoft account.
 
 Installation is handled with two scripts:
 

@@ -4,11 +4,13 @@ summary:
 authors:
     - Aaron Parker
 ---
-Windows Enterprise Defaults is a solution for customising a Windows image to modify the Microsoft defaults and make Windows enterprise ready. Microsoft's defaults suit the lowest common denominator for home, small business and enterprises, but an enterprise-ready Windows desktop requires some adjustments to the Windows and the default user environment.
+Windows Enterprise Defaults is designed to customize Windows images, replacing Microsoft defaults to make them enterprise-ready. While Microsoft's defaults cater to a broad range of users—from individuals to enterprises—an optimized enterprise desktop requires tailored adjustments.
 
-Windows Enterprise Defaults simplifies those changes to Windows, including - updating the Windows default profile, including the default Start menu and taskbar, the Windows user environment and Explorer settings, Windows capability and feature states, and removes in-box application packages. Windows Enterprise Defaults is not a "de-bloater", while it makes changes to Windows including removing in-box applications, the approach is to make sensible changes to Windows without crippling the end-user experience.
+This solution streamlines modifications to Windows by updating the default profile, Start menu, taskbar, user environment, and Explorer settings. It also manages Windows capabilities, features, and removes certain in-box application packages.
 
-Windows 10, Windows 11, and Windows Server 2016 to Windows Server 2025 are supported, both on physical PCs and virtual machine images (Azure Virtual Desktop, Windows 365 etc.). Windows Enterprise Defaults is primarily aimed at provisioning physical PCs or virtual desktops gold images, but will also work for Windows Server infrastructure roles.
+Windows Enterprise Defaults is not a "de-bloater", instead it focuses on making thoughtful changes without compromising the end-user experience. Though it removes some in-box applications and features, it ensures usability remains intact.
+
+Supporting Windows 10, Windows 11, and Windows Server 2016–2025, this tool works for both physical PCs and virtual machines (e.g., Azure Virtual Desktop, Windows 365). While primarily aimed at provisioning gold images for PCs or virtual desktops, it can also be applied to Windows Server infrastructure roles.
 
 ## Usage
 
@@ -24,19 +26,19 @@ The solution is intended for operating system deployment via various methods, in
 
 This package will configure the Windows image ready for the enterprise and the end-user. Here's the default Windows 11 desktop:
 
-![Default Windows 11 desktop](assets/img/before1080.png)
+[![Default Windows 11 desktop](assets/img/before1080.png)](assets/img/before1080.png)
 
 And here's a Windows 11 desktop after customisation - note that regional settings are configured, there's default Start menu, the search box in the taskbar has been reduced in size, many of the in-box applications have been uninstalled, and the default wallpaper has been set back to the Windows 11 bloom wallpaper (instead of Windows spotlight).
 
-![Customised Windows 11 desktop](assets/img/after1080.png)
+[![Customised Windows 11 desktop](assets/img/after1080.png)](assets/img/after1080.png)
 
 When used in provisioning devices with Windows Autopilot, other deployment tools, or with a VDI solution or Windows 365, and combined with Intune policies or Group Policy settings, the default user desktop should then be similar to the following screenshot:
 
-![Customised Windows 11 enterprise desktop with policies and applications](assets/img/after-corporate.png)
+[![Customised Windows 11 enterprise desktop with policies and applications](assets/img/after-corporate.png)](assets/img/after1080.png)
 
 ## Supported Platforms
 
-The solution has been tested on Windows 10 (1809 and above), Windows 11, Windows Server 2016-2025. All scripts should work on any future versions of Windows; however, you should test thoroughly before deployment in production.
+Windows Enterprise Defaults has been tested on Windows 10 (1809 and above), Windows 11, Windows Server 2016-2025. All scripts should work on any future versions of Windows; however, you should test thoroughly before deployment in production.
 
 !!! note ""
 

@@ -18,11 +18,11 @@ Imports registry settings into the default profile by mounting the registry file
 
 Imports registry settings into the default profile including preventing Server Manager from opening at sign-in, and turning off transparency effects.
 
-The script will also import a Start menu and taskbar layout for both Remote Desktop Session Hosts (`WindowsRDSStartMenuLayout.xml`) and standard infrastructure servers (`WindowsServerStartMenuLayout.xml`).
+The script will also import a Start menu and taskbar layout for both Remote Desktop Session Hosts (`WindowsRDSStartMenuLayout.xml` for Windows Server 2016-2022 or `Windows2025RDSStart.bin` for Windows Server 2025) and standard infrastructure servers (`WindowsServerStartMenuLayout.xml`).
 
 ## Windows 10 or Windows 11
 
-Imports a Start menu and taskbar layout (`Windows10StartMenuLayout.xml` or `Windows11StartMenuLayout.xml`) and add a default configuration file for Microsoft Teams (`desktop-config.json`).
+Imports a Start menu and taskbar layout (`Windows10StartMenuLayout.xml` or `Windows11Start.bin`) and add a default configuration file for Microsoft Edge (`initial_preferences.json`).
 
 These settings are imported into the default profile via direct file copies. The source file and destination are defined in the JSON sources as in the examples below. Here Windows 10 and Windows 11 default Start menu and taskbar layouts are defined in the included files and are copied to the specified destination.
 
@@ -51,4 +51,4 @@ These settings are imported into the default profile via direct file copies. The
 
 ## Virtual Machines
 
-Imports registry settings in the default profile to support Windows running in a virtual machine, typically VDI scenarios. This includes disabling transparency effects, windows dragging and animations, and disabling background applications.
+Imports registry settings in the default profile to support Windows running in a virtual machine, typically VDI scenarios. This includes disabling transparency effects, windows animations, and disabling background applications.
