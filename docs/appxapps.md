@@ -6,7 +6,7 @@ authors:
 ---
 [`Remove-AppxApps.ps1`](https://github.com/aaronparker/image-customise/blob/main/src/Remove-AppxApps.ps1) will remove Universal Windows Platform (UWP) / Microsoft Store apps from the local Windows OS. The script includes an explicit list of applications that it will keep, including packages that cannot be removed or are frameworks (packages that support other applications). **All other application packages will be removed**.
 
-This script should be run in [Windows OOBE](https://learn.microsoft.com/en-us/windows-hardware/customize/desktop/customize-oobe-in-windows-11) (i.e. via Windows Autopilot or Device provisioning) (1) or in a gold image, where the intention it to optimise the Windows installation by keeping only a core set of applications that provide valuable features to end-users.
+This script should be run in [Windows OOBE](https://learn.microsoft.com/en-us/windows-hardware/customize/desktop/customize-oobe-in-windows-11) (1) (i.e. via Windows Autopilot or Device provisioning) or in a gold image, where the intention it to optimise the Windows installation by keeping only a core set of applications that provide valuable features to end-users.
 { .annotate }
 
 1.  Windows OOBE stands for Windows Out-of-Box Experience. It's the setup process that occurs when you turn on a new Windows device for the first time or after resetting it to its factory settings. During OOBE, you're guided through various steps to personalize and configure your device, such as: connecting to a Wi-Fi network, setting up device preferences like region, keyboard layout, and privacy settings, and signing in with a Microsoft account.
