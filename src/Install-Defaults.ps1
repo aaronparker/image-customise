@@ -4,6 +4,12 @@
     .SYNOPSIS
     Implements Configuration changes to a default install of Windows to enable an enterprise ready installation.
 
+    .PARAMETER Language
+    A CultureInfo value that defines the locale / language configuration to install and configure for Windows.
+
+    .PARAMETER TimeZone
+    A string that is the StandardName or DaylightName properties of the TimeZoneInfo object. Use 'Get-TimeZone -ListAvailable' to list available time zones.
+
     .PARAMETER Path
     Path to where the scripts and configuration files are located.
 
@@ -25,12 +31,6 @@
     .PARAMETER FeatureUpdatePath
     A directory path in which the solution will be copied into to enable running during Windows feature updates.
 
-    .PARAMETER Language
-    A CultureInfo value that defines the locale / language configuration to install and configure for Windows.
-
-    .PARAMETER TimeZone
-    A string that is the StandardName or DaylightName properties of the TimeZoneInfo object. Use 'Get-TimeZone -ListAvailable' to list available time zones.
-
     .EXAMPLE
     PS C:\image-defaults> .\Install-Defaults.ps1 -Language "en-AU" -TimeZone "AUS Eastern Standard Time" -Verbose
 
@@ -40,6 +40,14 @@
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
+    [Parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
+    [System.Globalization.CultureInfo] $Language,
+
+    [Parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
+    [System.String] $TimeZone,
+
     [Parameter(Mandatory = $false)]
     [ValidateNotNullOrEmpty()]
     [System.String] $Path = $PSScriptRoot,
@@ -66,15 +74,7 @@ param (
 
     [Parameter(Mandatory = $false)]
     [ValidateNotNullOrEmpty()]
-    [System.String] $FeatureUpdatePath = "$env:SystemRoot\System32\Update\Run\$Guid",
-
-    [Parameter(Mandatory = $false)]
-    [ValidateNotNullOrEmpty()]
-    [System.Globalization.CultureInfo] $Language,
-
-    [Parameter(Mandatory = $false)]
-    [ValidateNotNullOrEmpty()]
-    [System.String] $TimeZone
+    [System.String] $FeatureUpdatePath = "$env:SystemRoot\System32\Update\Run\$Guid"
 )
 
 #region Restart if running in a 32-bit session
@@ -236,7 +236,7 @@ if ($Platform -eq "Client") {
 
 #region Set system language, locale and regional settings
 if ($PSBoundParameters.ContainsKey('Language')) {
-    if ($Platform -eq "Client") {
+    if ($OSVersion -ge [System.Version]"10.0.22000") {
         # Set language support by installing the specified language pack
         Install-SystemLanguage -Language $Language
 
@@ -244,7 +244,7 @@ if ($PSBoundParameters.ContainsKey('Language')) {
         Set-SystemLocale -Language $Language
     }
     else {
-        # On Windows Server, use dism to install language packs
+        # On Windows Server 2022 or below, use dism to install language packs
         # https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/dism-languages-and-international-servicing-command-line-options
 
         # Set locale settings
