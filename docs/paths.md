@@ -3,11 +3,11 @@
 
 ## Machine.All.json
 
-Description: Computer level settings for all Windows 10 and above.
+**Computer level settings for all Windows 10 and above.**
 
-Minimum build: 10.0.14393
-
-Maximum build: 10.0.99999
+| Minimum build | Maximum build | Type |
+| ------------- | ------------- | ---- |
+| 10.0.14393 | 10.0.99999 | Direct |
 
 | Path |
 | ---- |

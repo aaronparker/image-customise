@@ -2,11 +2,11 @@
 
 ## Build.All.json
 
-Description: Windows capabilities to remove on all Windows versions.
+**Windows capabilities to remove on all Windows versions.**
 
-Minimum build: 10.0.19041
-
-Maximum build: 10.0.99999
+| Minimum build | Maximum build |
+| ------------- | ------------- |
+| 10.0.19041 | 10.0.99999 |
 
 | Capability |
 | ---------- |
@@ -16,11 +16,11 @@ Maximum build: 10.0.99999
 
 ## Machine.All.json
 
-Description: Computer level settings for all Windows 10 and above.
+**Computer level settings for all Windows 10 and above.**
 
-Minimum build: 10.0.14393
-
-Maximum build: 10.0.99999
+| Minimum build | Maximum build | Type |
+| ------------- | ------------- | ---- |
+| 10.0.14393 | 10.0.99999 | Direct |
 
 | Capability |
 | ---------- |
@@ -30,11 +30,11 @@ Maximum build: 10.0.99999
 
 ## Machine.All.json
 
-Description: Computer level settings for all Windows 10 and above.
+**Computer level settings for all Windows 10 and above.**
 
-Minimum build: 10.0.14393
-
-Maximum build: 10.0.99999
+| Minimum build | Maximum build | Type |
+| ------------- | ------------- | ---- |
+| 10.0.14393 | 10.0.99999 | Direct |
 
 | Feature |
 | ------- |
@@ -49,11 +49,11 @@ Maximum build: 10.0.99999
 
 ## Machine.All.json
 
-Description: Computer level settings for all Windows 10 and above.
+**Computer level settings for all Windows 10 and above.**
 
-Minimum build: 10.0.14393
-
-Maximum build: 10.0.99999
+| Minimum build | Maximum build | Type |
+| ------------- | ------------- | ---- |
+| 10.0.14393 | 10.0.99999 | Direct |
 
 | Feature |
 | ------- |

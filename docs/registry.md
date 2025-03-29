@@ -2,13 +2,11 @@
 
 ## Machine-Windows11.All.json
 
-Description: Computer level settings for Windows 11 and above.
+**Computer level settings for Windows 11 and above.**
 
-Minimum build: 10.0.22000
-
-Maximum build: 10.0.29999
-
-Type: Direct
+| Minimum build | Maximum build | Type |
+| ------------- | ------------- | ---- |
+| 10.0.22000 | 10.0.29999 | Direct |
 
 | path | name | value | note |
 | ---- | ---- | ----- | ---- |
@@ -16,13 +14,11 @@ Type: Direct
 
 ## Machine.All.json
 
-Description: Computer level settings for all Windows 10 and above.
+**Computer level settings for all Windows 10 and above.**
 
-Minimum build: 10.0.14393
-
-Maximum build: 10.0.99999
-
-Type: Direct
+| Minimum build | Maximum build | Type |
+| ------------- | ------------- | ---- |
+| 10.0.14393 | 10.0.99999 | Direct |
 
 | path | name | value | note |
 | ---- | ---- | ----- | ---- |
@@ -36,13 +32,11 @@ Type: Direct
 
 ## Machine.Client.json
 
-Description: Computer level settings for Windows client editions.
+**Computer level settings for Windows client editions.**
 
-Minimum build: 10.0.14393
-
-Maximum build: 10.0.99999
-
-Type: Direct
+| Minimum build | Maximum build | Type |
+| ------------- | ------------- | ---- |
+| 10.0.14393 | 10.0.99999 | Direct |
 
 | path | name | value | note |
 | ---- | ---- | ----- | ---- |
@@ -51,13 +45,11 @@ Type: Direct
 | HKLM: \Software \Policies \Microsoft \Windows \CloudContent | DisableCloudOptimizedContent | 1 | Disables the customisation of the taskbar with additional shortcuts (e.g. new Outlook) |
 
 
-Description: Computer level settings for Windows client editions.
+**Computer level settings for Windows client editions.**
 
-Minimum build: 10.0.14393
-
-Maximum build: 10.0.99999
-
-Type: Direct
+| Minimum build | Maximum build | Type |
+| ------------- | ------------- | ---- |
+| 10.0.14393 | 10.0.99999 | Direct |
 
 | path | note |
 | ---- | ---- |
@@ -71,13 +63,11 @@ Type: Direct
 
 ## Services.Client.json
 
-Description: Services settings for Windows client editions
+**Services settings for Windows client editions**
 
-Minimum build: 10.0.14393
-
-Maximum build: 10.0.99999
-
-Type: Direct
+| Minimum build | Maximum build | Type |
+| ------------- | ------------- | ---- |
+| 10.0.14393 | 10.0.99999 | Direct |
 
 | path | name | value | note |
 | ---- | ---- | ----- | ---- |
@@ -85,13 +75,11 @@ Type: Direct
 
 ## User-Windows10.All.json
 
-Description: Default user profile settings for Windows 10.
+**Default user profile settings for Windows 10.**
 
-Minimum build: 10.0.14393
-
-Maximum build: 10.0.20999
-
-Type: DefaultProfile
+| Minimum build | Maximum build | Type |
+| ------------- | ------------- | ---- |
+| 10.0.14393 | 10.0.20999 | DefaultProfile |
 
 | path | name | value | note |
 | ---- | ---- | ----- | ---- |
@@ -103,13 +91,11 @@ Type: DefaultProfile
 
 ## User-Windows11.All.json
 
-Description: Default user profile settings for Windows 11.
+**Default user profile settings for Windows 11.**
 
-Minimum build: 10.0.22000
-
-Maximum build: 10.0.29999
-
-Type: DefaultProfile
+| Minimum build | Maximum build | Type |
+| ------------- | ------------- | ---- |
+| 10.0.22000 | 10.0.29999 | DefaultProfile |
 
 | path | name | value | note |
 | ---- | ---- | ----- | ---- |
@@ -118,13 +104,11 @@ Type: DefaultProfile
 
 ## User-Windows2025.Server.json
 
-Description: Default user profile settings for Windows Server 2025 and above.
+**Default user profile settings for Windows Server 2025 and above.**
 
-Minimum build: 10.0.26100
-
-Maximum build: 10.0.99999
-
-Type: DefaultProfile
+| Minimum build | Maximum build | Type |
+| ------------- | ------------- | ---- |
+| 10.0.26100 | 10.0.99999 | DefaultProfile |
 
 | path | name | value | note |
 | ---- | ---- | ----- | ---- |
@@ -132,13 +116,11 @@ Type: DefaultProfile
 
 ## User.All.json
 
-Description: Default user profile settings for all Windows editions
+**Default user profile settings for all Windows editions**
 
-Minimum build: 10.0.14393
-
-Maximum build: 10.0.99999
-
-Type: DefaultProfile
+| Minimum build | Maximum build | Type |
+| ------------- | ------------- | ---- |
+| 10.0.14393 | 10.0.99999 | DefaultProfile |
 
 | path | name | value | note |
 | ---- | ---- | ----- | ---- |
@@ -167,13 +149,11 @@ Type: DefaultProfile
 
 ## User.Client.json
 
-Description: Default user profile settings for all Windows client editions
+**Default user profile settings for all Windows client editions**
 
-Minimum build: 10.0.14393
-
-Maximum build: 10.0.99999
-
-Type: DefaultProfile
+| Minimum build | Maximum build | Type |
+| ------------- | ------------- | ---- |
+| 10.0.14393 | 10.0.99999 | DefaultProfile |
 
 | path | name | value | note |
 | ---- | ---- | ----- | ---- |
@@ -184,13 +164,11 @@ Type: DefaultProfile
 
 ## User.Server.json
 
-Description: Default user profile settings for all Windows Server editions.
+**Default user profile settings for all Windows Server editions.**
 
-Minimum build: 10.0.14393
-
-Maximum build: 10.0.20348
-
-Type: DefaultProfile
+| Minimum build | Maximum build | Type |
+| ------------- | ------------- | ---- |
+| 10.0.14393 | 10.0.20348 | DefaultProfile |
 
 | path | name | value | note |
 | ---- | ---- | ----- | ---- |
@@ -201,13 +179,11 @@ Type: DefaultProfile
 
 ## User.Virtual.json
 
-Description: Default user profile settings for all Windows editions on virtual machines.
+**Default user profile settings for all Windows editions on virtual machines.**
 
-Minimum build: 10.0.14393
-
-Maximum build: 10.0.99999
-
-Type: DefaultProfile
+| Minimum build | Maximum build | Type |
+| ------------- | ------------- | ---- |
+| 10.0.14393 | 10.0.99999 | DefaultProfile |
 
 | path | name | value | note |
 | ---- | ---- | ----- | ---- |
