@@ -50,6 +50,7 @@ param (
         "Microsoft.WindowsStore_8wekyb3d8bbwe",
         "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe",
         "Microsoft.ApplicationCompatibilityEnhancements_8wekyb3d8bbwe",
+        "Microsoft.SecHealthUI_8wekyb3d8bbwe",
         "Microsoft.StorePurchaseApp_8wekyb3d8bbwe",
         "Microsoft.Wallet_8wekyb3d8bbwe",
         "MicrosoftWindows.CrossDevice_cw5n1h2txyewy",
@@ -70,32 +71,40 @@ param (
 
 begin {
     # Get elevated status. if elevated we'll remove packages from all users and provisioned packages
-    [System.Boolean] $Elevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
+    $Role = [Security.Principal.WindowsBuiltInRole] "Administrator"
+    [System.Boolean] $Elevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole($Role)
 }
 process {
-    # Remove all AppX packages, except for packages that can't be removed, frameworks, and the safe packages list
-    $AppxPackages = Get-AppxPackage -AllUsers | `
-        Where-Object { $_.NonRemovable -eq $False -and $_.IsFramework -eq $False -and $_.PackageFamilyName -notin $SafePackages }
+    # Find all AppX packages on the system
+    $AppxPackages = Get-AppxPackage -AllUsers:$Elevated
+    foreach ($Package in $AppxPackages) {
+        Write-Verbose -Message "Currently installed package: $($Package.Name)"
+    }
 
-    # Check if we're running on Windows 11
+    # Remove all AppX packages, except for packages that can't be removed, frameworks, and the safe packages list
+    $AppxPackagesToRemove = $AppxPackages | `
+        Where-Object { $_.NonRemovable -eq $false -and $_.IsFramework -eq $false -and $_.PackageFamilyName -notin $SafePackages }
+    Write-Verbose -Message "We found $($AppxPackagesToRemove.Count) packages to remove."
+
+    # Check if we're running on Windows 11 or Windows Server 2025, or above
     if ([System.Environment]::OSVersion.Version -ge [System.Version]"10.0.22000") {
-        $AppxPackages | ForEach-Object {
+        $AppxPackagesToRemove | ForEach-Object {
             if ($PSCmdlet.ShouldProcess($_.PackageFullName, "Remove Appx package")) {
                 Remove-AppxPackage -Package $_.PackageFullName -AllUsers:$Elevated
-                $_.PackageFamilyName | Write-Output
             }
+            $_.PackageFamilyName | Write-Output
         }
     }
     else {
+        # OS version is less than 10.0.22000, so we're on Windows 10, Windows Server 2022 or below
         if ($Elevated) {
-            # Windows 10
-            $ProvisionedPackages = Get-AppxProvisionedPackage -Online
-            $PackagesToRemove = $ProvisionedPackages | Where-Object { $_.DisplayName -in $AppxPackages.Name }
+            $ProvisionedAppxPackages = Get-AppxProvisionedPackage -Online
+            $PackagesToRemove = $ProvisionedAppxPackages | Where-Object { $_.DisplayName -in $AppxPackagesToRemove.Name }
             $PackagesToRemove | ForEach-Object {
-                if ($PSCmdlet.ShouldProcess($_.PackageName, "Remove Appx package")) {
+                if ($PSCmdlet.ShouldProcess($_.PackageName, "Remove Appx provisioned package")) {
                     Remove-AppxProvisionedPackage -Package $_.PackageName -Online -AllUsers
-                    $_.PackageName | Write-Output
                 }
+                $_.PackageName | Write-Output
             }
         }
         else {
