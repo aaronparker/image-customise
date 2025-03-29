@@ -2,6 +2,8 @@
 
 ## Machine-Windows11.All.json
 
+Description: Computer level settings for Windows 11 and above.
+
 Minimum build: 10.0.22000
 
 Maximum build: 10.0.29999
@@ -13,6 +15,8 @@ Type: Direct
 | HKLM: \Software \Microsoft \Windows \CurrentVersion \Communications | ConfigureChatAutoInstall | 0 | Prevents the install of the consumer Microsoft Teams client |
 
 ## Machine.All.json
+
+Description: Computer level settings for all Windows 10 and above.
 
 Minimum build: 10.0.14393
 
@@ -32,6 +36,8 @@ Type: Direct
 
 ## Machine.Client.json
 
+Description: Computer level settings for Windows client editions.
+
 Minimum build: 10.0.14393
 
 Maximum build: 10.0.99999
@@ -44,6 +50,8 @@ Type: Direct
 | HKLM: \Software \Policies \Microsoft \Windows \CloudContent | DisableWindowsConsumerFeatures | 1 | Disables the Microsoft Windows consumer features |
 | HKLM: \Software \Policies \Microsoft \Windows \CloudContent | DisableCloudOptimizedContent | 1 | Disables the customisation of the taskbar with additional shortcuts (e.g. new Outlook) |
 
+
+Description: Computer level settings for Windows client editions.
 
 Minimum build: 10.0.14393
 
@@ -63,6 +71,8 @@ Type: Direct
 
 ## Services.Client.json
 
+Description: Services settings for Windows client editions
+
 Minimum build: 10.0.14393
 
 Maximum build: 10.0.99999
@@ -74,6 +84,8 @@ Type: Direct
 | HKLM: \SYSTEM \CurrentControlSet \Services \tzautoupdate | Start | 3 | Enable Set time zone automatically |
 
 ## User-Windows10.All.json
+
+Description: Default user profile settings for Windows 10.
 
 Minimum build: 10.0.14393
 
@@ -91,6 +103,8 @@ Type: DefaultProfile
 
 ## User-Windows11.All.json
 
+Description: Default user profile settings for Windows 11.
+
 Minimum build: 10.0.22000
 
 Maximum build: 10.0.29999
@@ -102,7 +116,23 @@ Type: DefaultProfile
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \Explorer \Advanced | TaskbarMn | 0 | Remove the Chat icon from the Taskbar - note: this value should not be needed on Windows 11 23H2 or higher |
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \Explorer \Advanced | TaskbarDa | 0 | Remove the Widgets icon from the Taskbar - note: this value is protected by permissions |
 
+## User-Windows2025.Server.json
+
+Description: Default user profile settings for Windows Server 2025 and above.
+
+Minimum build: 10.0.26100
+
+Maximum build: 10.0.99999
+
+Type: DefaultProfile
+
+| path | name | value | note |
+| ---- | ---- | ----- | ---- |
+| HKCU: \Software \Microsoft \ServerManager | DoNotOpenServerManagerAtLogon | 1 | Prevents Server Manager from starting at login |
+
 ## User.All.json
+
+Description: Default user profile settings for all Windows editions
 
 Minimum build: 10.0.14393
 
@@ -137,6 +167,8 @@ Type: DefaultProfile
 
 ## User.Client.json
 
+Description: Default user profile settings for all Windows client editions
+
 Minimum build: 10.0.14393
 
 Maximum build: 10.0.99999
@@ -152,9 +184,11 @@ Type: DefaultProfile
 
 ## User.Server.json
 
+Description: Default user profile settings for all Windows Server editions.
+
 Minimum build: 10.0.14393
 
-Maximum build: 10.0.99999
+Maximum build: 10.0.20348
 
 Type: DefaultProfile
 
@@ -166,6 +200,8 @@ Type: DefaultProfile
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \Explorer \Advanced | ShowTaskViewButton | 0 | Removes the Task View button on the Taskbar |
 
 ## User.Virtual.json
+
+Description: Default user profile settings for all Windows editions on virtual machines.
 
 Minimum build: 10.0.14393
 

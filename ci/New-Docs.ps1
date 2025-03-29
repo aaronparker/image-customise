@@ -18,6 +18,7 @@ foreach ($file in $Configs) {
     if ($null -ne $json.Registry.Set) {
         $markdown += New-MDHeader -Text $file.Name -Level 2
         $markdown += "`n"
+        $markdown += "Description: $($json.Description)`n`n"
         $markdown += "Minimum build: $($json.MinimumBuild)`n`n"
         $markdown += "Maximum build: $($json.MaximumBuild)`n`n"
         if ($null -ne $json.Registry.Type) {
@@ -30,6 +31,7 @@ foreach ($file in $Configs) {
 
     if ($null -ne $json.Registry.Remove) {
         $markdown += "`n"
+        $markdown += "Description: $($json.Description)`n`n"
         $markdown += "Minimum build: $($json.MinimumBuild)`n`n"
         $markdown += "Maximum build: $($json.MaximumBuild)`n`n"
         if ($null -ne $json.Registry.Type) {
@@ -54,6 +56,7 @@ foreach ($file in $Configs) {
     if ($null -ne $json.Capabilities.Remove) {
         $markdown += New-MDHeader -Text $file.Name -Level 2
         $markdown += "`n"
+        $markdown += "Description: $($json.Description)`n`n"
         $markdown += "Minimum build: $($json.MinimumBuild)`n`n"
         $markdown += "Maximum build: $($json.MaximumBuild)`n`n"
         $markdown += $json.Capabilities.Remove | ForEach-Object {
@@ -68,6 +71,7 @@ foreach ($file in $Configs) {
         $markdown += "`n"
         $markdown += New-MDHeader -Text $file.Name -Level 2
         $markdown += "`n"
+        $markdown += "Description: $($json.Description)`n`n"
         $markdown += "Minimum build: $($json.MinimumBuild)`n`n"
         $markdown += "Maximum build: $($json.MaximumBuild)`n`n"
         $markdown += $json.Features.Disable | ForEach-Object {
@@ -82,6 +86,7 @@ foreach ($file in $Configs) {
         $markdown += "`n"
         $markdown += New-MDHeader -Text $file.Name -Level 2
         $markdown += "`n"
+        $markdown += "Description: $($json.Description)`n`n"
         $markdown += "Minimum build: $($json.MinimumBuild)`n`n"
         $markdown += "Maximum build: $($json.MaximumBuild)`n`n"
         $markdown += $json.Packages.Remove | ForEach-Object {
@@ -107,6 +112,7 @@ foreach ($file in $Configs) {
         $markdown += "`n"
         $markdown += New-MDHeader -Text $file.Name -Level 2
         $markdown += "`n"
+        $markdown += "Description: $($json.Description)`n`n"
         $markdown += "Minimum build: $($json.MinimumBuild)`n`n"
         $markdown += "Maximum build: $($json.MaximumBuild)`n`n"
         $markdown += $json.Paths.Remove | ForEach-Object {
@@ -131,6 +137,7 @@ foreach ($file in $Configs) {
     if ($null -ne $json.Services.Enable) {
         $markdown += New-MDHeader -Text $file.Name -Level 2
         $markdown += "`n"
+        $markdown += "Description: $($json.Description)`n`n"
         $markdown += "Minimum build: $($json.MinimumBuild)`n`n"
         $markdown += "Maximum build: $($json.MaximumBuild)`n`n"
         $markdown += $json.Services.Enable | ForEach-Object {
@@ -155,6 +162,7 @@ foreach ($file in $Configs) {
     if ($null -ne $json.Files.Copy) {
         $markdown += New-MDHeader -Text $file.Name -Level 2
         $markdown += "`n"
+        $markdown += "Description: $($json.Description)`n`n"
         $markdown += "Minimum build: $($json.MinimumBuild)`n`n"
         $markdown += "Maximum build: $($json.MaximumBuild)`n`n"
         $markdown += $json.Files.Copy | New-MDTable -Shrink

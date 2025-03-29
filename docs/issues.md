@@ -28,6 +28,6 @@ This occurs even when using a Windows 11 24H2 install from an ISO with recent up
 
 For gold images, ensure the latest Windows Updates are installed before installing the solution.
 
-The screenshot below shows this issue when manually running the solution in Windows OOBE.
+The screenshot below shows this issue when manually running the solution in [Windows OOBE](https://learn.microsoft.com/en-us/windows-hardware/customize/desktop/customize-oobe-in-windows-11).
 
 ![Install language issue in Windows 11 OOBE](assets/img/languageerror.png)
