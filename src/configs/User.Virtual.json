@@ -160,44 +160,6 @@
                 "type": "DWord",
                 "note": "Prevents the Your Phone app from running in the background"
             }
-        ],
-        "Others": [
-            {
-                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
-                "name": "ShellState",
-                "value": "240000003C2800000000000000000000",
-                "type": "Binary"
-            },
-            {
-                "path": "HKCU:\\Control Panel\\Desktop",
-                "name": "UserPreferencesMask",
-                "value": "9032078010000000",
-                "type": "Binary"
-            },
-            {
-                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\VisualEffects",
-                "name": "VisualFXSetting",
-                "value": 3,
-                "type": "DWord"
-            },
-            {
-                "path": "HKCU:\\Control Panel\\International\\User Profile",
-                "name": "HttpAcceptLanguageOptOut",
-                "value": 1,
-                "type": "DWord"
-            },
-            {
-                "path": "HKCU:\\Control Panel\\Desktop",
-                "name": "FontSmoothing",
-                "value": "2",
-                "type": "String"
-            },
-            {
-                "path": "HKCU:\\Control Panel\\Desktop",
-                "name": "FontSmoothingType",
-                "value": "2",
-                "type": "String"
-            }
         ]
     }
 }
