@@ -37,7 +37,7 @@ Describe "Install script execution validation" {
 
     Context "Validate log file" {
         It "Log file should exist" {
-            Test-Path -Path "$Env:SystemRoot\Logs\image-customise\CustomisedDefaults.log" | Should -BeTrue
+            Test-Path -Path "$Env:SystemRoot\Logs\image-customise\WindowsEnterpriseDefaults.log" | Should -BeTrue
         }
     }
 }
