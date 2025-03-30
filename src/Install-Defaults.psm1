@@ -302,10 +302,19 @@ function Set-Registry {
 
         try {
             if ($PSCmdlet.ShouldProcess("$($Item.path), $($Item.name), $($Item.value)", "Set-ItemProperty")) {
+
+                # Convert binary values to byte arrays
+                if ($Item.type -eq "Binary") {
+                    $Value = -split $Item.value -replace ' ', { [Convert]::ToByte($_, 16) }
+                }
+                else {
+                    $Value = $Item.value
+                }
+
                 $params = @{
                     Path        = $Item.path
                     Name        = $Item.name
-                    Value       = $Item.value
+                    Value       = $Value
                     Type        = $Item.type
                     Force       = $true
                     ErrorAction = "Continue"
@@ -401,16 +410,25 @@ function Set-DefaultUserProfile {
 
             try {
                 if ($PSCmdlet.ShouldProcess("$RegPath, $($Item.name), $($Item.value)", "Set-ItemProperty")) {
+
+                    # Convert binary values to byte arrays
+                    if ($Item.type -eq "Binary") {
+                        $Value = -split $Item.value -replace ' ', { [Convert]::ToByte($_, 16) }
+                    }
+                    else {
+                        $Value = $Item.value
+                    }
+
                     $params = @{
                         Path        = $RegPath
                         Name        = $Item.name
-                        Value       = $Item.value
+                        Value       = $Value
                         Type        = $Item.type
                         Force       = $true
                         ErrorAction = "Continue"
                     }
                     Set-ItemProperty @params | Out-Null
-                    Write-LogFile -Message "Set registry property: $($Item.path); $($Item.name) $($Item.value)"
+                    Write-LogFile -Message "Set registry property: $($Item.path); $($Item.name), $($Item.value)"
                 }
             }
             catch {
@@ -511,12 +529,12 @@ function Remove-Path {
                     $params = @{
                         Path        = $Item
                         Recurse     = $true
-                        Confirm     = $false
+                        Confirm      = $false
                         Force       = $true
                         ErrorAction = "Continue"
                     }
                     Remove-Item @params
-                    Write-LogFile -Message "Remove path: $Path"
+                    Write-LogFile -Message "Remove path: $Item"
                 }
             }
             catch {
