@@ -124,7 +124,9 @@ extra:
   generator: true
 
 nav:
-  - Introduction: index.md
+  - Home:
+    - About: index.md
+    - Results: results.md
   - Install defaults: install.md
   - Under the hood:
     - Configurations: configs.md

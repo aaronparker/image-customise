@@ -1,5 +1,5 @@
 ---
-title: Introduction
+title: About
 summary:
 authors:
     - Aaron Parker
@@ -12,6 +12,8 @@ Windows Enterprise Defaults is not a "de-bloater", instead it focuses on making 
 
 Supporting Windows 10, Windows 11, and Windows Server 2016–2025, this tool works for both physical PCs and virtual machines (e.g., Azure Virtual Desktop, Windows 365). While primarily aimed at provisioning gold images for PCs or virtual desktops, it can also be applied to Windows Server infrastructure roles.
 
+To see the improved end-user experience, check out the [Results](https://stealthpuppy.com/image-customise/results/) page.
+
 ## Usage
 
 The solution is intended for operating system deployment via various methods, including:
@@ -21,20 +23,6 @@ The solution is intended for operating system deployment via various methods, in
 * Packaged as a Win32 application and delivered via Microsoft Intune during Windows Autopilot - [Win32 app management in Microsoft Intune](https://docs.microsoft.com/en-us/mem/intune/apps/apps-win32-app-management)
 * Executed in a virtual machine image pipeline using [Azure Image Builder](https://docs.microsoft.com/en-us/azure/virtual-machines/image-builder-overview) or [Packer](https://www.packer.io/) when building a gold image
 * Or even run manually on a Windows PC or virtual machine gold image if you're not using automation at all
-
-## Results
-
-This package will configure the Windows image ready for the enterprise and the end-user. Here's the default Windows 11 desktop:
-
-[![Default Windows 11 desktop](assets/img/before1080.png)](assets/img/before1080.png)
-
-And here's a Windows 11 desktop after customisation - note that regional settings are configured, there's default Start menu, the search box in the taskbar has been reduced in size, many of the in-box applications have been uninstalled, and the default wallpaper has been set back to the Windows 11 bloom wallpaper (instead of Windows spotlight).
-
-[![Customised Windows 11 desktop](assets/img/after1080.png)](assets/img/after1080.png)
-
-When used in provisioning devices with Windows Autopilot, other deployment tools, or with a VDI solution or Windows 365, and combined with Intune policies or Group Policy settings, the default user desktop should then be similar to the following screenshot:
-
-[![Customised Windows 11 enterprise desktop with policies and applications](assets/img/after-corporate.png)](assets/img/after1080.png)
 
 ## Supported Platforms
 
