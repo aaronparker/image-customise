@@ -56,6 +56,8 @@ param (
         "MicrosoftWindows.CrossDevice_cw5n1h2txyewy",
         "MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy",
         "Microsoft.WidgetsPlatformRuntime_8wekyb3d8bbwe",
+        "MicrosoftCorporationII.WinAppRuntime.Main.1.5_8wekyb3d8bbwe",
+        "MicrosoftCorporationII.WinAppRuntime.Singleton_8wekyb3d8bbwe",
 
         # Image & video codecs
         "Microsoft.MPEG2VideoExtension_8wekyb3d8bbwe",
