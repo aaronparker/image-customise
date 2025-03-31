@@ -32,6 +32,13 @@
                 "value": "2",
                 "type": "Dword",
                 "note": "Required to support the setting selected for VisiblePlaces."
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "ShowNotificationIcon",
+                "value": 1,
+                "type": "DWord",
+                "note": "Enables 'Notifications / Show notification bell icon'"
             }
         ],
         "SetOthers": [
