@@ -17,24 +17,30 @@ This allows you to optimise a Windows install or gold image by removing all but 
 
     It is not recommended to run this script on existing Windows PCs, as it will likely remove applications that users are actively using.
 
+## Validate Package Removal
+
+`Remove-AppxApps.ps1` supports the `-WhatIf` parameter, so that you can see which packages will be removed from the local machine before running the script without the `-WhatIf` parameter.
+
+[![Output from Remove-AppxApps.ps1 -WhatIf](assets/img/removeappx.png)](assets/img/removeappx.png)
+
 ## Default Packages
 
 This table lists the default packages that will be kept when `Remove-AppxApps.ps1`, all other packages will be removed.
 
 | PackageFamilyName                                            | Description                                                                       |
 | ------------------------------------------------------------ | --------------------------------------------------------------------------------- |
-| Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe                 |  Enable basic notes functionality. Supports Microsoft 365 accounts                |
-| Microsoft.Paint_8wekyb3d8bbwe                                |  Provides basic image editing functionality                                       |
-| Microsoft.PowerAutomateDesktop_8wekyb3d8bbwe                 |  Desktop automation tool                                                          |
-| Microsoft.ScreenSketch_8wekyb3d8bbwe                         |  Capture and annotate screenshots                                                 |
-| Microsoft.Windows.Photos_8wekyb3d8bbwe                       |  Basic image viewing. Supports Microsoft 365 accounts                             |
-| Microsoft.WindowsAlarms_8wekyb3d8bbwe                        |  Clock app with timers, alarms,  and world clock. Supports Microsoft 365 accounts |
-| Microsoft.WindowsCalculator_8wekyb3d8bbwe                    |  Calculator app                                                                   |
-| Microsoft.WindowsNotepad_8wekyb3d8bbwe                       |  Notepad app                                                                      |
-| Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe                 |  Voice recording app                                                              |
-| Microsoft.WindowsTerminal_8wekyb3d8bbwe                      |  Essential terminal app                                                           |
-| Microsoft.MicrosoftEdge.Stable_8wekyb3d8bbwe                 |  Microsoft Edge browser                                                           |
-| Microsoft.ZuneMusic_8wekyb3d8bbwe                            |  Windows Media Player,  video and music player                                    |
+| Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe                 | Enable basic notes functionality. Supports Microsoft 365 accounts                 |
+| Microsoft.Paint_8wekyb3d8bbwe                                | Provides basic image editing functionality                                        |
+| Microsoft.PowerAutomateDesktop_8wekyb3d8bbwe                 | Desktop automation tool                                                           |
+| Microsoft.ScreenSketch_8wekyb3d8bbwe                         | Capture and annotate screenshots                                                  |
+| Microsoft.Windows.Photos_8wekyb3d8bbwe                       | Basic image viewing. Supports Microsoft 365 accounts                              |
+| Microsoft.WindowsAlarms_8wekyb3d8bbwe                        | Clock app with timers, alarms,  and world clock. Supports Microsoft 365 accounts  |
+| Microsoft.WindowsCalculator_8wekyb3d8bbwe                    | Calculator app                                                                    |
+| Microsoft.WindowsNotepad_8wekyb3d8bbwe                       | Notepad app                                                                       |
+| Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe                 | Voice recording app                                                               |
+| Microsoft.WindowsTerminal_8wekyb3d8bbwe                      | Essential terminal app                                                            |
+| Microsoft.MicrosoftEdge.Stable_8wekyb3d8bbwe                 | Microsoft Edge browser                                                            |
+| Microsoft.ZuneMusic_8wekyb3d8bbwe                            | Windows Media Player,  video and music player                                     |
 | Microsoft.WindowsStore_8wekyb3d8bbwe                         | System package, could affect functionality if removed                             |
 | Microsoft.DesktopAppInstaller_8wekyb3d8bbwe                  | System package, could affect functionality if removed                             |
 | Microsoft.ApplicationCompatibilityEnhancements_8wekyb3d8bbwe | System package, could affect functionality if removed                             |
@@ -43,6 +49,8 @@ This table lists the default packages that will be kept when `Remove-AppxApps.ps
 | MicrosoftWindows.CrossDevice_cw5n1h2txyewy                   | System package, could affect functionality if removed                             |
 | MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy          | System package, could affect functionality if removed                             |
 | Microsoft.WidgetsPlatformRuntime_8wekyb3d8bbwe               | System package, could affect functionality if removed                             |
+| MicrosoftCorporationII.WinAppRuntime.Main.1.5_8wekyb3d8bbwe  | System package, could affect functionality if removed                             |
+| MicrosoftCorporationII.WinAppRuntime.Singleton_8wekyb3d8bbwe | System package, could affect functionality if removed                             |
 | Microsoft.MPEG2VideoExtension_8wekyb3d8bbwe                  | Video codec                                                                       |
 | Microsoft.AV1VideoExtension_8wekyb3d8bbwe                    | Video codec                                                                       |
 | Microsoft.AVCEncoderVideoExtension_8wekyb3d8bbwe             | Video codec                                                                       |
