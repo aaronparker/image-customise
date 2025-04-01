@@ -23,9 +23,9 @@ Configurations are stored in the following JSON files with the logic to make cha
 JSON files are gathered based on properties of the local Windows instance. The following keywords, used in the file names, ensure that the right JSON files are selected:
 
 * `Client` - Windows 10 or Windows 11
-* `Server` - Windows Server 2016, 2019, 2022
+* `Server` - Windows Server 2016, 2019, 2022, 2025 etc.
 * `Virtual` - Virtual machines, e.g. Hyper-V, Azure, vSphere, Parallels etc.
-* `All` - applies to all Windows instances
+* `All` - applies to all Windows install types
 
 Each JSON file includes a `MinimumBuild` property that can be used to ensure specific configurations only apply to a specific version of Windows or above. For example, the property might ensure that configurations only apply to Windows 10 version `10.0.19041` and above.
 

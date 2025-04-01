@@ -4,7 +4,7 @@ summary:
 authors:
     - Aaron Parker
 ---
-Windows Enterprise Defaults is designed to customize Windows images, replacing Microsoft defaults to make them enterprise-ready. While Microsoft's defaults cater to a broad range of users—from individuals to enterprises—an optimized enterprise desktop requires tailored adjustments.
+**Windows Enterprise Defaults** is designed to customize Windows images, replacing Microsoft defaults to make them enterprise-ready. While Microsoft's defaults cater to a broad range of users—from individuals to enterprises—an optimized enterprise desktop requires tailored adjustments.
 
 This solution streamlines modifications to Windows by updating the default profile, Start menu, taskbar, user environment, and Explorer settings. It also manages Windows capabilities, features, and removes certain in-box application packages.
 

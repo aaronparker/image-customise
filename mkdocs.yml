@@ -67,9 +67,9 @@ plugins:
         text: "#FFFFFF"
       cards_font: Roboto
 
-extra_javascript:
-  - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
-  - javascripts/tablesort.js
+# extra_javascript:
+#   - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
+#   - javascripts/tablesort.js
 
 # Extensions
 markdown_extensions:
@@ -127,18 +127,19 @@ nav:
   - Home:
     - About: index.md
     - Results: results.md
-  - Install defaults: install.md
+  - Deploy and use: install.md
   - Under the hood:
+    - Logging: logs.md
     - Configurations: configs.md
-    - Remove UWP apps: appxapps.md
+    - Remove AppX apps: appxapps.md
     - Machine settings: machine.md
     - User settings: profile.md
     - Customise: custom.md
-    - Known issues: issues.md
   - Settings:
     - Registry: registry.md
     - Capabilities and Features: features.md
     - Paths: paths.md
     - Services: services.md
     - Files: files.md
+  - Known issues: issues.md
   - stealthpuppy.com: https://stealthpuppy.com/

@@ -1,5 +1,5 @@
 ---
-title: Remove Universal Windows Platform apps
+title: Remove Universal Windows Platform / AppX apps
 summary:
 authors:
     - Aaron Parker

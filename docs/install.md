@@ -107,7 +107,7 @@ To ensure the solution applies to a target machine during Windows Autopilot, add
 
 ![Adding the Windows Enterprise Defaults to an Enrollment Status Page](assets/img/enrollmentstatuspage.jpeg)
 
-## Download and Install
+## Quick Install
 
 !!! warning
 
