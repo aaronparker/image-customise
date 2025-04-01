@@ -103,6 +103,7 @@
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \Explorer \Advanced | TaskbarDa | 0 | Remove the Widgets icon from the Taskbar - note: this value is protected by permissions |
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \Start | VisiblePlaces | 188 36 138 20 12 214 137 66 160 128 110 217 187 162 72 130 134 8 115 82 170 81 67 66 159 123 39 118 88 70 89 212 | Adds 'Settings' and 'File Explorer' next to the power button on the Start menu. |
 | HKCU: \Software \Microsoft \Windows \CurrentVersion \Start | PlacesInitializedVersion | 2 | Required to support the setting selected for VisiblePlaces. |
+| HKCU: \Software \Microsoft \Windows \CurrentVersion \Explorer \Advanced | ShowNotificationIcon | 1 | Enables 'Notifications / Show notification bell icon' |
 
 ## User-Windows2025.Server.json
 
