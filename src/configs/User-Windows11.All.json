@@ -39,6 +39,13 @@
                 "value": 1,
                 "type": "DWord",
                 "note": "Enables 'Notifications / Show notification bell icon'"
+            },
+            {
+                "path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\AutoInstalledPWAs",
+                "name": "CopilotPWAPreinstallCompleted",
+                "value": 1,
+                "type": "DWord",
+                "note": "Tells Windows that the Copilot PWA has been installed"
             }
         ],
         "SetOthers": [
