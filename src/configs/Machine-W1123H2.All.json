@@ -1,7 +1,7 @@
 {
-    "Description": "Computer level settings for Windows 11 and above.",
+    "Description": "Computer level settings for Windows 11 21H2 to 23H2.",
     "MinimumBuild": "10.0.22000",
-    "MaximumBuild": "10.0.29999",
+    "MaximumBuild": "10.0.22631",
     "Registry": {
         "Type": "Direct",
         "ChangeOwner": [
