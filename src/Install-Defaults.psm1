@@ -602,7 +602,6 @@ function Remove-Package {
     param ($Package)
 
     if ($Package.Count -ge 1) {
-        Write-LogFile -Message "Remove packages"
         foreach ($Item in $Package) {
             Get-WindowsPackage -Online -ErrorAction "Continue" | Where-Object { $_.PackageName -match $Item } | `
                 ForEach-Object {
