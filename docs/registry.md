@@ -1,12 +1,12 @@
 # Registry Settings
 
-## Machine-Windows11.All.json
+## Machine-W1123H2.All.json
 
-**Computer level settings for Windows 11 and above.**
+**Computer level settings for Windows 11 21H2 to 23H2.**
 
 | Minimum build | Maximum build | Type |
 | ------------- | ------------- | ---- |
-| 10.0.22000 | 10.0.29999 | Direct |
+| 10.0.22000 | 10.0.22631 | Direct |
 
 | path | name | value | note |
 | ---- | ---- | ----- | ---- |
@@ -23,12 +23,12 @@
 | path | name | value | note |
 | ---- | ---- | ----- | ---- |
 | HKLM: \SOFTWARE \Microsoft \Windows \CurrentVersion \Explorer | DisableEdgeDesktopShortcutCreation | 1 | Prevents the Microsoft Edge short added to the public desktop |
+| HKLM: \SOFTWARE \Policies \Microsoft \EdgeUpdate | CreateDesktopShortcutDefault | 0 | Prevent the Microsoft Edge shortcut from being added to the desktop |
+| HKLM: \SOFTWARE \Policies \Microsoft \EdgeUpdate | RemoveDesktopShortcutDefault | 1 | Prevent the Microsoft Edge shortcut from being added to the desktop |
+| HKLM: \SOFTWARE \Policies \Microsoft \Edge | SearchbarAllowed | 0 | Prevent the Microsoft Edge search bar from being added to the desktop |
 | HKLM: \SOFTWARE \Microsoft \Windows NT \CurrentVersion \FontSubstitutes | MS Shell Dlg | Tahoma | Replaces the `MS Shell Dlg` font with `Tahoma` for UI consistency |
 | HKLM: \SOFTWARE \Microsoft \Windows NT \CurrentVersion \FontSubstitutes | MS Shell Dlg 2 | Tahoma | Replaces the `MS Shell Dlg 2` font with `Tahoma` for UI consistency |
 | HKLM: \SOFTWARE \Microsoft \Windows \CurrentVersion \CapabilityAccessManager \ConsentStore \location | Value | Allow | Enables location services |
-| HKLM: \SOFTWARE \Policies \Microsoft \Edge | SearchbarAllowed | 0 | Prevent the Microsoft Edge search bar from being added to the desktop |
-| HKLM: \SOFTWARE \Policies \Microsoft \EdgeUpdate | CreateDesktopShortcutDefault | 0 | Prevent the Microsoft Edge shortcut from being added to the desktop |
-| HKLM: \SOFTWARE \Policies \Microsoft \EdgeUpdate | RemoveDesktopShortcutDefault | 1 | Prevent the Microsoft Edge shortcut from being added to the desktop |
 
 ## Machine.Client.json
 
