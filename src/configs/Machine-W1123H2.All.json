@@ -25,6 +25,13 @@
                 "value": 0,
                 "type": "DWord",
                 "note": "Prevents the install of the consumer Microsoft Teams client"
+            },
+            {
+                "path": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                "name": "ShowCopilotButton",
+                "value": 0,
+                "type": "DWord",
+                "note": "Removes the Copilot button from the taskbar"
             }
         ]
     }
