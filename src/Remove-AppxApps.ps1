@@ -1,37 +1,45 @@
 <#
     .SYNOPSIS
-    Removes unnecessary AppX packages from the system while preserving a list of safe packages.
+    Removes unnecessary AppX packages from the local Windows system.
 
     .DESCRIPTION
-    This script removes AppX packages from all users and provisioned packages on the system, except for those specified in `$SafePackages`.
+    This script removes AppX packages from all users and provisioned packages on the system, except for those specified in $SafePackageList.
     The default list of packages provide baseline functionality and should work in desktops using FSLogix Profile Container.
-    It also handles package removal differently based on whether the system is running Windows 10 or Windows 11.
+    The script can be run with the -Targeted switch to remove a specific list of AppX packages, which is useful for in-place feature updates.
     Additionally, it deletes specific registry keys related to Outlook and DevHome updates if the script is run with elevated privileges.
 
-    .PARAMETER SafePackages
+    .PARAMETER SafePackageList
     An optional parameter that specifies a list of AppX package family names to be preserved during the removal process.
     By default, it includes common desktop apps, system applications, and image/video codecs.
+
+    .PARAMETER Targeted
+    An optional switch parameter that, when specified, runs the script with a targeted list of AppX packages to be removed.
+
+    .PARAMETER TargetedPackageList
+    An optional parameter that specifies a targeted list of AppX package family names to be removed when the -Targeted switch is used.
 
     .EXAMPLE
     .\Remove-AppxApps.ps1
     Runs the script with the default list of safe packages and removes all other removable AppX packages.
 
     .EXAMPLE
-    .\Remove-AppxApps.ps1 -SafePackages @("Microsoft.WindowsCalculator_8wekyb3d8bbwe")
-    Runs the script while preserving only the specified package (`Microsoft.WindowsCalculator_8wekyb3d8bbwe`) and removes all other removable AppX packages.
+    .\Remove-AppxApps.ps1 -SafePackagesList @("Microsoft.WindowsCalculator_8wekyb3d8bbwe")
+    Runs the script while preserving only the specified package (Microsoft.WindowsCalculator_8wekyb3d8bbwe) and removes all other removable AppX packages.
+
+    .EXAMPLE
+    .\Remove-AppxApps.ps1 -Targeted
+    Runs the script with a targeted list of packages to be removed during a Windows feature upgrade.
 
     .NOTES
     - WARNING: If run on an existing desktop, this script may remove applications that users rely on.
-    - Use this script in OOBE (Windows Autopilot) and gold images only
     - The script must be run with elevated privileges to remove provisioned packages and delete specific registry keys.
     - The script checks the operating system version to determine whether it is running on Windows 10 or Windows 11 and adjusts the removal process accordingly.
-    - The `ShouldProcess` cmdlet is used to confirm actions before removing packages.
 #>
 
-[CmdletBinding(SupportsShouldProcess = $true)]
+[CmdletBinding(SupportsShouldProcess = $true, DefaultParameterSetName = "Default")]
 param (
-    [Parameter(Mandatory = $false)]
-    [System.Collections.ArrayList] $SafePackages = @(
+    [Parameter(Mandatory = $false, ParameterSetName = "Default")]
+    [System.Collections.ArrayList] $SafePackageList = @(
         # Common desktop apps
         "Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe", # Enable basic notes functionality. Supports Microsoft 365 accounts
         "Microsoft.Paint_8wekyb3d8bbwe", # Provides basic image editing functionality
@@ -68,49 +76,109 @@ param (
         "Microsoft.RawImageExtension_8wekyb3d8bbwe",
         "Microsoft.VP9VideoExtensions_8wekyb3d8bbwe",
         "Microsoft.WebMediaExtensions_8wekyb3d8bbwe",
-        "Microsoft.WebpImageExtension_8wekyb3d8bbwe")
+        "Microsoft.WebpImageExtension_8wekyb3d8bbwe"),
+
+    # Use Targeted switch to remove a targeted list of packages. Useful for in-place feature updates
+    [Parameter(Mandatory = $false, ParameterSetName = "Targeted")]
+    [System.Management.Automation.SwitchParameter] $Targeted,
+
+    [Parameter(Mandatory = $false, ParameterSetName = "Targeted")]
+    [System.Collections.ArrayList] $TargetedPackageList = @(
+        "Microsoft.BingNews_8wekyb3d8bbwe", 
+        "Microsoft.BingSearch_8wekyb3d8bbwe", 
+        "Microsoft.BingWeather_8wekyb3d8bbwe", 
+        # "Microsoft.Copilot_8wekyb3d8bbwe", 
+        "Microsoft.GetHelp_8wekyb3d8bbwe", 
+        # "Microsoft.OutlookForWindows_8wekyb3d8bbwe", 
+        # "Microsoft.Todos_8wekyb3d8bbwe", 
+        "Microsoft.Windows.DevHome_8wekyb3d8bbwe", 
+        "Microsoft.WindowsCamera_8wekyb3d8bbwe", 
+        "microsoft.windowscommunicationsapps_8wekyb3d8bbwe", 
+        "Microsoft.Xbox.TCUI_8wekyb3d8bbwe", 
+        "Microsoft.XboxGameOverlay_8wekyb3d8bbwe", 
+        "Microsoft.XboxIdentityProvider_8wekyb3d8bbwe", 
+        "Microsoft.XboxSpeechToTextOverlay_8wekyb3d8bbwe", 
+        # "MSTeams_8wekyb3d8bbwe",
+        "Microsoft.ZuneVideo_8wekyb3d8bbwe")
 )
 
 begin {
     # Get elevated status. if elevated we'll remove packages from all users and provisioned packages
     $Role = [Security.Principal.WindowsBuiltInRole] "Administrator"
     [System.Boolean] $Elevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole($Role)
-}
-process {
-    # Find all AppX packages on the system
-    $AppxPackages = Get-AppxPackage -AllUsers:$Elevated
-    foreach ($Package in $AppxPackages) {
-        Write-Verbose -Message "Currently installed package: $($Package.Name)"
+
+    function Add-DeprovisionedPackageKey {
+        # Explicitly create the registry key for deprovisioned packages
+        # Silently fail if we don't have permissions to create the key
+        param (
+            [Parameter(Mandatory = $true)]
+            [System.String] $PackageFamilyName
+        )
+        $Deprovisioned = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Appx\AppxAllUserStore\Deprovisioned"
+        if (Test-Path -Path "$Deprovisioned\$($_.PackageFamilyName)") {
+            New-Item -Path "$Deprovisioned\$($_.PackageFamilyName)" -ErrorAction "SilentlyContinue" *>$null
+        }
     }
+}
 
-    # Remove all AppX packages, except for packages that can't be removed, frameworks, and the safe packages list
-    $AppxPackagesToRemove = $AppxPackages | `
-        Where-Object { $_.NonRemovable -eq $false -and $_.IsFramework -eq $false -and $_.PackageFamilyName -notin $SafePackages }
-    Write-Verbose -Message "We found $($AppxPackagesToRemove.Count) packages to remove."
+process {
+    if ($Targeted -eq $true) {
+        # Targeted behavior: remove a specific list of AppX packages
+        Write-Verbose -Message "Running with the targeted list of packages."
 
-    # Check if we're running on Windows 11 or Windows Server 2025, or above
-    if ([System.Environment]::OSVersion.Version -ge [System.Version]"10.0.22000") {
+        # Find all AppX packages on the system and filter them based on the targeted list
+        $AppxPackagesToRemove = Get-AppxPackage -AllUsers:$Elevated | Where-Object { $_.PackageFamilyName -in $TargetedPackageList }
+
+        # Remove packages in the targeted list
         $AppxPackagesToRemove | ForEach-Object {
-            if ($PSCmdlet.ShouldProcess($_.PackageFullName, "Remove Appx package")) {
+            if ($PSCmdlet.ShouldProcess($_.PackageFullName, "Remove AppX package")) {
                 Remove-AppxPackage -Package $_.PackageFullName -AllUsers:$Elevated
+                Add-DeprovisionedPackageKey -PackageFamilyName $_.PackageFamilyName
             }
             $_.PackageFamilyName | Write-Output
         }
     }
     else {
-        # OS version is less than 10.0.22000, so we're on Windows 10, Windows Server 2022 or below
-        if ($Elevated) {
-            $ProvisionedAppxPackages = Get-AppxProvisionedPackage -Online
-            $PackagesToRemove = $ProvisionedAppxPackages | Where-Object { $_.DisplayName -in $AppxPackagesToRemove.Name }
-            $PackagesToRemove | ForEach-Object {
-                if ($PSCmdlet.ShouldProcess($_.PackageName, "Remove Appx provisioned package")) {
-                    Remove-AppxProvisionedPackage -Package $_.PackageName -Online -AllUsers
+        # Default behavior: remove all AppX packages except for the safe list
+        Write-Verbose -Message "Running with the safe list of packages."
+        
+        # Find all AppX packages on the system
+        $AppxPackages = Get-AppxPackage -AllUsers:$Elevated
+        foreach ($Package in $AppxPackages) {
+            Write-Verbose -Message "Currently installed package: $($Package.Name)"
+        }
+
+        # Remove all AppX packages, except for packages that can't be removed, frameworks, and the safe packages list
+        $AppxPackagesToRemove = $AppxPackages | `
+            Where-Object { $_.NonRemovable -eq $false -and $_.IsFramework -eq $false -and $_.PackageFamilyName -notin $SafePackageList }
+        Write-Verbose -Message "We found $($AppxPackagesToRemove.Count) packages to remove."
+
+        # Check if we're running on Windows 11 or Windows Server 2025, or above
+        if ([System.Environment]::OSVersion.Version -ge [System.Version]"10.0.22000") {
+            $AppxPackagesToRemove | ForEach-Object {
+                if ($PSCmdlet.ShouldProcess($_.PackageFullName, "Remove AppX package")) {
+                    Remove-AppxPackage -Package $_.PackageFullName -AllUsers:$Elevated
+                    Add-DeprovisionedPackageKey -PackageFamilyName $_.PackageFamilyName
                 }
-                $_.PackageName | Write-Output
+                $_.PackageFamilyName | Write-Output
             }
         }
         else {
-            Write-Error -Message "This script must be run elevated to remove provisioned packages."
+            # OS version is less than 10.0.22000, so we're on Windows 10, Windows Server 2022 or below
+            if ($Elevated) {
+                $ProvisionedAppxPackages = Get-AppxProvisionedPackage -Online
+                $PackagesToRemove = $ProvisionedAppxPackages | Where-Object { $_.DisplayName -in $AppxPackagesToRemove.Name }
+                $PackagesToRemove | ForEach-Object {
+                    if ($PSCmdlet.ShouldProcess($_.PackageName, "Remove AppX provisioned package")) {
+                        Remove-AppxProvisionedPackage -Package $_.PackageName -Online -AllUsers
+                        Add-DeprovisionedPackageKey -PackageFamilyName $_.PackageFamilyName
+                    }
+                    $_.PackageName | Write-Output
+                }
+            }
+            else {
+                Write-Error -Message "This script must be run elevated to remove provisioned packages."
+            }
         }
     }
 
@@ -128,5 +196,6 @@ process {
         }
     }
 }
+
 end {
 }
