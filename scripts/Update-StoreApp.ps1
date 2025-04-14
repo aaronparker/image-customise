@@ -1,7 +1,3 @@
-#description: Updates all installed Microsoft Store apps
-#execution mode: Combined
-#tags: Image, Optimise, Store
-
 function Update-StoreApp {
     <#
         .SYNOPSIS
@@ -62,72 +58,68 @@ function Update-StoreApp {
             throw [System.Management.Automation.ScriptRequiresException]::New($Msg)
         }
 
-        # https://fleexlab.blogspot.com/2018/02/using-winrts-iasyncoperation-in.html
-        Add-Type -AssemblyName "System.Runtime.WindowsRuntime"
-        $asTaskGeneric = ([System.WindowsRuntimeSystemExtensions].GetMethods() | `
-                Where-Object { $_.Name -eq 'AsTask' -and $_.GetParameters().Count -eq 1 -and $_.GetParameters()[0].ParameterType.Name -eq 'IAsyncOperation`1' })[0]
-
-        function Await($WinRtTask, $ResultType) {                
-            $asTask = $asTaskGeneric.MakeGenericMethod($ResultType)
-            $netTask = $asTask.Invoke($null, @($WinRtTask))
-            $netTask.Wait(-1) | Out-Null
-            $netTask.Result
-        }
-    }
-
-    process {
         try {
+            # https://fleexlab.blogspot.com/2018/02/using-winrts-iasyncoperation-in.html
+            Add-Type -AssemblyName "System.Runtime.WindowsRuntime"
+            $asTaskGeneric = ([System.WindowsRuntimeSystemExtensions].GetMethods() | `
+                    Where-Object { $_.Name -eq 'AsTask' -and $_.GetParameters().Count -eq 1 -and $_.GetParameters()[0].ParameterType.Name -eq 'IAsyncOperation`1' })[0]
+
+            function Await($WinRtTask, $ResultType) {                
+                $asTask = $asTaskGeneric.MakeGenericMethod($ResultType)
+                $netTask = $asTask.Invoke($null, @($WinRtTask))
+                $netTask.Wait(-1) | Out-Null
+                $netTask.Result
+            }
+
             # https://docs.microsoft.com/uwp/api/windows.applicationmodel.store.preview.installcontrol.appinstallmanager?view=winrt-22000
             # We need to tell PowerShell about this WinRT API before we can call it
             Write-Verbose -Message "Enabling Windows.ApplicationModel.Store.Preview.InstallControl.AppInstallManager WinRT type"
             [Windows.ApplicationModel.Store.Preview.InstallControl.AppInstallManager, Windows.ApplicationModel.Store.Preview, ContentType = WindowsRuntime] | Out-Null
             $AppManager = New-Object -TypeName "Windows.ApplicationModel.Store.Preview.InstallControl.AppInstallManager"
-
-            foreach ($App in $PackageFamilyName) {
-                try {
-                    Write-Verbose -Message "Requesting an update for: $App"
-                    $updateOp = $AppManager.UpdateAppByPackageFamilyNameAsync($App)
-                    $updateResult = Await $updateOp ([Windows.ApplicationModel.Store.Preview.InstallControl.AppInstallItem])
-                    while ($true) {
-                        if ($null -eq $updateResult) {
-                            Write-Verbose -Message "Update is null. It must already be completed (or there was no update)."
-                            break
-                        }
-
-                        if ($null -eq $updateResult.GetCurrentStatus()) {
-                            Write-Verbose -Message "Current status is null."
-                            break
-                        }
-
-                        Write-Progress -Activity $App -Status "Updating" -PercentComplete $updateResult.GetCurrentStatus().PercentComplete
-                        if ($updateResult.GetCurrentStatus().PercentComplete -eq 100) {
-                            break
-                        }
-                        Start-Sleep -Seconds 3
-                    }
-                    Write-Progress -Activity $App -Status "Updating" -Completed
-                }
-                catch [System.AggregateException] {
-                    # If the thing is not installed, we can't update it. In this case, we get an
-                    # ArgumentException with the message "Value does not fall within the expected
-                    # range." I cannot figure out why *that* is the error in the case of "app is
-                    # not installed"... perhaps we could be doing something different/better, but
-                    # I'm happy to just let this slide for now.
-                    $problem = $_.Exception.InnerException # we'll just take the first one
-                    Write-Verbose -Message "Error updating app $($App): $problem"
-                }
-                catch {
-                    Write-Error -Message "Unexpected error updating app $($App): $($_.Exception.Message)"
-                }
-            }
         }
         catch {
             throw $_
+        }
+    }
+
+    process {
+        foreach ($App in $PackageFamilyName) {
+            try {
+                Write-Verbose -Message "Requesting an update for: $App"
+                $updateOp = $AppManager.UpdateAppByPackageFamilyNameAsync($App)
+                $updateResult = Await $updateOp ([Windows.ApplicationModel.Store.Preview.InstallControl.AppInstallItem])
+                while ($true) {
+                    if ($null -eq $updateResult) {
+                        Write-Verbose -Message "Update is null. It must already be completed or there was no update."
+                        break
+                    }
+
+                    if ($null -eq $updateResult.GetCurrentStatus()) {
+                        Write-Verbose -Message "Current status is null."
+                        break
+                    }
+
+                    Write-Progress -Activity $App -Status "Updating" -PercentComplete $updateResult.GetCurrentStatus().PercentComplete
+                    if ($updateResult.GetCurrentStatus().PercentComplete -eq 100) {
+                        break
+                    }
+                }
+                Write-Progress -Activity $App -Status "Updating" -Completed
+            }
+            catch [System.AggregateException] {
+                # If the app is not installed, we can't update it. In this case, we get an
+                # ArgumentException with the message "Value does not fall within the expected range."
+                Write-Verbose -Message "Error updating app $($App): $($_.Exception.InnerException)"
+            }
+            catch {
+                Write-Error -Message "Unexpected error updating app $($App): $($_.Exception.Message)"
+            }
         }
     }
 }
 
 # Get-AppxPackage to find all installed apps that are not removable and not framework apps, and then updates them
 Get-AppxPackage | `
-    Where-Object { $_.NonRemovable -eq $false -and $_.IsFramework -eq $false } | `
+    # Where-Object { $_.NonRemovable -eq $false -and $_.IsFramework -eq $false } | `
+    Where-Object { $_.NonRemovable -eq $false } | `
     Update-StoreApp
