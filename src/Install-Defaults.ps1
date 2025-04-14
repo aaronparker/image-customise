@@ -74,7 +74,7 @@ param (
 
     [Parameter(Mandatory = $false)]
     [ValidateNotNullOrEmpty()]
-    [System.String] $FeatureUpdatePath = "$env:SystemRoot\System32\Update\Run\$Guid"
+    [System.String] $FeatureUpdatePath = "$env:SystemRoot\System32\update\run\$Guid"
 )
 
 #region Restart if running in a 32-bit session
@@ -264,7 +264,7 @@ else {
 #endregion
 
 # Copy the source files for use with upgrades
-if ($FeatureUpdatePath -eq $WorkingPath) {
+if (Test-Path -Path "$FeatureUpdatePath\Install-Defaults.ps1" -PathType "Leaf") {
     Write-LogFile -Message "Skipping copy to $FeatureUpdatePath"
 }
 else {
