@@ -135,6 +135,7 @@ nav:
     - Machine settings: machine.md
     - User settings: profile.md
     - Customise: custom.md
+    - Feature upgrades: feature.md
   - Settings:
     - Registry: registry.md
     - Capabilities and Features: features.md
