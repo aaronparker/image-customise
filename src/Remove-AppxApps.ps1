@@ -84,20 +84,20 @@ param (
 
     [Parameter(Mandatory = $false, ParameterSetName = "Targeted")]
     [System.Collections.ArrayList] $TargetedPackageList = @(
-        "Microsoft.BingNews_8wekyb3d8bbwe", 
-        "Microsoft.BingSearch_8wekyb3d8bbwe", 
-        "Microsoft.BingWeather_8wekyb3d8bbwe", 
-        # "Microsoft.Copilot_8wekyb3d8bbwe", 
-        "Microsoft.GetHelp_8wekyb3d8bbwe", 
-        # "Microsoft.OutlookForWindows_8wekyb3d8bbwe", 
-        # "Microsoft.Todos_8wekyb3d8bbwe", 
-        "Microsoft.Windows.DevHome_8wekyb3d8bbwe", 
-        "Microsoft.WindowsCamera_8wekyb3d8bbwe", 
-        "microsoft.windowscommunicationsapps_8wekyb3d8bbwe", 
-        "Microsoft.Xbox.TCUI_8wekyb3d8bbwe", 
-        "Microsoft.XboxGameOverlay_8wekyb3d8bbwe", 
-        "Microsoft.XboxIdentityProvider_8wekyb3d8bbwe", 
-        "Microsoft.XboxSpeechToTextOverlay_8wekyb3d8bbwe", 
+        "Microsoft.BingNews_8wekyb3d8bbwe",
+        "Microsoft.BingSearch_8wekyb3d8bbwe",
+        "Microsoft.BingWeather_8wekyb3d8bbwe",
+        # "Microsoft.Copilot_8wekyb3d8bbwe",
+        "Microsoft.GetHelp_8wekyb3d8bbwe",
+        # "Microsoft.OutlookForWindows_8wekyb3d8bbwe",
+        # "Microsoft.Todos_8wekyb3d8bbwe",
+        "Microsoft.Windows.DevHome_8wekyb3d8bbwe",
+        "Microsoft.WindowsCamera_8wekyb3d8bbwe",
+        "microsoft.windowscommunicationsapps_8wekyb3d8bbwe",
+        "Microsoft.Xbox.TCUI_8wekyb3d8bbwe",
+        "Microsoft.XboxGameOverlay_8wekyb3d8bbwe",
+        "Microsoft.XboxIdentityProvider_8wekyb3d8bbwe",
+        "Microsoft.XboxSpeechToTextOverlay_8wekyb3d8bbwe",
         # "MSTeams_8wekyb3d8bbwe",
         "Microsoft.ZuneVideo_8wekyb3d8bbwe")
 )
@@ -114,9 +114,15 @@ begin {
             [Parameter(Mandatory = $true)]
             [System.String] $PackageFamilyName
         )
-        $Deprovisioned = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Appx\AppxAllUserStore\Deprovisioned"
-        if (Test-Path -Path "$Deprovisioned\$($_.PackageFamilyName)") {
-            New-Item -Path "$Deprovisioned\$($_.PackageFamilyName)" -ErrorAction "SilentlyContinue" *>$null
+        try {
+            $Deprovisioned = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Appx\AppxAllUserStore\Deprovisioned"
+            $Path = "$Deprovisioned\$($PackageFamilyName)"
+            if (-not(Test-Path -Path $Path)) {
+                New-Item -Path $Path -ErrorAction "SilentlyContinue" *>$null
+            }
+        }
+        catch {
+            Write-Verbose -Message "Failed to create registry key: $Path. Error: $($_.Exception.Message)"
         }
     }
 }
@@ -141,7 +147,7 @@ process {
     else {
         # Default behavior: remove all AppX packages except for the safe list
         Write-Verbose -Message "Running with the safe list of packages."
-        
+
         # Find all AppX packages on the system
         $AppxPackages = Get-AppxPackage -AllUsers:$Elevated
         foreach ($Package in $AppxPackages) {
@@ -192,7 +198,7 @@ process {
             reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Orchestrator\UScheduler\MS_Outlook" /f *>$null
         }
         catch {
-            Write-Information -MessageData "Failed to delete registry keys with: $($_.Exception.Message)."
+            Write-Verbose -MessageData "Failed to delete registry keys with: $($_.Exception.Message)."
         }
     }
 }
