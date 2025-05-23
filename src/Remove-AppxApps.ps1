@@ -198,7 +198,7 @@ process {
             reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Orchestrator\UScheduler\MS_Outlook" /f *>$null
         }
         catch {
-            Write-Verbose -MessageData "Failed to delete registry keys with: $($_.Exception.Message)."
+            Write-Verbose -Message "Failed to delete registry keys with: $($_.Exception.Message)."
         }
     }
 }
