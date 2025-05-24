@@ -1,13 +1,13 @@
 # Project information
 site_name: Windows Enterprise Defaults
-site_url: https://stealthpuppy.com/image-customise
+site_url: https://stealthpuppy.com/defaults
 site_author: Aaron Parker
 site_description: >-
   Making Windows images enterprise ready
 
 # Repository
-repo_name: aaronparker/image-customise
-repo_url: https://github.com/aaronparker/image-customise
+repo_name: aaronparker/defaults
+repo_url: https://github.com/aaronparker/defaults
 edit_uri: ""
 
 # Copyright
