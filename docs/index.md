@@ -12,7 +12,7 @@ Windows Enterprise Defaults is not a "de-bloater", instead it focuses on making 
 
 Supporting Windows 10, Windows 11, and Windows Server 2016–2025, this tool works for both physical PCs and virtual machines (e.g., Azure Virtual Desktop, Windows 365). While primarily aimed at provisioning gold images for PCs or virtual desktops, it can also be applied to Windows Server infrastructure roles.
 
-To see the improved end-user experience, check out the [Results](https://stealthpuppy.com/image-customise/results/) page.
+To see the improved end-user experience, check out the [Results](https://stealthpuppy.com/defaults/results/) page.
 
 ## Usage
 

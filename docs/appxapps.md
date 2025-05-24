@@ -4,7 +4,7 @@ summary:
 authors:
     - Aaron Parker
 ---
-[`Remove-AppxApps.ps1`](https://github.com/aaronparker/image-customise/blob/main/src/Remove-AppxApps.ps1) will remove Universal Windows Platform (UWP) / Microsoft Store apps from the local Windows OS. This script runs in two modes:
+[`Remove-AppxApps.ps1`](https://github.com/aaronparker/defaults/blob/main/src/Remove-AppxApps.ps1) will remove Universal Windows Platform (UWP) / Microsoft Store apps from the local Windows OS. This script runs in two modes:
 
 ## Safe Package List
 

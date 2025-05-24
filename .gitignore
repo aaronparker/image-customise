@@ -38,7 +38,7 @@ Thumbs.db:encryptable
 
 # Exclude the releases folder
 releases/Install-Defaults.intunewin
-releases/image-customise.zip
+releases/defaults.zip
 CodeCoverage.xml
 TestResults.xml
 results.sarif

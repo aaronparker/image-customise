@@ -70,7 +70,7 @@ param (
 
     [Parameter(Mandatory = $false)]
     [ValidateNotNullOrEmpty()]
-    [System.String] $Helplink = "https://stealthpuppy.com/image-customise/",
+    [System.String] $Helplink = "https://stealthpuppy.com/defaults/",
 
     [Parameter(Mandatory = $false)]
     [ValidateNotNullOrEmpty()]

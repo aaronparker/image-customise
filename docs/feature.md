@@ -10,7 +10,7 @@ When `Install-Defaults.ps1` runs, it copies the project files to `C:\WINDOWS\Sys
 
 [![File Explorer showing the feature upgrade files](assets/img/feature.png)](assets/img/feature.png)
 
-When a feature upgrade completes (e.g. Windows 11 23H2 to Windows 11 24H2), `success.cmd` is executed. This will re-run `Install-Defaults.ps1` and explicitly run `Remove-AppxApps.ps1` in [targeted mode](https://stealthpuppy.com/image-customise/appxapps/#targeted-package-list). This removes a set of AppX applications that are often reinstalled during a feature update.
+When a feature upgrade completes (e.g. Windows 11 23H2 to Windows 11 24H2), `success.cmd` is executed. This will re-run `Install-Defaults.ps1` and explicitly run `Remove-AppxApps.ps1` in [targeted mode](https://stealthpuppy.com/defaults/appxapps/#targeted-package-list). This removes a set of AppX applications that are often reinstalled during a feature update.
 
 ```batch
 @ECHO OFF

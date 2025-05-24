@@ -11,8 +11,8 @@
     "DisplayName": "Windows Enterprise Defaults 2503.28.209 x86",
     "Description": "Customisations to **make Windows 10 & Windows 11 enterprise-ready** by configuring a clean OS default state, uninstalling unnecessary in-box AppX apps, and improving the end-user experience by updating the default user profile and default Start menu. Includes support for localising Windows and setting a time zone.",
     "Publisher": "stealthpuppy",
-    "InformationURL": "https://stealthpuppy.com/image-customise/",
-    "PrivacyURL": "https://stealthpuppy.com/image-customise/",
+    "InformationURL": "https://stealthpuppy.com/defaults/",
+    "PrivacyURL": "https://stealthpuppy.com/defaults/",
     "Categories": [],
     "PSPackageFactoryGuid": "9fddd581-f505-4760-9bb3-2365db204b38"
   },

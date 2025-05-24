@@ -75,8 +75,8 @@ function Write-LogFile {
             $LogFile = "$Env:ProgramData\Microsoft\IntuneManagementExtension\Logs\WindowsEnterpriseDefaults.log"
         }
         else {
-            # Otherwise, put the log file in the $Env:SystemRoot\Logs\image-customise folder
-            $Path = "$Env:SystemRoot\Logs\image-customise"
+            # Otherwise, put the log file in the $Env:SystemRoot\Logs\defaults folder
+            $Path = "$Env:SystemRoot\Logs\defaults"
             $LogFile = "$Path\WindowsEnterpriseDefaults.log"
             if (-not(Test-Path -Path $Path)) {
                 New-Item -Path $Path -ItemType "Directory" -Force | Out-Null

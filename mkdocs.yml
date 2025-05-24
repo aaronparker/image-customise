@@ -52,7 +52,7 @@ theme:
   favicon: assets/favicon.png
   #icon:
     #logo: logo
-  logo: assets/img/image-customise.png
+  logo: assets/img/defaults.png
 
 # Plugins
 plugins:

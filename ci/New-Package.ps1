@@ -65,7 +65,7 @@ Write-Information -InformationAction "Continue" -MessageData "Found package: $($
 #region Zip the src folder
 $params = @{
     Path            = "$PackagePath\*"
-    DestinationPath = "$PackageOutput\image-customise.zip"
+    DestinationPath = "$PackageOutput\defaults.zip"
     ErrorAction     = "Stop"
 }
 Compress-Archive @params

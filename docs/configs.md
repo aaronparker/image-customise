@@ -8,17 +8,17 @@ Configuration changes are implemented with `Install-Defaults.ps1`. This script r
 
 Configurations are stored in the following JSON files with the logic to make changes to Windows includes in `Install-Defaults.ps1`:
 
-* [Build.All.json](https://github.com/aaronparker/image-customise/blob/main/src/Build.All.json)
-* [Machine-Windows11.All.json](https://github.com/aaronparker/image-customise/blob/main/src/Machine-Windows11.All.json)
-* [Machine.All.json](https://github.com/aaronparker/image-customise/blob/main/src/Machine.All.json)
-* [Machine.Client.json](https://github.com/aaronparker/image-customise/blob/main/src/Machine.Client.json)
-* [Machine.Server.json](https://github.com/aaronparker/image-customise/blob/main/src/Machine.Server.json)
-* [User-Windows10.All.json](https://github.com/aaronparker/image-customise/blob/main/src/User-Windows10.All.json)
-* [User-Windows11.All.json](https://github.com/aaronparker/image-customise/blob/main/src/User-Windows11.All.json)
-* [User.All.json](https://github.com/aaronparker/image-customise/blob/main/src/User.All.json)
-* [User.Client.json](https://github.com/aaronparker/image-customise/blob/main/src/User.Client.json)
-* [User.Server.json](https://github.com/aaronparker/image-customise/blob/main/src/User.Machine.json)
-* [User.Virtual.json](https://github.com/aaronparker/image-customise/blob/main/src/User.Virtual.json)
+* [Build.All.json](https://github.com/aaronparker/defaults/blob/main/src/Build.All.json)
+* [Machine-Windows11.All.json](https://github.com/aaronparker/defaults/blob/main/src/Machine-Windows11.All.json)
+* [Machine.All.json](https://github.com/aaronparker/defaults/blob/main/src/Machine.All.json)
+* [Machine.Client.json](https://github.com/aaronparker/defaults/blob/main/src/Machine.Client.json)
+* [Machine.Server.json](https://github.com/aaronparker/defaults/blob/main/src/Machine.Server.json)
+* [User-Windows10.All.json](https://github.com/aaronparker/defaults/blob/main/src/User-Windows10.All.json)
+* [User-Windows11.All.json](https://github.com/aaronparker/defaults/blob/main/src/User-Windows11.All.json)
+* [User.All.json](https://github.com/aaronparker/defaults/blob/main/src/User.All.json)
+* [User.Client.json](https://github.com/aaronparker/defaults/blob/main/src/User.Client.json)
+* [User.Server.json](https://github.com/aaronparker/defaults/blob/main/src/User.Machine.json)
+* [User.Virtual.json](https://github.com/aaronparker/defaults/blob/main/src/User.Virtual.json)
 
 JSON files are gathered based on properties of the local Windows instance. The following keywords, used in the file names, ensure that the right JSON files are selected:
 
@@ -33,7 +33,7 @@ Each JSON file includes a `MinimumBuild` property that can be used to ensure spe
 
 `Install-Defaults.ps1` performs additional tasks not defined in the JSON configuration files:
 
-* Removes inbox Universal Windows Platform (AppX) apps - see [Remove UWP apps](https://stealthpuppy.com/image-customise/appxapps/)
+* Removes inbox Universal Windows Platform (AppX) apps - see [Remove UWP apps](https://stealthpuppy.com/defaults/appxapps/)
 * Copies the solution as a [Run custom actions during feature update](https://learn.microsoft.com/en-gb/windows-hardware/manufacture/desktop/windows-setup-enable-custom-actions?view=windows-11). This enables the Custom Defaults to be re-run during an in-place upgrade
 
 ## Script Process Visualisation

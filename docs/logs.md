@@ -6,7 +6,7 @@ authors:
 ---
 Windows Enterprise Defaults logs actions to the following locations:
 
-* The default log file path is: `C:\Windows\Logs\image-customise\WindowsEnterpriseDefaults.log`
+* The default log file path is: `C:\Windows\Logs\defaults\WindowsEnterpriseDefaults.log`
 * If the target device is enrolled into Microsoft Intune, the log file path will instead be: `C:\ProgramData\Microsoft\IntuneManagementExtension\Logs\WindowsEnterpriseDefaults.log`
 
 Data is logged in Configuration Manager format, so it can be viewed with the Support Center Log File Viewer from the Configuration Manager Support Center tools:

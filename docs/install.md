@@ -6,7 +6,7 @@ authors:
 ---
 ## Download the Latest Release
 
-To use the solution in an operating system deployment pipeline, download the zip file (`image-customise.zip`) attached to the [latest release](https://github.com/aaronparker/image-customise/releases/latest) and import the extracted files into your OS deployment solution (e.g., the Microsoft Deployment Toolkit, Microsoft Intune, Microsoft Configuration Manager, etc.).
+To use the solution in an operating system deployment pipeline, download the zip file (`defaults.zip`) attached to the [latest release](https://github.com/aaronparker/defaults/releases/latest) and import the extracted files into your OS deployment solution (e.g., the Microsoft Deployment Toolkit, Microsoft Intune, Microsoft Configuration Manager, etc.).
 
 ![Windows Enterprise Defaults release hosted on GitHub](assets/img/githubrelease.jpeg)
 
@@ -93,7 +93,7 @@ Once installed, the following registry information can be used to detect that th
 
 The solution is also provided in `.intunewin` format to enable direct import into Microsoft Intune without re-packaging.
 
-Settings for importing the Windows Enterprise Defaults as a Win32 package into Intune are maintained here: [App.json](https://github.com/aaronparker/image-customise/blob/main/App.json). This can be used with the [IntuneWin32AppPackager](https://github.com/MSEndpointMgr/IntuneWin32AppPackager) to automate import into Intune.
+Settings for importing the Windows Enterprise Defaults as a Win32 package into Intune are maintained here: [App.json](https://github.com/aaronparker/defaults/blob/main/App.json). This can be used with the [IntuneWin32AppPackager](https://github.com/MSEndpointMgr/IntuneWin32AppPackager) to automate import into Intune.
 
 ![Windows Enterprise Defaults as a Win32 application in Microsoft Intune](assets/img/intuneapp.jpeg)
 
@@ -113,12 +113,12 @@ To ensure the solution applies to a target machine during Windows Autopilot, add
 
     Do not use this method on an existing Windows PC. This script will run `Remove-AppxApps.ps1` which will remove AppX / Store apps except for the list specified in the script.
 
-To simplify download and install during an automated image build pipeline, or to install manually into an image, a [quick install script](https://raw.githubusercontent.com/aaronparker/image-customise/main/Install.ps1) is provided that can be executed with the following PowerShell:
+To simplify download and install during an automated image build pipeline, or to install manually into an image, a [quick install script](https://raw.githubusercontent.com/aaronparker/defaults/main/Install.ps1) is provided that can be executed with the following PowerShell:
 
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force;
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
-Invoke-Expression ((New-Object System.Net.WebClient).DownloadString("https://raw.githubusercontent.com/aaronparker/image-customise/main/Install.ps1"))
+Invoke-Expression ((New-Object System.Net.WebClient).DownloadString("https://raw.githubusercontent.com/aaronparker/defaults/main/Install.ps1"))
 ```
 
 This will download the latest release in zip format, extract the archive and execute `Install-Defaults.ps1` on the local Windows instance, to install the Windows Enterprise Defaults.

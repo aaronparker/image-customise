@@ -1,4 +1,4 @@
-$Uri = "https://api.github.com/repos/aaronparker/image-customise/releases/latest"
+$Uri = "https://api.github.com/repos/aaronparker/defaults/releases/latest"
 $Filter = "\.zip$"
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $params = @{

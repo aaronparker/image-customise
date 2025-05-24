@@ -57,4 +57,4 @@ jobs:
           files: |
             releases/Install-Defaults.intunewin
             releases/Win32App.json
-            releases/image-customise.zip
+            releases/defaults.zip
